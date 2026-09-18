@@ -1,0 +1,96 @@
+// Palimpsest — no question ships unless the book says so.
+//
+//   node build/verify.mjs
+//
+// For every question in content/:
+//   1. every evidence quote is found VERBATIM in the paragraph it cites
+//      (typographic quotes and dashes are normalised; nothing else is);
+//   2. the answer is supported: each term in `must` (default: the answer
+//      itself) appears in the quoted evidence, so the question cannot claim
+//      more than the quotes carry;
+//   3. options are distinct and none of them is the answer;
+//   4. an ordering question has distinct dates, each of which appears in its
+//      own quote.
+// Any failure exits non-zero.
+
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join, dirname, relative } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+const norm = (s) => String(s)
+  .replace(/[‘’ʼ]/g, "'").replace(/[“”]/g, '"')
+  .replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
+const low = (s) => norm(s).toLowerCase();
+
+const PARA = new Map();
+for (const f of readdirSync(join(ROOT, 'corpus'))) {
+  const book = JSON.parse(readFileSync(join(ROOT, 'corpus', f), 'utf8'));
+  for (const c of book.chapters) for (const s of c.sections) for (const p of s.paras) {
+    PARA.set(p.id, { text: p.text, section: s, source: book.source });
+  }
+}
+
+const files = [];
+(function walk(d) {
+  for (const f of readdirSync(d)) {
+    const p = join(d, f);
+    if (statSync(p).isDirectory()) walk(p);
+    else if (f.endsWith('.mjs')) files.push(p);
+  }
+})(join(ROOT, 'content'));
+
+const fails = [];
+let n = 0;
+const lensCount = {};
+for (const file of files) {
+  const qs = (await import(pathToFileURL(file).href)).default;
+  const where = relative(ROOT, file);
+  const ids = new Set();
+  for (const q of qs) {
+    n++;
+    const bad = (m) => fails.push(`${where} · ${q.id}: ${m}`);
+    if (ids.has(q.id)) bad('duplicate id');
+    ids.add(q.id);
+    for (const l of q.lens || []) lensCount[l] = (lensCount[l] || 0) + 1;
+
+    const quoteOk = (ev) => {
+      const para = PARA.get(ev.p);
+      if (!para) { bad(`cites ${ev.p}, which is not in the corpus`); return false; }
+      if (!norm(para.text).includes(norm(ev.q))) { bad(`quote not found in ${ev.p}: "${ev.q.slice(0, 70)}…"`); return false; }
+      return true;
+    };
+
+    if (q.kind === 'order') {
+      const ats = q.items.map((it) => it.at);
+      if (new Set(ats).size !== ats.length) bad('two items share a date');
+      for (const it of q.items) {
+        if (!quoteOk(it.ev)) continue;
+        if (!norm(it.ev.q).includes(String(Math.abs(it.at)))) bad(`"${it.label}": its quote does not contain ${Math.abs(it.at)}`);
+      }
+      continue;
+    }
+
+    const evs = q.ev || [];
+    if (!evs.length) { bad('no evidence'); continue; }
+    const allOk = evs.map(quoteOk).every(Boolean);
+    const said = low(evs.map((e) => e.q).join(' '));
+    for (const term of q.must || [q.answer]) {
+      if (!said.includes(low(term))) bad(`answer not supported: "${term}" is not in the quoted evidence`);
+    }
+    const opts = (q.options || []).map(low);
+    if (new Set(opts).size !== opts.length) bad('duplicate options');
+    if (opts.includes(low(q.answer))) bad('the answer is also listed as a wrong option');
+    if (!allOk) continue;
+  }
+}
+
+console.log(`${n} questions in ${files.length} file(s)`);
+console.log('by lens: ' + Object.entries(lensCount).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · '));
+if (fails.length) {
+  console.error(`\nverify FAILED — ${fails.length} problem(s):`);
+  for (const f of fails) console.error('  x ' + f);
+  process.exit(1);
+}
+console.log('every quote found verbatim; every answer supported by its evidence.');
