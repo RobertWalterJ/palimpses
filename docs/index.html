@@ -377,6 +377,11 @@ input[type=range] { width: 100%; height: 44px; accent-color: var(--accent); marg
 .mention p { margin: 8px 0 0; font: 400 1rem/1.55 var(--read); }
 .mention mark { background: none; color: inherit; text-decoration: underline 2px var(--accent); text-underline-offset: 4px; }
 </style>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script>if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {}));</script>
 </head>
 <body>
 <main id="app" class="app" aria-live="polite"></main>
