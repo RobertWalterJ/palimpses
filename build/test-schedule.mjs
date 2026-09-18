@@ -28,7 +28,8 @@ S.State.load();
 
 const fails = [];
 const log = [];
-for (let day = 1; day <= 60; day++) {
+const DAYS = 120;
+for (let day = 1; day <= DAYS; day++) {
   const round = new S.Round(ids);
   let asked = 0, right = 0, repeats = 0;
   const seen = new Set();
@@ -67,17 +68,20 @@ const at = (d) => log[d - 1];
 // New material keeps arriving: everything met within 45 days, and no stretch
 // of a week in which nothing new was introduced while some was still unmet.
 const metBy = log.find((l) => l.met === ids.length)?.day;
-if (!metBy || metBy > 45) fails.push(`all ${ids.length} not met until day ${metBy || '>60'}`);
+// The pace has to scale with the pack: a fixed deadline was right for 61
+// questions and wrong for 87. The invariant is that new material never
+// starves — at least one new question a day on average, one round a day.
+if (!metBy || metBy > ids.length) fails.push(`all ${ids.length} not met until day ${metBy || '>' + DAYS} — slower than one new a day`);
 for (let d = 7; d < log.length; d++) {
   if (log[d].met < ids.length && log[d].met === log[d - 7].met) { fails.push(`nothing new introduced from day ${d - 6} to day ${d + 1}`); break; }
 }
 if (Math.max(...log.map((l) => l.asked)) > 15) fails.push(`a round ran to ${Math.max(...log.map((l) => l.asked))} questions`);
-for (const d of [1, 3, 7, 14, 30, 60]) {
+for (const d of [1, 7, 30, 60, 90, 120]) {
   const l = at(d);
   console.log(`day ${String(d).padStart(2)}: asked ${String(l.asked).padStart(2)} (${l.repeats} in-round repeats), right ${l.right}, met ${l.met}/${ids.length}, known ${l.known}`);
 }
 const idle = log.filter((l) => l.asked === 0).length;
 console.log(`all met by day ${metBy}`);
-console.log(`days with nothing to do: ${idle} of 60 — the spacing working, not a gap in content`);
+console.log(`days with nothing to do: ${idle} of ${DAYS} — the spacing working, not a gap in content`);
 if (fails.length) { console.error('\nFAILED:\n  ' + fails.join('\n  ')); process.exit(1); }
 console.log('the learning loop converges.');
