@@ -25,7 +25,7 @@ const LEARN_STEP = 4;                // questions later, inside the round
 const NEW_PER_ROUND = 5;
 const ROUND = 12;                    // slots, counting the in-round repeats
 const MAX_REPEATS = 4;
-const NEW_PER_DAY = 15;               // new questions per day, across all rounds                // in-round second looks, per round
+const NEW_PER_DAY = 15;              // new questions per day, across all rounds
 const LOAD_CEILING = 25;             // due reviews at which nothing new is introduced
 
 let clock = () => Date.now();

@@ -10,7 +10,7 @@
 // verdict that takes focus, a round-end that lists what slipped, and real
 // back-button behaviour.
 
-import { State, Round, cardState, nextDueSentence, shuffle, now, DAY, dayKey } from './schedule.js';
+import { State, Round, cardState, isHolding, nextDueSentence, shuffle, now, DAY, dayKey } from './schedule.js';
 import { initSpeech, unlock, say, setRate, onSpeaking } from './speech.js';
 import { Reader, sentences } from './reader.js';
 import * as S from './sound.js';
@@ -66,6 +66,38 @@ function counts(ids) {
 }
 
 const evOf = (q) => q.ev || q.items.map((i) => i.ev);
+
+// ── chapters ────────────────────────────────────────────────────────────
+// Progress by chapter, and a round from one chapter. New questions come in
+// the order the chapter tells its story, so a chapter round reads as one.
+// A question named in a list: an order question by what it orders.
+function listTitle(q) {
+  if (q.kind === 'order') return 'In order: ' + q.items.slice(0, 2).map((i) => i.label).join('; ') + '…';
+  const ask = splitPrompt(q.prompt).ask;
+  return ask.length < 45 ? q.prompt : ask;
+}
+function chapterIds(chId) { return PACK.questions.filter((q) => q.ch === chId).map((q) => q.id); }
+function chapterStats() {
+  return PACK.chapters.map((ch) => {
+    const ids = chapterIds(ch.id);
+    const c = counts(ids);
+    return { ch, ids, n: ids.length, ...c, due: State.dueIds(ids).length, fresh: ids.filter((id) => !State.card(id)).length };
+  });
+}
+function kbar(b) {
+  return h('div', { class: 'bar', role: 'img', 'aria-label': `${b.known} known, ${b.met} met, of ${b.n}` },
+    h('i', { class: 'k', style: `width:${(b.known / b.n) * 100}%` }), h('i', { class: 'm', style: `width:${(b.met / b.n) * 100}%` }));
+}
+function chapterRows(stats) {
+  return h('div', { class: 'chapters' }, stats.map((s) => {
+    const todo = s.due + s.fresh;
+    const note = todo ? (s.due ? `${s.due} to revisit` : `${s.fresh} new`) : s.unseen === 0 ? 'All met — practise it' : 'Up to date';
+    return h('button', { class: 'chrow', type: 'button', onclick: () => { S.press(); play(!todo, s.ids); } },
+      h('span', { class: 'chtop' }, h('b', {}, s.ch.title), h('span', { class: 't-small num' }, `${s.known + s.met} of ${s.n}`)),
+      kbar(s),
+      h('span', { class: 't-small' }, note));
+  }));
+}
 // The pool the hero and "passage of the day" draw from: every verified quote.
 function passages() {
   const seen = new Set(), out = [];
@@ -97,10 +129,10 @@ function hero() {
       centres.map((c) => h('button', { class: 'dot', style: `left:${x(c.at)}%;cursor:pointer;padding:0`, 'aria-label': `${c.name}, ${c.when} — open`, title: c.name, onclick: c.go }))),
     h('div', { class: 'labels', 'aria-hidden': 'true' },
       ...centres.map((c, i) => h('span', { class: [i === last ? 'r' : i === 0 ? 'l' : '', i % 2 ? 'lo' : ''].join(' ').trim(), style: `left:${i === last ? 100 : x(c.at)}%` }, c.name, h('small', {}, c.when)))),
-    h('p', { class: 'caption' }, 'Centres of their own, from the first people here, 14,000 years ago, to the League. The deep past is squeezed to fit: each step left covers more years.'));
+    h('p', { class: 'caption' }, 'From the first people here, 14,000 years ago, to the League. Older years are squeezed to fit.'));
   return h('header', { class: 'hero' }, under,
     h('h1', { class: 'wordmark' }, 'Palim', h('span', {}, 'psest')),
-    h('p', { class: 'tagline' }, 'History from more than one centre. Every answer shows where it came from.'),
+    h('p', { class: 'tagline' }, 'History has many centres.'),
     strip);
 }
 
@@ -129,7 +161,7 @@ function homeScreen() {
   const mode = (cls, icon, title, sub, go) => h('button', { class: `mode ${cls}`, onclick: () => { S.press(); go(); } },
     h('span', { class: 'ic', html: ICON[icon] }), h('span', {}, h('b', {}, title), h('span', { class: 't-small' }, sub)),
     h('span', { html: ICON.chev.replace('<svg', '<svg class="chev"') }));
-  const learnSub = first ? 'About five questions. Every answer shows its passage.'
+  const learnSub = first ? 'Five questions, each with its source.'
     : due ? `${due} to revisit${fresh ? ', then new questions' : ''}` : `${Math.min(fresh, 5)} new questions waiting`;
 
   return [
@@ -146,7 +178,8 @@ function homeScreen() {
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(c.known)), h('span', {}, h('i', { style: 'background:var(--ink)' }), 'known')),
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(c.met)), h('span', {}, h('i', { style: 'background:var(--met)' }), 'met')),
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(run)), h('span', {}, run === 1 ? 'day' : 'days running'))),
-        h('p', { class: 't-small' }, `${PACK.title} · ${PACK.chapters.map((ch) => ch.title).join(', ')}`))) : null,
+        h('p', { class: 't-small' }, `${PACK.title}, ${PACK.chapters.length} chapters`))) : null,
+    !first ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Chapters'), chapterRows(chapterStats())) : null,
     pod ? h('section', { class: 'card stack' },
       h('div', { class: 'src-head' }, h('p', { class: 't-label' }, 'Passage of the day'), h('span', { class: 'spacer' }), sayBtn(pod.quote, 'Read the passage aloud')),
       h('blockquote', { class: 'quote' }, pod.quote),
@@ -171,11 +204,14 @@ function citeLine(e) {
 let round = null;
 let tally = null;
 
-function play(practice) {
-  round = new Round(IDS, { practice });
+function play(practice, ids = IDS) {
+  round = new Round(ids, { practice });
+  round.scope = ids;
+  // Which chapters were still unfinished, to mark the ones this round finishes.
+  round.openBefore = new Set(chapterStats().filter((s) => s.unseen).map((s) => s.ch.id));
   tally = { n: 0, right: 0, streak: 0, missed: [] };
   S.resetStreak();
-  if (round.empty) return;
+  if (round.empty) { sheet(h('p', { class: 't-body' }, 'Nothing to ask here yet.'), h('button', { class: 'btn primary wide', style: 'margin-top:14px', onclick: closeSheet }, 'OK')); return; }
   round.total = round.queue.length;
   setLeaveGuard(() => {
     if (!round || round.finished) return false;
@@ -383,6 +419,11 @@ function finish() {
   const next = State.nextDue(IDS);
   const missed = [...new Set(tally.missed)].map((id) => Q.get(id));
   const practice = round.practice;
+  const scope = round.scope;
+  const scoped = scope !== IDS;
+  const sDue = State.dueIds(scope).length, sFresh = scope.filter((id) => !State.card(id)).length;
+  const finished = practice ? [] : chapterStats().filter((s) => round.openBefore.has(s.ch.id) && !s.unseen);
+  if (finished.length && !(tally.n && tally.right === tally.n)) setTimeout(() => S.fanfare(), 400);
   show('done', () => [
     h('div', { class: 'topbar' }),
     h('h1', { class: 't-title', style: 'font-size:1.8rem' }, practice ? 'Practice done' : 'Round done'),
@@ -390,16 +431,28 @@ function finish() {
       h('p', { class: 'answer' }, `${tally.right} of ${tally.n} right.`),
       practice ? h('p', { class: 't-body' }, 'Practice doesn’t change your review dates.') : null,
       !due && next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null),
+    ...finished.map((s) => {
+      const q0 = s.ids.map((id) => Q.get(id)).find((q) => q.ev) || Q.get(s.ids[0]);
+      const e = evOf(q0)[0];
+      const w = sectionOf(e.p);
+      return h('section', { class: 'card stack chapter-done' },
+        h('p', { class: 't-label' }, 'Chapter met'),
+        h('p', { class: 'answer' }, `You’ve met every question in “${s.ch.title}”.`),
+        h('p', { class: 't-body' }, 'Next it moves to known: each question counts once you get it right after three weeks away.'),
+        w ? h('button', { class: 'btn wide', onclick: () => openReader(w.section.id, e.p) }, 'Read where the chapter starts') : null);
+    }),
     missed.length ? h('h2', { class: 'group-title' }, 'What slipped — read it again') : null,
     missed.length ? h('div', { class: 'list' }, missed.map((q) => {
       const e = evOf(q)[0];
       const w = sectionOf(e.p);
       return h('button', { class: 'item', onclick: () => w && openReader(w.section.id, e.p, [e.quote]) },
-        h('div', {}, h('b', {}, splitPrompt(q.prompt).ask.length < 45 ? q.prompt : splitPrompt(q.prompt).ask), h('span', {}, `§${e.sec}`)), h('span', { html: ICON.chev }));
+        h('div', {}, h('b', {}, listTitle(q)), h('span', {}, `§${e.sec}`)), h('span', { html: ICON.chev }));
     })) : null,
     h('div', { class: 'stack' },
-      due || fresh ? h('button', { class: 'btn primary wide', onclick: () => play(false) }, 'Another round') : null,
-      h('button', { class: `btn wide${due || fresh ? '' : ' primary'}`, onclick: () => show('home', homeScreen, { replace: true }) }, 'Home')),
+      practice ? h('button', { class: 'btn primary wide', onclick: () => play(true, scope) }, 'Practise again')
+        : scoped && (sDue || sFresh) ? h('button', { class: 'btn primary wide', onclick: () => play(false, scope) }, 'Another round from this chapter')
+          : due || fresh ? h('button', { class: 'btn primary wide', onclick: () => play(false) }, 'Another round') : null,
+      h('button', { class: `btn wide${practice || due || fresh ? '' : ' primary'}`, onclick: () => show('home', homeScreen, { replace: true }) }, 'Home')),
   ], { replace: true });
 }
 route('done', homeScreen);
@@ -422,15 +475,39 @@ function progressScreen() {
   }
   const days = Object.entries(State.data.days).sort().slice(-14).reverse();
   const week = IDS.filter((id) => { const k = State.card(id); return k && k.st !== 'new' && k.due > now() && k.due < now() + 7 * DAY; }).length;
-  const bar = (b) => h('div', { class: 'bar', role: 'img', 'aria-label': `${b.known} known, ${b.met} met, of ${b.n}` },
-    h('i', { class: 'k', style: `width:${(b.known / b.n) * 100}%` }), h('i', { class: 'm', style: `width:${(b.met / b.n) * 100}%` }));
+  const bar = kbar;
+  const holding = IDS.filter((id) => isHolding(State.card(id))).length;
+  // First-try reviews over the last two weeks: the number the 80–85% target
+  // is about. New questions and in-round repeats would flatter or sink it.
+  let rn = 0, rr = 0;
+  for (const [, v] of days) { rn += v.rn || 0; rr += v.rr || 0; }
+  const acc = rn ? Math.round((rr / rn) * 100) : null;
+  const accNote = rn < 10 ? `Not enough reviews yet to judge: ${rn} so far, and it needs about ten.`
+    : acc > 90 ? 'Above the sweet spot of 80–85%. Reviews are coming easily.'
+      : acc >= 78 ? 'In the sweet spot of 80–85%: hard enough to stick, easy enough to keep going.'
+        : 'Below the sweet spot of 80–85%. Missed questions come back tomorrow; a day with fewer new ones helps.';
+  const slipping = IDS.map((id) => [id, State.card(id)]).filter(([, k]) => k && k.st === 'relearning')
+    .sort((a, b) => b[1].last - a[1].last).slice(0, 8).map(([id]) => Q.get(id));
   return [
     h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'Progress')),
     h('section', { class: 'card ring-row' }, ring(c, total),
       h('div', { class: 'stack', style: 'gap:6px' },
         h('p', { class: 't-body' }, h('b', {}, `${c.known} known`), ' — you still had them after three weeks away.'),
         h('p', { class: 't-body' }, h('b', {}, `${c.met} met`), ' — seen, and still being learned.'),
+        holding ? h('p', { class: 't-body' }, h('b', {}, `${holding} holding`), ' — right after a week or more, on the way to known.') : null,
         h('p', { class: 't-small' }, `${c.unseen} not met yet · ${week} come round in the next seven days.`))),
+    h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'By chapter'), chapterRows(chapterStats())),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'Reviews, first try, last two weeks'),
+      rn >= 10 ? h('p', { class: 'answer num' }, `${acc}%`, h('span', { class: 't-small' }, ` of ${rn}`)) : null,
+      h('p', { class: 't-body' }, accNote)),
+    slipping.length ? h('h2', { class: 'group-title' }, 'Slipping — missed on review, worth a reread') : null,
+    slipping.length ? h('div', { class: 'list' }, slipping.map((q) => {
+      const e = evOf(q)[0];
+      const w = sectionOf(e.p);
+      return h('button', { class: 'item', onclick: () => w && openReader(w.section.id, e.p, [e.quote]) },
+        h('div', {}, h('b', {}, listTitle(q)), h('span', {}, `§${e.sec}`)), h('span', { html: ICON.chev }));
+    })) : null,
     h('section', { class: 'card stack' },
       h('p', { class: 't-label' }, 'By thread'),
       Object.entries(byLens).map(([l, b]) => h('div', { class: 'stack', style: 'gap:6px' },
@@ -442,7 +519,6 @@ function progressScreen() {
         h('span', {}, dayLabel(d)), h('span', { class: 'spacer' }),
         h('span', { class: 't-small num' }, `${v.n} answered · ${Math.round((v.right / v.n) * 100)}% right`)))
         : h('p', { class: 't-body' }, 'Nothing yet. Your first round will show here.')),
-    h('p', { class: 't-small' }, 'Getting about four in five right on reviews is the sweet spot: hard enough to stick, easy enough to keep going.'),
   ];
 }
 route('progress', progressScreen);

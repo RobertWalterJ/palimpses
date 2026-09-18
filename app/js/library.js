@@ -294,7 +294,7 @@ function peoplesTab() {
   for (const [g, list] of groups) {
     out.push(h('h2', { class: 'group-title' }, g));
     out.push(h('div', { class: 'list' }, list.map((e) => h('button', { class: 'item', onclick: () => openEntry(e.id) },
-      h('div', {}, h('b', {}, e.name), h('span', {}, [e.also.slice(0, 2).join(' · '), `${e.mentions.length} passages`].filter(Boolean).join(' — '))),
+      h('div', {}, h('b', {}, e.name), h('span', {}, [e.also.slice(0, 2).join(' · '), `${e.mentions.length} passage${e.mentions.length === 1 ? '' : 's'}`].filter(Boolean).join(' — '))),
       h('span', { html: ICON.chev })))));
   }
   if (periods.length) {
