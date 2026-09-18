@@ -98,8 +98,22 @@ for (const file of files) {
     }
     continue;
   }
+  // The bigger picture: each big question's summary is quoted verbatim, and
+  // every question in the chapter serves one of them.
+  const mod = await import(pathToFileURL(file).href);
+  const BIG = new Set();
+  for (const b of mod.BIG || []) {
+    BIG.add(b.id);
+    for (const ev of b.ev) {
+      const para = PARA.get(ev.p);
+      if (!para) fails.push(where + ' · big ' + b.id + ': cites ' + ev.p + ', not in the corpus');
+      else if (!norm(para.text).includes(norm(ev.q))) fails.push(where + ' · big ' + b.id + ': not found in ' + ev.p + ': "' + ev.q.slice(0, 60) + '…"');
+    }
+  }
   for (const q of qs) {
     n++;
+    if (!BIG.has(q.big)) fails.push(where + ' · ' + q.id + ': big question "' + q.big + '" is not one of this chapter’s');
+    if (q.depth && q.depth !== 'detail') fails.push(where + ' · ' + q.id + ': depth must be detail or absent');
     const bad = (m) => fails.push(`${where} · ${q.id}: ${m}`);
     if (ids.has(q.id)) bad('duplicate id');
     ids.add(q.id);

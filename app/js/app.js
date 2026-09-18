@@ -385,6 +385,7 @@ function orderScreen(q) {
         h('div', { class: 'q-head' }, h('p', { class: 'answer' }, `${it.when} — ${it.label}`), sayBtn(`${it.when}. ${it.label}. ${it.ev.quote}`)),
         h('blockquote', { class: 'quote' }, it.ev.quote),
         citeLine(it.ev))),
+      bigPicture(q),
       lensChips(q));
     foot.replaceChildren(h('button', { class: 'btn primary wide', onclick: () => { S.advance(); nextQuestion(); } }, 'Next'));
     afterAnswer(reveal);
@@ -400,6 +401,29 @@ function grade(q, ok) {
   tally.n++;
   if (ok) { tally.right++; tally.streak++; S.right(tally.streak); } else { tally.streak = 0; tally.missed.push(q.id); S.wrong(); }
   setTimeout(() => S.reveal(ok), 180);
+}
+
+// The bigger picture: which of the chapter's big questions this one serves,
+// summed up in the author's own Key Points (verified like everything else).
+function bigOf(q) {
+  const ch = PACK.chapters.find((c) => c.id === q.ch);
+  return ch?.big?.find((b) => b.id === q.big) || null;
+}
+function bigPicture(q) {
+  const b = bigOf(q);
+  if (!b) return null;
+  const ch = PACK.chapters.find((c) => c.id === q.ch);
+  const n = ch.big.indexOf(b) + 1;
+  // Don't repeat what the evidence above already quoted.
+  const seen = evOf(q).map((x) => x.quote);
+  const fresh = b.ev.filter((x) => !seen.some((y) => y.includes(x.quote) || x.quote.includes(y)));
+  const e = (fresh[0] || b.ev[0]);
+  const w = sectionOf(e.p);
+  return h('section', { class: 'card big-picture' },
+    h('p', { class: 't-label' }, `The bigger picture · ${ch.title}, ${n} of ${ch.big.length}`),
+    h('div', { class: 'q-head' }, h('h3', { class: 'bq' }, b.q), sayBtn(b.q + ' ' + fresh.map((x) => x.quote).join(' '), 'Read the bigger picture aloud')),
+    fresh.length ? h('p', { class: 'bk' }, fresh.map((x) => x.quote).join(' ')) : null,
+    w ? h('button', { class: 'disclose', style: 'padding:2px 0', onclick: () => openReader(w.section.id, e.p, b.ev.filter((x) => x.p === e.p).map((x) => x.quote)) }, `The author’s summary — §${e.sec}`) : null);
 }
 
 function lensChips(q) {
@@ -433,7 +457,7 @@ function revealCard(q, ok) {
       h('blockquote', { class: 'quote' }, e.quotes.join(' … ')),
       toggle, paraBox, citeLine({ ...e, quote: e.quotes[0] })));
   }
-  out.push(lensChips(q));
+  out.push(bigPicture(q), lensChips(q));
   return out;
 }
 
@@ -481,6 +505,8 @@ function finish() {
       return h('section', { class: 'card stack chapter-done' },
         h('p', { class: 't-label' }, 'Chapter met'),
         h('p', { class: 'answer' }, `You’ve met every question in “${s.ch.title}”.`),
+        s.ch.big?.length ? h('p', { class: 't-body' }, 'The questions it asked:') : null,
+        s.ch.big?.length ? h('ul', { class: 'bigs' }, s.ch.big.map((b) => h('li', {}, b.q))) : null,
         h('p', { class: 't-body' }, 'Next it moves to known: each question counts once you get it right after three weeks away.'),
         w ? h('button', { class: 'btn wide', onclick: () => openReader(w.section.id, e.p) }, 'Read where the chapter starts') : null);
     }),

@@ -56,14 +56,19 @@ for (const pack of PACKS) {
   const chapters = [];
   let entries = [];
   for (const f of files) {
-    const qs = (await import(pathToFileURL(join(ROOT, pack.dir, f)).href)).default;
+    const mod = await import(pathToFileURL(join(ROOT, pack.dir, f)).href);
+    const qs = mod.default;
     if (qs.length && qs[0].lead) { entries = qs; continue; }   // the library, not questions
     const firstP = qs[0].ev?.[0]?.p || qs[0].items?.[0]?.ev.p;
     const ch = CHAPTER_OF.get(firstP);
     const chId = f.replace(/\.mjs$/, '');
-    chapters.push({ id: chId, title: CHAPTER_TITLE[chId] || (ch ? ch.title : chId), book: ch ? ch.title : null, n: ch?.n ?? null });
-    for (const q of qs) {
-      const base = { id: `${pack.id}/${q.id}`, ch: chId, kind: q.kind, prompt: q.prompt, lens: q.lens || [] };
+    chapters.push({ id: chId, title: CHAPTER_TITLE[chId] || (ch ? ch.title : chId), book: ch ? ch.title : null, n: ch?.n ?? null,
+      big: (mod.BIG || []).map((b) => ({ id: b.id, q: b.q, ev: b.ev.map(evOut) })) });
+    // Significant questions first, the details after: new questions are
+    // introduced in this order, so a chapter opens on what matters most.
+    const ordered = [...qs.filter((q) => q.depth !== 'detail'), ...qs.filter((q) => q.depth === 'detail')];
+    for (const q of ordered) {
+      const base = { id: `${pack.id}/${q.id}`, ch: chId, kind: q.kind, prompt: q.prompt, lens: q.lens || [], big: q.big, ...(q.depth ? { depth: q.depth } : {}) };
       if (q.kind === 'order') {
         questions.push({ ...base, items: q.items.map((it) => ({ label: it.label, at: it.at, when: it.when || null, ev: evOut(it.ev) })) });
       } else {

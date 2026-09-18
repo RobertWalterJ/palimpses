@@ -10,10 +10,77 @@
 // 1630s: "half" in §5.3, "perhaps two-thirds" in §5.6), the question asks
 // about the disagreement instead of picking one.
 
+export const BIG = [
+  { id: 'terms', q: 'Who set the terms when the nations and Europeans met?',
+    ev: [{ p: 'pre-5.4-p19', q: 'Aboriginal participants in trade saw important advantages to trade with the newcomers and acted accordingly.' },
+      { p: 'pre-5.4-p21', q: 'The terms and protocols of trade were set by Aboriginal participants and Europeans had to conform.' }] },
+  { id: 'crossings', q: 'What crossed the Atlantic, both ways, and what did it change?',
+    ev: [{ p: 'pre-5.2-p26', q: 'Historically important crops and other goods travelled from the Americas to Europe, while invasive species made their way in the other direction in the Columbian Exchange.' },
+      { p: 'pre-5.2-p27', q: 'Livestock — especially horses, cattle, and pigs — had a significant impact on Aboriginal landscapes, livelihoods, cultures, and health.' }] },
+  { id: 'disease', q: 'What did the epidemics do — and how did the nations respond?',
+    ev: [{ p: 'pre-5.3-p27', q: 'The speed with which exotic diseases cleared out as much as 90% of the indigenous population in the Americas made this “New World” appear to the newcomers to be a “vacant land.”' },
+      { p: 'pre-5.3-p30', q: 'Losses to epidemics provoked community responses from Aboriginal peoples that included consolidation, adoption, conquest, and migration.' }] },
+  { id: 'power', q: 'How did the nations’ own alliances and wars reshape the continent?',
+    ev: [{ p: 'pre-5.5-p20', q: 'Aboriginal societies forged alliances among themselves against their neighbours and against the European newcomers.' },
+      { p: 'pre-5.7-p18', q: 'Having destroyed Wendake (Huronia), the Five Nations launched a military campaign that won them a huge territory and an advantageous position as a buffer state between the English and the French.' }] },
+];
+
 export default [
+  // ── the bigger picture (from the author's Key Points) ──────────────────
+  {
+    id: 'change-before-contact', kind: 'choice', big: 'terms', lens: ['own-terms', 'against-progress'],
+    prompt: 'Metal goods and new ideas often reached a nation before any European did. When did much of the change happen?',
+    answer: 'Before direct contact, as goods moved nation to nation',
+    options: ['Only once a mission was founded', 'Only after a trading post was built', 'Only after the first treaty was signed'],
+    must: ['proto-contact phase, before establishing direct relations with Europeans'],
+    ev: [{ p: 'pre-5.4-p18', q: 'Cultural and technological change among Aboriginal societies often took place in the proto-contact phase, before establishing direct relations with Europeans.' }],
+  },
+  {
+    id: 'epidemic-responses', kind: 'choice', big: 'disease', lens: ['own-terms', 'against-progress'],
+    prompt: 'Epidemics took terrible losses. How did the nations respond?',
+    answer: 'By consolidating, adopting, conquering and moving',
+    options: ['By giving up their lands to the French', 'By waiting for the missions to help them', 'Mostly by doing nothing: they despaired'],
+    must: ['consolidation, adoption, conquest, and migration'],
+    ev: [{ p: 'pre-5.3-p30', q: 'Losses to epidemics provoked community responses from Aboriginal peoples that included consolidation, adoption, conquest, and migration.' }],
+  },
+  {
+    id: 'most-pivotal', kind: 'choice', big: 'disease', lens: ['against-progress'],
+    prompt: 'Crops, horses, pigs, guns and germs all crossed the Atlantic. What does Belshaw call the most pivotal?',
+    answer: 'Smallpox and the “virgin soil” epidemics',
+    options: ['The horse, on the Plains', 'Guns and metal tools', 'The potato, in Europe'],
+    must: ['as pivotal as smallpox and the virgin soil epidemics'],
+    ev: [{ p: 'pre-5.3-p28', q: 'Nothing in the Columbian Exchange was as pivotal as smallpox and the virgin soil epidemics.' }],
+  },
+  {
+    id: 'alliances-why', kind: 'choice', big: 'power', lens: ['own-terms'],
+    prompt: 'The nations forged many alliances among themselves. Against whom?',
+    answer: 'Their neighbours as well as the newcomers',
+    options: ['Only the European newcomers', 'Only the Haudenosaunee League', 'No one; they were only for trade'],
+    must: ['against their neighbours and against the European newcomers'],
+    ev: [{ p: 'pre-5.5-p20', q: 'Aboriginal societies forged alliances among themselves against their neighbours and against the European newcomers.' },
+      { p: 'pre-5.5-p22', q: 'Some of these alliances were motivated by or strengthened as a result of contact with Europeans.' }],
+  },
+  {
+    id: 'buffer-state', kind: 'choice', big: 'power', lens: ['own-terms', 'against-progress'],
+    prompt: 'After destroying Wendake, what did the Five Nations’ campaigns win them?',
+    answer: 'A huge territory, and a place between two empires',
+    options: ['Nothing lasting; they were exhausted', 'An alliance that made them French subjects', 'A few villages on the St. Lawrence'],
+    must: ['a huge territory', 'buffer state between the English and the French'],
+    ev: [{ p: 'pre-5.7-p18', q: 'Having destroyed Wendake (Huronia), the Five Nations launched a military campaign that won them a huge territory and an advantageous position as a buffer state between the English and the French.' }],
+  },
+  {
+    id: 'wendake-undone', kind: 'choice', big: 'power', lens: ['against-progress'],
+    prompt: 'Haudenosaunee raids destroyed Wendake. What else does Belshaw say played a part?',
+    answer: 'The missions, and too few French guns',
+    options: ['A Wendat civil war over land', 'A famine after years of drought', 'English soldiers fighting beside the League'],
+    must: ['missionary presence played a role in the destruction', 'reluctance or inability to trade more rifles'],
+    ev: [{ p: 'pre-5.6-p15', q: 'French reluctance or inability to trade more rifles more rapidly to the Wendat contributed to fractiousness within the Confederacy and severe losses to Haudenosaunee raids.' },
+      { p: 'pre-5.6-p16', q: 'The missionary presence played a role in the destruction of Wendake (Huronia).' }],
+  },
+
   // ── whose world, whose language ────────────────────────────────────────
   {
-    id: 'trade-language-wendat', kind: 'choice', lens: ['own-terms', 'economy'],
+    id: 'trade-language-wendat', kind: 'choice', big: 'terms', depth: 'detail', lens: ['own-terms', 'economy'],
     prompt: 'In what is now central and northern Ontario, which language did traders adopt?',
     answer: 'Wendat',
     options: ['French', 'Cree', 'Mi’kmaq'],
@@ -21,7 +88,7 @@ export default [
     ev: [{ p: 'pre-5.2-p1', q: 'In what is now central and northern Ontario, the language traders adopted was Wendat, because it was in the Wendat villages that most of the trademarts were held.' }],
   },
   {
-    id: 'chinook-before', kind: 'choice', lens: ['own-terms', 'record'],
+    id: 'chinook-before', kind: 'choice', big: 'terms', depth: 'detail', lens: ['own-terms', 'record'],
     prompt: 'Chinook, or chinuk wawa, was a trade language of the Pacific coast. When did it exist?',
     answer: 'Before Europeans arrived',
     options: ['Only after the fur trade began', 'Only in the mission schools', 'Only after Confederation'],
@@ -29,7 +96,7 @@ export default [
     ev: [{ p: 'pre-5.2-p1', q: 'linguists have concluded that Chinook, or chinuk wawa, existed before Europeans arrived in the late 18th century.' }],
   },
   {
-    id: 'newcomers-understood', kind: 'choice', lens: ['own-terms', 'economy'],
+    id: 'newcomers-understood', kind: 'choice', big: 'terms', lens: ['own-terms', 'economy'],
     prompt: 'When Europeans showed up, how did the nations mainly understand them?',
     answer: 'As a source of goods, and as allies or enemies',
     options: ['As powerful strangers who had to be obeyed', 'As a passing danger that was best avoided', 'As messengers sent down from the spirit world'],
@@ -37,7 +104,7 @@ export default [
     ev: [{ p: 'pre-5.2-p2', q: 'When Europeans showed up, Aboriginal people understood them principally in this context: as a source of goods and as possible allies or adversaries.' }],
   },
   {
-    id: 'terms-of-trade', kind: 'choice', lens: ['own-terms', 'economy', 'against-progress'],
+    id: 'terms-of-trade', kind: 'choice', big: 'terms', lens: ['own-terms', 'economy', 'against-progress'],
     prompt: 'Who set the terms and protocols of trade?',
     answer: 'Indigenous traders — Europeans had to conform',
     options: ['The French Crown, by royal charter', 'The Hudson’s Bay Company’s governors', 'The Jesuit missionaries in the villages'],
@@ -47,7 +114,7 @@ export default [
 
   // ── the columbian exchange ─────────────────────────────────────────────
   {
-    id: 'crops-population', kind: 'choice', lens: ['own-terms'],
+    id: 'crops-population', kind: 'choice', big: 'crossings', lens: ['own-terms'],
     prompt: 'Potatoes, maize and other crops went from the Americas to the rest of the world. What did they do there?',
     answer: 'They turbo-charged population growth',
     options: ['Little; they stayed curiosities for centuries', 'They were planted only in botanical gardens', 'They were grown only to feed animals'],
@@ -55,7 +122,7 @@ export default [
     ev: [{ p: 'pre-5.2-p5', q: 'For Europe, Asia, and Africa these crops — especially the starchy plants — turbo-charged population growth.' }],
   },
   {
-    id: 'european-food-crops', kind: 'choice', lens: ['own-terms', 'against-progress'],
+    id: 'european-food-crops', kind: 'choice', big: 'crossings', lens: ['own-terms', 'against-progress'],
     prompt: 'Once European food crops reached the Americas, what were most of them used for?',
     answer: 'Feeding the settler communities, not trade',
     options: ['Trading for furs with every nation', 'Replacing maize in Wendat fields', 'Feeding the fishing fleets at sea'],
@@ -64,7 +131,7 @@ export default [
       { p: 'pre-5.2-p9', q: 'Food crops travelling the other way — from Europe — were of minimal interest to Aboriginal peoples, as they had all the food they needed.' }],
   },
   {
-    id: 'horses-plains', kind: 'choice', lens: ['own-terms'],
+    id: 'horses-plains', kind: 'choice', big: 'crossings', depth: 'detail', lens: ['own-terms'],
     prompt: 'Horses were traded north from New Spain, nation to nation. When did they reach the northern Plains?',
     answer: 'The 1730s',
     options: ['The 1530s', 'The 1660s', 'The 1810s'],
@@ -72,7 +139,7 @@ export default [
     ev: [{ p: 'pre-5.2-p13', q: 'Horses were passed along in conservative numbers for generations until they reached the northern Plains in the 1730s.' }],
   },
   {
-    id: 'cayuse', kind: 'choice', lens: ['own-terms'],
+    id: 'cayuse', kind: 'choice', big: 'crossings', depth: 'detail', lens: ['own-terms'],
     prompt: 'Who bred the Spanish mustang into the hardier horse known as the cayuse?',
     answer: 'The Liksiyu of the Columbia Plateau',
     options: ['Spanish ranchers in New Mexico', 'Hudson’s Bay Company traders', 'French settlers in Louisiana'],
@@ -81,7 +148,7 @@ export default [
       { p: 'pre-5.2-p13', q: 'The animals they produced were known by the name given the Liksiyu by the French: cayuse.' }],
   },
   {
-    id: 'horse-bands', kind: 'choice', lens: ['own-terms'],
+    id: 'horse-bands', kind: 'choice', big: 'crossings', lens: ['own-terms'],
     prompt: 'With the horse, what happened to the size of Cree and Assiniboine bands?',
     answer: 'They grew from under 50 to over 200',
     options: ['They shrank, since herds needed grazing', 'They stayed much the same size', 'They split into single families'],
@@ -89,7 +156,7 @@ export default [
     ev: [{ p: 'pre-5.2-p14', q: 'The Cree, Assiniboine, and other Plains communities expanded significantly, from fewer than 50 to more than 200 hundred per band' }],
   },
   {
-    id: 'pigs', kind: 'choice', lens: ['own-terms'],
+    id: 'pigs', kind: 'choice', big: 'crossings', lens: ['own-terms'],
     prompt: 'Why were many nations less than keen on European pigs?',
     answer: 'Pigs broke into gardens and wrecked camas pastures',
     options: ['Pigs carried smallpox into the villages', 'Pigs drove the deer away from hunting grounds', 'Pigs were sacred animals to rival nations'],
@@ -98,7 +165,7 @@ export default [
       { p: 'pre-5.2-p22', q: 'On Vancouver Island, for example, pigs destroyed camas pastures and thus threatened Aboriginal survival.' }],
   },
   {
-    id: 'food-imperialism', kind: 'choice', lens: ['against-progress', 'economy'],
+    id: 'food-imperialism', kind: 'choice', big: 'crossings', lens: ['against-progress', 'economy'],
     prompt: 'Historian Beverly Soloway studied the Hudson’s Bay Company’s British planted-food model in the far north. What did it do to Cree (Mushkegowuck) foodways?',
     answer: 'Disrupted them, with food insecurity lasting to today',
     options: ['Improved diets across the whole subarctic', 'Changed little, since the Cree ignored it', 'Replaced fishing with farming for good'],
@@ -109,7 +176,7 @@ export default [
 
   // ── the widowed land ───────────────────────────────────────────────────
   {
-    id: 'tenochtitlan-fell', kind: 'choice', lens: ['against-progress'],
+    id: 'tenochtitlan-fell', kind: 'choice', big: 'disease', lens: ['against-progress'],
     prompt: 'The Aztecs drove Cortés out of Tenochtitlan in 1520. What turned it?',
     answer: 'Smallpox, and an army of unhappy tributary nations',
     options: ['Better Spanish cannon, steel armour and fast cavalry', 'A treaty signed at last with Moctezuma’s heirs', 'Fresh soldiers and horses shipped in from Spain'],
@@ -119,7 +186,7 @@ export default [
       { p: 'pre-5.3-p6', q: 'Smallpox was the real conquistadore in Mexico; Cortés and his small army simply mopped up.' }],
   },
   {
-    id: 'vacant-land', kind: 'choice', lens: ['against-progress'],
+    id: 'vacant-land', kind: 'choice', big: 'disease', lens: ['against-progress'],
     prompt: 'Why did the Americas look like a “vacant land” to many newcomers?',
     answer: 'Disease had killed as many as nine in ten people',
     options: ['Most nations lived far inland, out of sight', 'Few people had ever lived there at all', 'Nations hid themselves from the ships'],
@@ -127,7 +194,7 @@ export default [
     ev: [{ p: 'pre-5.3-p27', q: 'The speed with which exotic diseases cleared out as much as 90% of the indigenous population in the Americas made this “New World” appear to the newcomers to be a “vacant land.”' }],
   },
   {
-    id: 'no-quarantine', kind: 'choice', lens: ['own-terms'],
+    id: 'no-quarantine', kind: 'choice', big: 'disease', lens: ['own-terms'],
     prompt: 'Quarantine might have slowed smallpox. Why did the Wendat never attempt it?',
     answer: 'Leaving someone to die alone was unforgivable',
     options: ['The Jesuits forbade separating families', 'Their councils voted against it', 'Longhouses left no room to isolate anyone'],
@@ -135,7 +202,7 @@ export default [
     ev: [{ p: 'pre-5.3-p17', q: 'In their culture, illness was something through which people were marshalled by their shamans and their kin; leaving someone to die alone in fear and isolation would have been unforgivable.' }],
   },
   {
-    id: 'wendat-deaths-two-figures', kind: 'choice', lens: ['contested', 'record'],
+    id: 'wendat-deaths-two-figures', kind: 'choice', big: 'disease', depth: 'detail', lens: ['contested', 'record'],
     prompt: 'The book gives a figure for Wendat deaths from smallpox in the 1630s in two places. What does it say?',
     answer: 'Half in one place, perhaps two-thirds in another',
     options: ['A tenth, in both places', 'Nine in ten, in both places', 'Almost none, in both places'],
@@ -144,7 +211,7 @@ export default [
       { p: 'pre-5.6-p7', q: 'perhaps two-thirds of the Wendat population died in the space of four years.' }],
   },
   {
-    id: 'elders-lost', kind: 'choice', lens: ['record', 'own-terms'],
+    id: 'elders-lost', kind: 'choice', big: 'disease', lens: ['record', 'own-terms'],
     prompt: 'Smallpox killed many Wendat elders. Why was that loss so deep?',
     answer: 'They kept the stories and the political memory',
     options: ['They owned most of the trade goods', 'They alone could hunt in winter', 'They led every war party'],
@@ -154,7 +221,7 @@ export default [
 
   // ── encounters ─────────────────────────────────────────────────────────
   {
-    id: 'goods-before-champlain', kind: 'choice', lens: ['own-terms', 'economy'],
+    id: 'goods-before-champlain', kind: 'choice', big: 'terms', lens: ['own-terms', 'economy'],
     prompt: 'European goods were reaching Wendat villages by 1580. How long was that before Champlain met the first Wendat envoy?',
     answer: 'A full quarter century',
     options: ['About five years', 'A few months', 'Nearly a hundred years'],
@@ -162,7 +229,7 @@ export default [
     ev: [{ p: 'pre-5.4-p3', q: 'By 1580, European goods were showing up in Wendat villages — a full quarter century before Champlain met with Outchetaguin, the first Wendat representative to come calling on the French at Quebec.' }],
   },
   {
-    id: 'mikmaq-canoes', kind: 'choice', lens: ['own-terms', 'economy'],
+    id: 'mikmaq-canoes', kind: 'choice', big: 'terms', depth: 'detail', lens: ['own-terms', 'economy'],
     prompt: 'How did the Mi’kmaq meet Cartier’s boats?',
     answer: 'Twenty canoes paddled out, loaded with furs',
     options: ['They hid inland until he sailed away', 'They fired warning arrows from the shore', 'They sent one envoy to ask his purpose'],
@@ -170,7 +237,7 @@ export default [
     ev: [{ p: 'pre-5.4-p4', q: 'Twenty fur-laden Mi’kmaq canoes paddled out to meet Cartier’s boats — they weren’t afraid and they knew that the Europeans were open to trading.' }],
   },
   {
-    id: 'donnacona', kind: 'choice', lens: ['own-terms', 'economy'],
+    id: 'donnacona', kind: 'choice', big: 'terms', lens: ['own-terms', 'economy'],
     prompt: 'Donnacona, headman at Stadacona, tried to stop Cartier leaving. Why?',
     answer: 'To control the French trade through him',
     options: ['To learn how the French built ships', 'To keep him safe through the winter', 'To marry him into the village'],
@@ -178,7 +245,7 @@ export default [
     ev: [{ p: 'pre-5.4-p4', q: 'Donnacona (the headman at Stadacona) tried to prevent Cartier from leaving so that his village, through control of Cartier, could by extension control and dominate the French-Aboriginal trade.' }],
   },
   {
-    id: 'used-pelts', kind: 'choice', lens: ['economy'],
+    id: 'used-pelts', kind: 'choice', big: 'terms', depth: 'detail', lens: ['economy'],
     prompt: 'Which beaver pelts did European buyers want most?',
     answer: 'Used ones, worn or slept in until shiny',
     options: ['Fresh ones, straight from the trap', 'Ones from beavers taken in summer', 'Ones dyed red with ochre'],
@@ -186,7 +253,7 @@ export default [
     ev: [{ p: 'pre-5.4-p6', q: 'In short, what the Europeans wanted most of all was used pelts: those that had become a shiny black by being slept on or draped across a sweaty human body.' }],
   },
   {
-    id: 'stable-prices', kind: 'choice', lens: ['economy', 'contested'],
+    id: 'stable-prices', kind: 'choice', big: 'terms', lens: ['economy', 'contested'],
     prompt: 'In the eastern woodlands, the price the French paid for furs barely moved. What do some historians take that to show?',
     answer: 'Trade was a social act — the relationship mattered most',
     options: ['The French fixed every price by royal law', 'Furs were so plentiful they had little value', 'Indigenous traders did not grasp what prices were'],
@@ -196,7 +263,7 @@ export default [
       { p: 'pre-5.4-p8', q: 'Some historians have countered that, in some regions like the Subarctic and the West, stable prices disguise increased demands in other areas by Aboriginal traders' }],
   },
   {
-    id: 'before-trade', kind: 'choice', lens: ['economy', 'own-terms'],
+    id: 'before-trade', kind: 'choice', big: 'terms', lens: ['economy', 'own-terms'],
     prompt: 'Every European trader’s journal describes what came before any trading began. What was it?',
     answer: 'Gift-giving, speeches and welcoming rituals, sometimes for days',
     options: ['A written contract, signed in French', 'An inspection of the furs by a clerk', 'A price list read out by the factor'],
@@ -204,7 +271,7 @@ export default [
     ev: [{ p: 'pre-5.4-p8', q: 'Every Euro-Canadian trader’s journal describes in some detail the elaborate gift-giving, speaking, and welcoming rituals that preceded trade. Days could pass between the meeting of the trade partners and the actual beginning of trade.' }],
   },
   {
-    id: 'facon-du-pays', kind: 'choice', lens: ['own-terms', 'economy'],
+    id: 'facon-du-pays', kind: 'choice', big: 'terms', lens: ['own-terms', 'economy'],
     prompt: 'Fur-trade marriages were made “à la façon du pays” — by the custom of the country. Whose custom?',
     answer: 'Indigenous — it turned traders into relatives',
     options: ['Catholic, blessed by a priest', 'French, under civil law', 'The Company’s, set by its rules'],
@@ -215,7 +282,7 @@ export default [
 
   // ── alliances ──────────────────────────────────────────────────────────
   {
-    id: 'league-older', kind: 'choice', lens: ['own-terms', 'against-progress'],
+    id: 'league-older', kind: 'choice', big: 'power', lens: ['own-terms', 'against-progress'],
     prompt: 'The Haudenosaunee League came together around 1450. What does the book compare its age with?',
     answer: 'It is older than Canada, the US and the UK',
     options: ['It is about as old as Canada itself', 'It is a little younger than New France', 'It began after contact, in the early 1600s'],
@@ -223,7 +290,7 @@ export default [
     ev: [{ p: 'pre-5.5-p5', q: 'the Haudenosaunee alliance came together sometime around 1450, which makes it significantly older than Canada, the United States, and the United Kingdom.' }],
   },
   {
-    id: 'league-women', kind: 'choice', lens: ['own-terms'],
+    id: 'league-women', kind: 'choice', big: 'power', lens: ['own-terms'],
     prompt: 'The Haudenosaunee were a matrilineal culture. Who gave much direction to their council?',
     answer: 'The women of the community',
     options: ['The Jesuit fathers', 'The Dutch traders', 'The eldest war chief alone'],
@@ -231,7 +298,7 @@ export default [
     ev: [{ p: 'pre-5.5-p5', q: 'Being a matrilineal culture, the council received much direction from the women in the community' }],
   },
   {
-    id: 'great-peacemaker', kind: 'choice', lens: ['own-terms'],
+    id: 'great-peacemaker', kind: 'choice', big: 'power', lens: ['own-terms'],
     prompt: 'The Great Peacemaker set out to end the Mourning Wars among Iroquoian-speaking peoples. Where did he come from?',
     answer: 'The Wendat villages of the north',
     options: ['The Mohawk Valley', 'The Ohio Valley', 'The shores of Lake Erie'],
@@ -239,7 +306,7 @@ export default [
     ev: [{ p: 'pre-5.5-p5', q: 'This prophet arose in the Wendat villages of the north and he made it his goal to end the Mourning Wars between the Iroquoian-speaking peoples.' }],
   },
   {
-    id: 'wendat-numbers', kind: 'choice', lens: ['own-terms'],
+    id: 'wendat-numbers', kind: 'choice', big: 'power', depth: 'detail', lens: ['own-terms'],
     prompt: 'About how many Wendat lived in Wendake when Champlain visited in 1615?',
     answer: 'Some 25,000 to 30,000',
     options: ['About 2,000', 'About 250,000', 'Fewer than 800'],
@@ -247,7 +314,7 @@ export default [
     ev: [{ p: 'pre-5.5-p7', q: 'By the time of Champlain’s visit to their villages in 1615, there were some 25,000 to 30,000 Wendat in Wendake' }],
   },
   {
-    id: 'wendat-tolls', kind: 'choice', lens: ['economy', 'own-terms'],
+    id: 'wendat-tolls', kind: 'choice', big: 'power', lens: ['economy', 'own-terms'],
     prompt: 'At their height, what could the Wendat do along the interior canoe routes?',
     answer: 'Charge tolls for passage',
     options: ['Ban French canoes outright', 'Build a fort at every portage', 'Claim every other nation’s harvest'],
@@ -255,7 +322,7 @@ export default [
     ev: [{ p: 'pre-5.5-p8', q: 'They had the commercial and physical power to lay claim to extensive trading zones and to charge tolls for passage along the many canoe routes through the interior.' }],
   },
   {
-    id: 'thanadelthur', kind: 'choice', lens: ['own-terms'],
+    id: 'thanadelthur', kind: 'choice', big: 'power', lens: ['own-terms'],
     prompt: 'Who is credited with persuading the Chipewyan and the Cree to make a lasting peace in the 1710s?',
     answer: 'Thanadelthur, a Chipewyan woman',
     options: ['The governor at York Factory', 'A Jesuit missionary on the Bay', 'A Cree war chief of the Plains'],
@@ -264,7 +331,7 @@ export default [
       { p: 'pre-5.5-p13', q: 'she is credited with singlehandedly persuading both Aboriginal parties to agree to a lasting peace.' }],
   },
   {
-    id: 'wabanaki-agenda', kind: 'choice', lens: ['own-terms', 'against-progress'],
+    id: 'wabanaki-agenda', kind: 'choice', big: 'power', lens: ['own-terms', 'against-progress'],
     prompt: 'The Wabanaki fought the English for a century after Metacomet’s War. Whose agenda were they following?',
     answer: 'Their own: holding and restoring their lands',
     options: ['The French Crown’s, as its loyal allies', 'The Jesuit missions’, as new converts', 'The Acadian settlers’, as their protectors'],
@@ -273,7 +340,7 @@ export default [
       { p: 'pre-5.5-p4', q: 'The Wabanaki agenda was consistently the preservation if not the restoration of their lands in the face of English colonial growth.' }],
   },
   {
-    id: 'league-cosmopolitan', kind: 'choice', lens: ['own-terms'],
+    id: 'league-cosmopolitan', kind: 'choice', big: 'power', lens: ['own-terms'],
     prompt: 'After years of war and adopting captives, what had the Haudenosaunee League become by the 1660s?',
     answer: 'A more cosmopolitan power, full of adopted people',
     options: ['A small league of five closed nations', 'A French ally with French officers', 'A scattered people with no council'],
@@ -281,7 +348,7 @@ export default [
     ev: [{ p: 'pre-5.7-p8', q: 'It had, in effect, become an instrument for a more cosmopolitan Aboriginal control of the region.' }],
   },
   {
-    id: 'two-treaties-1701', kind: 'choice', lens: ['own-terms'],
+    id: 'two-treaties-1701', kind: 'choice', big: 'power', lens: ['own-terms'],
     prompt: 'In 1701 the Haudenosaunee made peace at Montreal. What else did they do that year?',
     answer: 'Signed a separate treaty with the English at Albany',
     options: ['Joined the French in a war on England', 'Gave up their lands north of Lake Ontario', 'Broke up the League into five nations'],
@@ -291,7 +358,7 @@ export default [
 
   // ── the harder material (historiography audit): not a counter-myth ──
   {
-    id: 'stable-prices-counter', kind: 'choice', lens: ['economy', 'contested'],
+    id: 'stable-prices-counter', kind: 'choice', big: 'terms', lens: ['economy', 'contested'],
     prompt: 'Some historians doubt that stable fur prices prove the trade was mainly social. What do they argue?',
     answer: 'Stable prices hid rising demands made elsewhere',
     options: ['The French secretly raised their prices', 'No records of fur prices survive at all', 'Prices were fixed by the Crown’s treaties'],
@@ -299,7 +366,7 @@ export default [
     ev: [{ p: 'pre-5.4-p8', q: 'Some historians have countered that, in some regions like the Subarctic and the West, stable prices disguise increased demands in other areas by Aboriginal traders' }],
   },
   {
-    id: 'haudenosaunee-motives', kind: 'choice', lens: ['own-terms', 'against-progress'],
+    id: 'haudenosaunee-motives', kind: 'choice', big: 'power', lens: ['own-terms', 'against-progress'],
     prompt: 'After the smallpox of the 1630s, the Haudenosaunee attacked Wendake. What did that offer them?',
     answer: 'Revenge, victory, profit, and captives to adopt',
     options: ['A chance to make peace with France', 'New farmland for Dutch settlers', 'Nothing; they were defending themselves'],
@@ -307,7 +374,7 @@ export default [
     ev: [{ p: 'pre-5.3-p18', q: 'Attacking the Wendat presented the opportunity for revenge, victory, profit, and adoptees to replace those Mohawk lost in the epidemic of 1634.' }],
   },
   {
-    id: 'scorched-earth', kind: 'choice', lens: ['against-progress'],
+    id: 'scorched-earth', kind: 'choice', big: 'power', lens: ['against-progress'],
     prompt: 'In 1647–48 the Haudenosaunee turned from raiding Wendat fur fleets to attacking Wendat villages. How had the Mourning Wars been different before?',
     answer: 'Retaliatory, but not a scorched-earth campaign',
     options: ['Fought only by European soldiers', 'Settled every year by a treaty', 'Fought for land to farm, not revenge'],
@@ -315,7 +382,7 @@ export default [
     ev: [{ p: 'pre-5.7-p5', q: 'The Mourning Wars to that point had been retaliatory and retributory, but not a scorched-earth program.' }],
   },
   {
-    id: 'captives-marched', kind: 'choice', lens: ['against-progress'],
+    id: 'captives-marched', kind: 'choice', big: 'power', lens: ['against-progress'],
     prompt: 'The Haudenosaunee raided Wendake in part to rebuild their own numbers. What does the evidence show?',
     answer: 'Many Wendat women and children were taken captive',
     options: ['The Wendat moved freely into League villages', 'No captives were taken in these wars', 'Captives were all ransomed back to France'],
@@ -323,7 +390,7 @@ export default [
     ev: [{ p: 'pre-5.6-p10', q: 'The evidence is clear that large numbers of Wendat women and children were marched and canoed across southern Ontario in these years into the villages of the League.' }],
   },
   {
-    id: 'not-always-consensual', kind: 'choice', lens: ['against-progress', 'own-terms'],
+    id: 'not-always-consensual', kind: 'choice', big: 'terms', lens: ['against-progress', 'own-terms'],
     prompt: 'What does the record show about early relationships between newcomer men and Indigenous women?',
     answer: 'Not always consensual, though women held power',
     options: ['Always arranged by the Church', 'Always welcomed by every family', 'Rare, since the French forbade them'],
@@ -334,7 +401,7 @@ export default [
 
   // ── in order ───────────────────────────────────────────────────────────
   {
-    id: 'order-contact', kind: 'order', lens: ['own-terms'],
+    id: 'order-contact', kind: 'order', big: 'power', lens: ['own-terms'],
     prompt: 'Oldest first.',
     items: [
       { label: 'The Haudenosaunee League comes together', at: 1450, when: 'c. 1450', ev: { p: 'pre-5.5-p5', q: 'came together sometime around 1450' } },

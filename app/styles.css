@@ -163,6 +163,12 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .foot-links .disclose { font-size: .92rem; }
 /* Today's voice: the one card on Home in the reading face, on the soft tint,
    with the accent's quotation mark — it should feel like a page, not a tile. */
+/* The bigger picture: the chapter's question in the display face, the
+   author's summary in the reading face — set apart from the evidence above. */
+.big-picture { border-left: 4px solid var(--accent); display: grid; gap: 8px; }
+.big-picture .bq { margin: 0; font: 700 1.1rem/1.35 var(--display); color: var(--ink); }
+.big-picture .bk { margin: 0; font: 400 1rem/1.6 var(--read); color: var(--ink-2); }
+.bigs { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; font: 600 .98rem/1.4 var(--ui); }
 .card.voice-day { background: var(--accent-soft); box-shadow: none; display: grid; gap: 10px; }
 .voice-day .vq { margin: 0; font: 500 1.24rem/1.55 var(--read); color: var(--ink); text-wrap: pretty; }
 .voice-day .vq::before { content: '“'; display: block; font: 700 2.6rem/.7 var(--display); color: var(--accent); margin-bottom: -2px; }
