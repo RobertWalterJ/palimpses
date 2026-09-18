@@ -1,0 +1,184 @@
+/* Palimpsest.
+ *
+ * THE IDEA: a page that has been written on before — and the first such pages
+ * in this pack are Anishinaabe birchbark scrolls. So the ground is birch, not
+ * cream: a cool, slightly grey off-white. Ink text, and one accent — red
+ * ochre, the pigment that runs all through the pre-contact record (the scrolls
+ * were darkened in black, red or blue) — for the things you can touch.
+ *
+ * TYPE: Literata is what you READ (questions, quotes, the source). Archivo is
+ * what you USE (options, buttons, labels). Content and control should be
+ * tellable apart by the letterforms alone.
+ *
+ * RIGHT AND WRONG never rely on hue: each carries a glyph (✓ ✗) and the two
+ * are separated in lightness. build/audit-colour.mjs checks every pair below
+ * under three colour-vision deficiencies and fails the build if one collapses.
+ */
+
+:root {
+  color-scheme: light;
+  --ground: #ECEAE5;
+  --surface: #FBFAF7;
+  --surface-2: #E1DED6;
+  --ink: #211A14;
+  --ink-2: #4E4337;
+  --ink-3: #6B5E50;
+  --accent: #A33A1C;          /* ochre: what you can touch */
+  --on-accent: #FBFAF7;
+  --good: #0e7061;
+  --good-bg: #eef9f6;
+  --bad: #c41726;
+  --bad-bg: #ffdad5;
+  --quote-bg: #F1EEE7;
+  /* 'met' in the progress bar: a true mid-tone, 3:1 from both the ink ('known')
+     and the empty track, so the three states survive without colour. */
+  --met: #937359;
+  --shadow: 0 1px 2px rgba(33, 26, 20, .06), 0 6px 18px rgba(33, 26, 20, .07);
+  --r: 18px;
+  --read: 'Literata', Georgia, serif;
+  --use: 'Archivo', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #17130F;
+    --surface: #221C17;
+    --surface-2: #2C251E;
+    --ink: #F2EADF;
+    --ink-2: #CDBFAE;
+    --ink-3: #A79886;
+    --accent: #E4825C;
+    --on-accent: #17130F;
+    --good: #30dfaf;
+    --good-bg: #28332e;
+    --bad: #fa6f6c;
+    --bad-bg: #3d1917;
+    --quote-bg: #2A231C;
+    --met: #9A7B62;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #17130F;
+  --surface: #221C17;
+  --surface-2: #2C251E;
+  --ink: #F2EADF;
+  --ink-2: #CDBFAE;
+  --ink-3: #A79886;
+  --accent: #E4825C;
+  --on-accent: #17130F;
+  --good: #30dfaf;
+  --good-bg: #28332e;
+  --bad: #fa6f6c;
+  --bad-bg: #3d1917;
+  --quote-bg: #2A231C;
+  --met: #9A7B62;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .25);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--ground); color: var(--ink);
+  font: 17px/1.55 var(--read);
+  -webkit-text-size-adjust: 100%;
+  letter-spacing: .005em;
+}
+.app {
+  max-width: 560px; margin: 0 auto;
+  padding: max(20px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+  min-height: 100dvh; display: flex; flex-direction: column; gap: 18px;
+}
+button { font: inherit; color: inherit; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ── type ── */
+.brand { font: 600 1.9rem/1.1 var(--read); margin: 8px 0 0; letter-spacing: -.01em; }
+.brand small { display: block; font: 400 .95rem/1.4 var(--read); color: var(--ink-2); margin-top: 6px; }
+.eyebrow { font: 600 .75rem/1 var(--use); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.lede { color: var(--ink-2); margin: 0; }
+.muted { color: var(--ink-3); }
+h2 { font: 600 1.25rem/1.3 var(--read); margin: 0; }
+
+/* ── surfaces ── */
+.card { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow); padding: 18px; }
+.row { display: flex; align-items: center; gap: 10px; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.spacer { flex: 1; }
+
+/* ── buttons ── */
+.btn {
+  font: 600 1rem/1 var(--use); border: 0; border-radius: 999px; padding: 16px 22px; cursor: pointer;
+  background: var(--surface-2); color: var(--ink); min-height: 52px;
+}
+.btn.primary { background: var(--accent); color: var(--on-accent); }
+.btn.wide { width: 100%; }
+.btn.quiet { background: transparent; color: var(--accent); padding: 12px 6px; min-height: 44px; }
+.icon {
+  border: 0; background: var(--surface-2); color: var(--ink-2); border-radius: 999px;
+  width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; cursor: pointer;
+}
+.icon svg { width: 20px; height: 20px; }
+
+/* ── progress ── */
+.bar { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; display: flex; }
+.bar i { display: block; height: 100%; }
+.bar .k { background: var(--ink); }
+.bar .m { background: var(--met); }
+.pips { display: flex; gap: 6px; }
+.pips i { width: 8px; height: 8px; border-radius: 50%; background: var(--surface-2); }
+.pips i.on { background: var(--ink-2); }
+.pips i.now { background: var(--accent); }
+
+/* ── question ── */
+.prompt { font: 600 1.3rem/1.4 var(--read); margin: 0; }
+.opt {
+  position: relative; width: 100%; text-align: left; border: 0; cursor: pointer;
+  background: var(--surface); box-shadow: var(--shadow); border-radius: var(--r);
+  padding: 16px 52px 16px 18px; font: 500 1.02rem/1.4 var(--use); min-height: 60px;
+}
+.opt .say { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; width: 40px; height: 40px; flex-basis: 40px; }
+.opt.right { background: var(--good-bg); }
+.opt.wrong { background: var(--bad-bg); }
+.opt.right::after, .opt.wrong::after {
+  position: absolute; left: 6px; top: 6px; font: 800 .95rem/1 var(--use);
+}
+.opt.right::after { content: '✓'; color: var(--good); }
+.opt.wrong::after { content: '✗'; color: var(--bad); }
+.opt.faded { opacity: .55; }
+.opt[disabled] { cursor: default; }
+.opt .n {
+  display: inline-grid; place-items: center; width: 26px; height: 26px; margin-right: 10px; border-radius: 50%;
+  background: var(--accent); color: var(--on-accent); font: 700 .85rem/1 var(--use);
+}
+
+/* ── the reveal: where it came from ── */
+.verdict { font: 700 1.05rem/1.3 var(--use); display: flex; align-items: center; gap: 8px; }
+.verdict.good { color: var(--good); }
+.verdict.bad { color: var(--bad); }
+.answer { font: 600 1.1rem/1.45 var(--read); margin: 0; }
+.quote {
+  margin: 0; padding: 14px 16px; border-radius: 14px; background: var(--quote-bg);
+  font: italic 400 1rem/1.6 var(--read); color: var(--ink);
+}
+.quote mark { background: none; color: inherit; font-style: normal; font-weight: 600; }
+.row > .quote { flex: 1; min-width: 0; }
+.row:has(> .quote) { align-items: flex-start; }
+.para { font: 400 .95rem/1.6 var(--read); color: var(--ink-2); margin: 0; }
+.para mark { background: var(--quote-bg); color: var(--ink); border-radius: 4px; padding: 0 2px; }
+.cite { font: 400 .85rem/1.45 var(--use); color: var(--ink-3); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 600 .78rem/1 var(--use); padding: 7px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); }
+details summary { cursor: pointer; font: 600 .9rem/1.4 var(--use); color: var(--accent); padding: 6px 0; }
+
+.foot { position: sticky; bottom: 0; padding: 12px 0 max(4px, env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--ground) 30%); }
+
+/* ── settings ── */
+.setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; }
+.setting label { font: 500 1rem/1.3 var(--use); }
+.seg { display: flex; gap: 6px; flex-wrap: wrap; }
+.seg button { border: 0; border-radius: 999px; padding: 10px 14px; background: var(--surface-2); font: 600 .9rem/1 var(--use); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+input[type=range] { width: 160px; accent-color: var(--accent); }

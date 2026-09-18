@@ -253,10 +253,10 @@ export default [
     id: 'order-long-past', kind: 'order', lens: ['own-terms'],
     prompt: 'Oldest first.',
     items: [
-      { label: 'The Maritime Archaic begins trading along the Atlantic coast', at: -7000, ev: { p: 'pre-2.3-p24', q: 'They prospered from approximately 7000 BCE to 1500 BCE' } },
-      { label: 'The Stl’atl’imx settle Keatley Creek above the Fraser', at: -2800, ev: { p: 'pre-2.4-p8', q: 'The Stl’atl’imx people who lived there from about 2800 BCE' } },
-      { label: 'Cahokia rises on the Mississippi', at: 600, ev: { p: 'pre-2.4-p6', q: 'Cahokia (ca. 600-1400 CE)' } },
-      { label: 'French exploratory missions arrive', at: 1530, ev: { p: 'pre-2.4-p9', q: 'the arrival of French exploratory missions in the 1530s' } },
+      { label: 'The Maritime Archaic begins trading along the Atlantic coast', at: -7000, when: 'c. 7000 BCE', ev: { p: 'pre-2.3-p24', q: 'They prospered from approximately 7000 BCE to 1500 BCE' } },
+      { label: 'The Stl’atl’imx settle Keatley Creek above the Fraser', at: -2800, when: 'c. 2800 BCE', ev: { p: 'pre-2.4-p8', q: 'The Stl’atl’imx people who lived there from about 2800 BCE' } },
+      { label: 'Cahokia rises on the Mississippi', at: 600, when: 'c. 600 CE', ev: { p: 'pre-2.4-p6', q: 'Cahokia (ca. 600-1400 CE)' } },
+      { label: 'French exploratory missions arrive', at: 1530, when: 'the 1530s', ev: { p: 'pre-2.4-p9', q: 'the arrival of French exploratory missions in the 1530s' } },
     ],
   },
 ];
