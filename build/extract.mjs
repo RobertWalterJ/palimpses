@@ -81,13 +81,21 @@ for (const src of SOURCES) {
       if ($n.closest('figure, .wp-caption, figcaption, .media-attributions').length) return;
       // A list item inside a paragraph would be counted twice.
       if (tag === 'p' && $n.closest('li').length) return;
-      const text = clean($n.text());
+      // Footnotes are inline <span class="footnote"> in Pressbooks, so they ran
+      // straight into the prose ("…ethnohistory.”Bruce Trigger, The Children…")
+      // — hard for anyone to read and worse for a dyslexic reader. They are
+      // lifted out and kept beside the paragraph, where a citation belongs.
+      const $c = $n.clone();
+      const notes = $c.find('.footnote').map((_, f) => clean($(f).text())).get();
+      $c.find('.footnote').remove();
+      const text = clean($c.text());
       if (text.length < 25) return;
       section.paras.push({
         id: `${section.id}-p${++k}`,
         under: heading,
         key: /^key points?$/i.test(heading || ''),   // the author's own summary
         text,
+        ...(notes.length ? { notes } : {}),
       });
     });
     if (section.paras.length) chapter.sections.push(section);

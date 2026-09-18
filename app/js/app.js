@@ -1,66 +1,58 @@
 // Palimpsest — the app.
 //
-// Three rules carried over from the other apps, because they are Robert's:
+// Robert's standing rules, which every screen here keeps:
 //   - no clocks, ever; nothing expires while you think;
-//   - everything can be read aloud, by a button, and nothing speaks at you
-//     unless you ask it to;
-//   - nothing is claimed without its source: every reveal shows the words from
-//     the book, the paragraph they sit in, and a link to the page.
+//   - everything can be read aloud, by a button; nothing speaks unless asked;
+//   - nothing is claimed without its source.
+// The design and dyslexia audits (September 2026) shaped the rest: a hero
+// built from the pack's own undertext, upright reading type at a size the
+// reader chooses, options whose text the phone's own Look Up can reach, a
+// verdict that takes focus, a round-end that lists what slipped, and real
+// back-button behaviour.
 
-import { State, Round, cardState, nextDueSentence, shuffle, now, DAY } from './schedule.js';
-import { initSpeech, unlock, say, stop, setRate, onSpeaking, available as speechAvailable } from './speech.js';
-import { setSound, primeSound, resetStreak, setSpeaking, press, right as soundRight, wrong as soundWrong, advance, fanfare } from './sound.js';
+import { State, Round, cardState, nextDueSentence, shuffle, now, DAY, dayKey } from './schedule.js';
+import { initSpeech, unlock, say, setRate, onSpeaking } from './speech.js';
+import { Reader, sentences } from './reader.js';
+import * as S from './sound.js';
+import { h, esc, ICON, iconBtn, sayBtn, sheet, closeSheet, show, back, route, setLeaveGuard, applyReading, READ_DEFAULTS } from './ui.js';
+import { loadLibrary, openLibrary, openReader, openEntry, readingSheet, sectionOf } from './library.js';
 
-const $app = document.getElementById('app');
 let PACK = null;
 let IDS = [];
 const Q = new Map();
 
 const LENS = {
-  'own-terms': 'on its own terms',
-  'against-progress': 'against the progress story',
-  economy: 'exchange and obligation',
-  record: 'how the past was kept',
-  contested: 'still argued',
+  'own-terms': ['On its own terms', 'A society described by what it was, not by what it lacked.'],
+  'against-progress': ['Against the progress story', 'The “primitive, unchanging, new world” story — and what the evidence says instead.'],
+  economy: ['Exchange and obligation', 'Trade, currency, gifts and what they bound people to.'],
+  record: ['How the past was kept', 'Oral tradition, scrolls, wampum, landscape: the records that exist.'],
+  contested: ['Still argued', 'The book itself says this is uncertain, so the question does too.'],
 };
-
-// ── tiny DOM helper ─────────────────────────────────────────────────────
-function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs || {})) {
-    if (v == null || v === false) continue;
-    if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
-    else if (k === 'html') el.innerHTML = v;
-    else el.setAttribute(k, v === true ? '' : v);
-  }
-  for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid.nodeType ? kid : document.createTextNode(kid));
-  return el;
-}
-const SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
-const sayBtn = (text, cls = 'icon', label = 'Read aloud') => (speechAvailable()
-  ? h('button', { class: cls, 'aria-label': label, html: SPEAKER, onclick: (e) => { e.stopPropagation(); unlock(); say(text); } })
-  : null);
-const screen = (...kids) => { stop(); $app.replaceChildren(...kids); window.scrollTo(0, 0); };
 
 // ── boot ────────────────────────────────────────────────────────────────
 async function boot() {
   State.load();
+  const s = State.data.settings;
+  s.reading = { ...READ_DEFAULTS, ...(s.reading || {}) };
+  if (s.ambience == null) s.ambience = false;
   applySettings();
   initSpeech();
-  onSpeaking(setSpeaking);
-  document.addEventListener('pointerdown', () => { unlock(); primeSound(); }, { once: true });
+  onSpeaking(S.setSpeaking);
+  document.addEventListener('pointerdown', () => { unlock(); S.primeSound(); if (s.sound && s.ambience) S.setAmbience(true); }, { once: true });
   PACK = window.__PALIMPSEST_DATA?.canada || await (await fetch('data/canada.json')).json();
   for (const q of PACK.questions) Q.set(q.id, q);
   IDS = PACK.questions.map((q) => q.id);
-  home();
+  await loadLibrary();
+  show('home', homeScreen, { replace: true });
 }
 
 function applySettings() {
   const s = State.data.settings;
-  setSound(s.sound);
+  S.setSound(s.sound);
   setRate(s.rate);
   if (s.theme === 'system') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme', s.theme);
+  applyReading(s.reading);
 }
 
 // ── home ────────────────────────────────────────────────────────────────
@@ -73,225 +65,351 @@ function counts(ids) {
   return c;
 }
 
-function home() {
+const evOf = (q) => q.ev || q.items.map((i) => i.ev);
+// The pool the hero and "passage of the day" draw from: every verified quote.
+function passages() {
+  const seen = new Set(), out = [];
+  for (const q of PACK.questions) for (const e of evOf(q)) if (!seen.has(e.quote)) { seen.add(e.quote); out.push(e); }
+  return out;
+}
+function dayIndex(n) { let x = 0; for (const ch of dayKey()) x = (x * 31 + ch.charCodeAt(0)) >>> 0; return x % n; }
+
+function hero() {
+  // Three real lines from the pack, re-drawn every visit, faint and cropped.
+  const pool = shuffle(passages()).slice(0, 3);
+  const under = h('div', { class: 'undertext', 'aria-hidden': 'true' }, pool.map((p) => h('p', {}, p.quote)));
+  // The pack's own centres on a line of years, from the first people here
+  // ("at least 14,000 years ago", pre-2.2-p6) to contact at the right.
+  const span = [-12000, 1600];
+  const x = (y) => ((y - span[0]) / (span[1] - span[0])) * 100;
+  const centres = [
+    { name: 'Maritime Archaic', when: 'c. 7000 BCE', at: -7000, go: () => openEntry('maritime-archaic') },
+    { name: 'Keatley Creek', when: 'c. 2800 BCE', at: -2800, go: () => { const w = sectionOf('pre-2.4-p8'); if (w) openReader(w.section.id, 'pre-2.4-p8'); } },
+    { name: 'Cahokia', when: 'c. 600 CE', at: 600, go: () => openEntry('mississippian') },
+  ];
+  const last = centres.length - 1;
+  const strip = h('div', { class: 'strip' },
+    h('div', { class: 'rail' },
+      centres.map((c) => h('button', { class: 'dot', style: `left:${x(c.at)}%;cursor:pointer;padding:0`, 'aria-label': `${c.name}, ${c.when} — open`, title: c.name, onclick: c.go })),
+      h('span', { class: 'dot contact', style: 'left:calc(100% - 6px)', title: 'Contact, 1530s', 'aria-hidden': 'true' })),
+    h('div', { class: 'labels', 'aria-hidden': 'true' },
+      ...centres.map((c, i) => h('span', { class: i === last ? 'r' : '', style: `left:${i === last ? 100 : x(c.at)}%` }, c.name, h('small', {}, c.when)))),
+    h('p', { class: 'caption' }, 'Centres before contact, on a line of years from the first people here, 14,000 years ago, to the 1530s.'));
+  return h('header', { class: 'hero' }, under,
+    h('h1', { class: 'wordmark' }, 'Palim', h('span', {}, 'psest')),
+    h('p', { class: 'tagline' }, 'History from more than one centre. Every answer shows where it came from.'),
+    strip);
+}
+
+function ring(c, total) {
+  const R = 40, C = 2 * Math.PI * R;
+  const k = (c.known / total) * C, m = (c.met / total) * C;
+  return h('div', { html: `<svg class="ring" viewBox="0 0 96 96" role="img" aria-label="${c.known} known and ${c.met} met, of ${total}">
+    <circle class="track" cx="48" cy="48" r="${R}"/>
+    <circle class="met" cx="48" cy="48" r="${R}" stroke-dasharray="${k + m} ${C}" transform="rotate(-90 48 48)"/>
+    <circle class="known" cx="48" cy="48" r="${R}" stroke-dasharray="${k} ${C}" transform="rotate(-90 48 48)"/>
+    <text x="48" y="51" text-anchor="middle">${c.known + c.met}/${total}</text>
+    <text class="sub" x="48" y="65" text-anchor="middle">met</text></svg>` });
+}
+
+function homeScreen() {
   const c = counts(IDS);
+  const total = IDS.length;
   const due = State.dueIds(IDS).length;
   const fresh = IDS.filter((id) => !State.card(id)).length;
   const run = State.runOfDays();
-  const total = IDS.length;
-  const pct = (n) => `${(n / total) * 100}%`;
-
-  const status = due ? `${due} to revisit today.`
-    : fresh ? (c.unseen === total ? 'Nothing met yet.' : 'Up to date. There are new questions waiting.')
-      : null;
+  const first = c.unseen === total;
   const next = !due && !fresh ? State.nextDue(IDS) : null;
+  const pool = passages();
+  const pod = pool[dayIndex(pool.length)];
 
-  screen(
-    h('header', {},
-      h('h1', { class: 'brand' }, 'Palimpsest',
-        h('small', {}, 'History from more than one centre. Every answer shows where it came from.'))),
-    h('section', { class: 'card stack' },
-      h('div', { class: 'eyebrow' }, PACK.title),
-      h('h2', {}, PACK.chapters.map((ch) => ch.title).join(' · ')),
-      h('p', { class: 'lede' }, PACK.blurb),
-      h('div', { class: 'bar', role: 'img', 'aria-label': `${c.known} known, ${c.met} met, ${c.unseen} not yet met, of ${total}` },
-        h('i', { class: 'k', style: `width:${pct(c.known)}` }), h('i', { class: 'm', style: `width:${pct(c.met)}` })),
-      h('div', { class: 'cite' }, `${c.known} known · ${c.met} met · ${c.unseen} not yet met`),
-      status ? h('p', { class: 'lede' }, status) : null,
-      next ? h('p', { class: 'lede' }, nextDueSentence(next)) : null,
-      run >= 2 ? h('p', { class: 'cite' }, `${run} days running.`) : null),
-    h('div', { class: 'stack' },
-      due || fresh
-        ? h('button', { class: 'btn primary wide', onclick: () => { press(); play(false); } }, due ? 'Revisit and learn' : 'Learn')
-        : null,
-      c.unseen < total
-        ? h('button', { class: 'btn wide', onclick: () => { press(); play(true); } }, 'Practise — does not move the schedule')
-        : null,
-      h('div', { class: 'row' },
-        h('button', { class: 'btn quiet', onclick: progress }, 'Progress'),
-        h('span', { class: 'spacer' }),
-        h('button', { class: 'btn quiet', onclick: settings }, 'Settings'),
-        h('button', { class: 'btn quiet', onclick: about }, 'Sources'))),
-  );
+  const mode = (cls, icon, title, sub, go) => h('button', { class: `mode ${cls}`, onclick: () => { S.press(); go(); } },
+    h('span', { class: 'ic', html: ICON[icon] }), h('span', {}, h('b', {}, title), h('span', { class: 't-small' }, sub)),
+    h('span', { html: ICON.chev.replace('<svg', '<svg class="chev"') }));
+  const learnSub = first ? 'About five questions. Every answer shows its passage.'
+    : due ? `${due} to revisit${fresh ? ', then new questions' : ''}` : `${Math.min(fresh, 5)} new questions waiting`;
+
+  return [
+    hero(),
+    due || fresh ? mode('primary', 'learn', due ? 'Revisit and learn' : 'Learn', learnSub, () => play(false))
+      : h('section', { class: 'card stack' }, h('p', { class: 't-title' }, 'You’re up to date.'), next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null),
+    first ? h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'How it works'),
+      h('p', { class: 't-body' }, 'Each question comes from John Douglas Belshaw’s open textbook on Canadian history. After you answer, you see the exact passage — and you can read the whole section, or have it read to you.'),
+      h('p', { class: 't-body' }, h('b', {}, 'Met'), ' means you’ve seen a question. ', h('b', {}, 'Known'), ' means you still had it after three weeks away. There’s no timer anywhere.')) : null,
+    !first ? h('section', { class: 'card ring-row' }, ring(c, total),
+      h('div', { class: 'stack', style: 'gap:10px' },
+        h('div', { class: 'stats' },
+          h('div', { class: 'stat' }, h('b', { class: 'num' }, String(c.known)), h('span', {}, h('i', { style: 'background:var(--ink)' }), 'known')),
+          h('div', { class: 'stat' }, h('b', { class: 'num' }, String(c.met)), h('span', {}, h('i', { style: 'background:var(--met)' }), 'met')),
+          h('div', { class: 'stat' }, h('b', { class: 'num' }, String(run)), h('span', {}, run === 1 ? 'day' : 'days running'))),
+        h('p', { class: 't-small' }, `${PACK.title} · ${PACK.chapters.map((ch) => ch.title).join(', ')}`))) : null,
+    pod ? h('section', { class: 'card stack' },
+      h('div', { class: 'src-head' }, h('p', { class: 't-label' }, 'Passage of the day'), h('span', { class: 'spacer' }), sayBtn(pod.quote, 'Read the passage aloud')),
+      h('blockquote', { class: 'quote' }, pod.quote),
+      citeLine(pod)) : null,
+    !first ? mode('', 'practise', 'Practise', 'Anything you’ve met, in any order. Won’t change your review dates.', () => play(true)) : null,
+    h('nav', { class: 'tiles', 'aria-label': 'More' },
+      h('button', { class: 'tile', onclick: () => { S.press(); openLibrary(); } }, h('span', { html: ICON.library }), 'Library'),
+      h('button', { class: 'tile', onclick: () => { S.press(); show('progress', progressScreen); } }, h('span', { html: ICON.progress }), 'Progress'),
+      h('button', { class: 'tile', onclick: () => { S.press(); show('settings', settingsScreen); } }, h('span', { html: ICON.settings }), 'Settings')),
+  ];
+}
+route('home', homeScreen);
+
+// A link into the library at the quoted paragraph.
+function citeLine(e) {
+  const w = e.p ? sectionOf(e.p) : null;
+  return h('p', { class: 'cite' },
+    w ? h('button', { class: 'disclose', style: 'padding:2px 0', onclick: () => openReader(w.section.id, e.p, [e.quote]) }, `Read this section — §${e.sec}`) : `§${e.sec}`);
 }
 
 // ── a round ─────────────────────────────────────────────────────────────
 let round = null;
-let tally = { n: 0, right: 0, streak: 0 };
+let tally = null;
 
 function play(practice) {
   round = new Round(IDS, { practice });
-  tally = { n: 0, right: 0, streak: 0 };
-  resetStreak();
-  if (round.empty) return home();
-  ask();
+  tally = { n: 0, right: 0, streak: 0, missed: [] };
+  S.resetStreak();
+  if (round.empty) return;
+  round.total = round.queue.length;
+  setLeaveGuard(() => {
+    if (!round || round.finished) return false;
+    leaveSheet();
+    return true;
+  });
+  nextQuestion(true);
 }
-
-function ask() {
+function leaveSheet() {
+  sheet(h('h2', { class: 't-title' }, 'Leave this round?'),
+    h('p', { class: 't-body', style: 'margin:8px 0 16px' }, 'Your answers so far are saved.'),
+    h('div', { class: 'row' },
+      h('button', { class: 'btn wide', onclick: closeSheet }, 'Keep going'),
+      h('button', { class: 'btn primary wide', onclick: () => { round.finished = true; setLeaveGuard(null); closeSheet(); show('home', homeScreen, { replace: true }); } }, 'Leave')));
+}
+function nextQuestion(firstOne = false) {
   const id = round.next();
   if (!id) return finish();
   const q = Q.get(id);
-  if (q.kind === 'order') return askOrder(q);
+  show('round', q.kind === 'order' ? () => orderScreen(q) : () => choiceScreen(q), { replace: !firstOne });
+}
+route('round', () => [h('p', { class: 't-body', style: 'padding-top:40px' }, 'That round has ended.'),
+  h('button', { class: 'btn primary wide', onclick: () => show('home', homeScreen, { replace: true }) }, 'Home')]);
 
+function topBar() {
+  const done = tally.n;
+  const total = Math.max(round.total, done + round.queue.length + 1);
+  return h('div', { class: 'topbar' },
+    iconBtn('back', 'Leave the round', () => leaveSheet(), 'icon plain'),
+    h('div', { class: 'meter', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(total), 'aria-valuenow': String(done) },
+      h('i', { style: `width:${(done / total) * 100}%` })),
+    h('span', { class: 't-small num' }, `${done + 1} of about ${total}`),
+    round.practice ? h('span', { class: 'chip' }, 'practice') : null);
+}
+
+// "Setting. Question?" → the setting in a lighter line, the question on its
+// own in bold (dyslexia audit).
+function splitPrompt(p) {
+  const parts = p.match(/[^.?!]+[.?!]+[”"’]?\s*/g) || [p];
+  if (parts.length < 2) return { setup: null, ask: p };
+  return { setup: parts.slice(0, -1).join('').trim(), ask: parts[parts.length - 1].trim() };
+}
+function questionHead(prompt) {
+  const { setup, ask } = splitPrompt(prompt);
+  return h('div', { class: 'q-head' },
+    h('div', {}, setup ? h('p', { class: 'setup' }, setup) : null, h('h2', { class: 'ask' }, ask)),
+    sayBtn(prompt, 'Read the question aloud'));
+}
+
+function afterAnswer(reveal) {
+  const v = reveal.querySelector('.verdict');
+  v.focus({ preventScroll: true });
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  requestAnimationFrame(() => v.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' }));
+}
+
+function choiceScreen(q) {
   const opts = shuffle([q.answer, ...q.options]);
-  const optEls = opts.map((label) => {
-    const b = h('button', { class: 'opt', onclick: () => choose(label) }, label, sayBtn(label, 'icon say', `Read “${label}” aloud`));
-    b.dataset.label = label;
-    return b;
-  });
   const reveal = h('div', { class: 'stack' });
   const foot = h('div', { class: 'foot' });
+  const rows = opts.map((label) => {
+    const b = h('button', { class: 'opt', type: 'button', onclick: () => choose(label) }, h('span', { class: 'mk', 'aria-hidden': 'true' }), h('span', {}, label));
+    return { label, b, row: h('div', { class: 'optrow' }, b, sayBtn(label, `Read “${label}” aloud`)) };
+  });
 
   function choose(label) {
+    if (rows[0].b.disabled) return;
     const ok = label === q.answer;
-    for (const b of optEls) {
-      b.disabled = true;
-      if (b.dataset.label === q.answer) b.classList.add('right');
-      else if (b.dataset.label === label) b.classList.add('wrong');
-      else b.classList.add('faded');
+    for (const r of rows) {
+      r.b.disabled = true;
+      if (r.label === q.answer) { r.b.classList.add('right'); r.b.querySelector('.mk').textContent = '✓'; r.b.setAttribute('aria-label', `${r.label} — the right answer`); }
+      else if (r.label === label) { r.b.classList.add('wrong'); r.b.querySelector('.mk').textContent = '✗'; r.b.setAttribute('aria-label', `${r.label} — your answer, not right`); }
+      else r.b.classList.add('faded');
     }
     grade(q, ok);
     reveal.replaceChildren(...revealCard(q, ok));
-    foot.replaceChildren(h('button', { class: 'btn primary wide', onclick: () => { advance(); ask(); } }, 'Next'));
-    reveal.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    if (State.data.settings.readAloud === 'auto') say((ok ? 'Right. ' : 'Not quite. ') + q.answer + '. ' + q.ev[0].quote);
+    foot.replaceChildren(h('button', { class: 'btn primary wide', onclick: () => { S.advance(); nextQuestion(); } }, 'Next'));
+    afterAnswer(reveal);
+    if (State.data.settings.readAloud === 'auto') say((ok ? 'Right. ' : `Not quite. The answer is: ${q.answer}. `) + q.ev[0].quote);
   }
 
-  screen(topBar(), h('div', { class: 'row' }, h('p', { class: 'prompt' }, q.prompt), sayBtn(q.prompt)),
-    h('div', { class: 'stack' }, optEls), reveal, foot);
-  if (State.data.settings.readAloud === 'auto') say(q.prompt);
+  if (State.data.settings.readAloud === 'auto') setTimeout(() => say(q.prompt), 250);
+  return [topBar(), questionHead(q.prompt), h('div', { class: 'opts' }, rows.map((r) => r.row)), reveal, foot];
 }
 
-function askOrder(q) {
+function orderScreen(q) {
   const items = shuffle(q.items);
   const picked = [];
   const reveal = h('div', { class: 'stack' });
-  const foot = h('div', { class: 'foot' });
-  const els = items.map((it) => {
-    const b = h('button', { class: 'opt', onclick: () => tap(it, b) }, h('span', { class: 'label' }, it.label), sayBtn(it.label, 'icon say', 'Read aloud'));
-    return b;
+  const checkBtn = h('button', { class: 'btn primary', style: 'flex:1', disabled: true, onclick: () => settle() }, 'Check the order');
+  const clearBtn = h('button', { class: 'btn', onclick: () => { picked.length = 0; draw(); } }, 'Clear');
+  const foot = h('div', { class: 'foot' }, h('div', { class: 'row' }, clearBtn, checkBtn));
+  const rows = items.map((it) => {
+    const b = h('button', { class: 'opt', type: 'button', onclick: () => tap(it) }, h('span', { class: 'mk' }), h('span', {}, it.label));
+    return { it, b, row: h('div', { class: 'optrow' }, b, sayBtn(it.label)) };
   });
-
   function draw() {
-    els.forEach((b, i) => {
-      const at = picked.indexOf(items[i]);
-      const old = b.querySelector('.n');
-      if (old) old.remove();
-      if (at >= 0) b.prepend(h('span', { class: 'n' }, String(at + 1)));
-    });
+    for (const r of rows) {
+      const n = picked.indexOf(r.it);
+      const mk = r.b.firstChild;
+      mk.className = n >= 0 ? 'n' : 'mk';
+      mk.textContent = n >= 0 ? String(n + 1) : '';
+      r.b.setAttribute('aria-label', n >= 0 ? `${r.it.label}, placed ${n + 1}` : r.it.label);
+    }
+    checkBtn.disabled = picked.length !== items.length;
   }
   function tap(it) {
-    if (picked.length === items.length) return;   // settled
-    press();
+    if (rows[0].b.disabled) return;
+    S.press();
     const i = picked.indexOf(it);
     if (i >= 0) picked.splice(i, 1); else picked.push(it);
     draw();
-    if (picked.length === items.length) settle();
   }
   function settle() {
     const truth = q.items.slice().sort((a, b) => a.at - b.at);
     const ok = picked.every((it, i) => it === truth[i]);
-    els.forEach((b, i) => {
-      b.disabled = true;
-      const pos = picked.indexOf(items[i]);
-      b.classList.add(truth[pos] === items[i] ? 'right' : 'wrong');
-    });
+    for (const r of rows) {
+      r.b.disabled = true;
+      const right = truth[picked.indexOf(r.it)] === r.it;
+      r.b.classList.add(right ? 'right' : 'wrong');
+      r.b.firstChild.className = 'mk';
+      r.b.firstChild.textContent = right ? '✓' : '✗';
+    }
     grade(q, ok);
     reveal.replaceChildren(
-      h('div', { class: `verdict ${ok ? 'good' : 'bad'}` }, ok ? '✓ In order.' : '✗ Not quite. Oldest first:'),
-      ...truth.map((it) => h('div', { class: 'card stack' },
-        h('div', { class: 'answer' }, `${it.when || fmtYear(it.at)} — ${it.label}`),
+      h('p', { class: `verdict ${ok ? 'good' : 'bad'}`, tabindex: '-1' }, ok ? '✓ In order.' : '✗ Not quite. Oldest first:'),
+      ...truth.map((it) => h('section', { class: 'card stack' },
+        h('div', { class: 'q-head' }, h('p', { class: 'answer' }, `${it.when} — ${it.label}`), sayBtn(`${it.when}. ${it.label}. ${it.ev.quote}`)),
         h('blockquote', { class: 'quote' }, it.ev.quote),
-        h('div', { class: 'cite' }, h('a', { href: it.ev.url, target: '_blank', rel: 'noopener' }, it.ev.sec)))),
-      chips(q),
-    );
-    foot.replaceChildren(h('button', { class: 'btn primary wide', onclick: () => { advance(); ask(); } }, 'Next'));
+        citeLine(it.ev))),
+      lensChips(q));
+    foot.replaceChildren(h('button', { class: 'btn primary wide', onclick: () => { S.advance(); nextQuestion(); } }, 'Next'));
+    afterAnswer(reveal);
   }
-
-  screen(topBar(), h('div', { class: 'row' }, h('p', { class: 'prompt' }, q.prompt + ' Tap them in order.'), sayBtn(q.prompt)),
-    h('div', { class: 'stack' }, els), reveal, foot);
+  return [topBar(), questionHead('Put these in order, oldest first.'),
+    h('p', { class: 't-small' }, 'Tap them in order. Tap one again to take it back.'),
+    h('div', { class: 'opts' }, rows.map((r) => r.row)), reveal, foot];
 }
-
-const fmtYear = (y) => (y < 0 ? `${-y} BCE` : y < 1000 ? `${y} CE` : String(y));
 
 function grade(q, ok) {
   const c = State.answer(q.id, ok, { practice: round.practice });
   round.after(q.id, c);
   tally.n++;
-  if (ok) { tally.right++; tally.streak++; soundRight(); } else { tally.streak = 0; soundWrong(); }
+  if (ok) { tally.right++; tally.streak++; S.right(tally.streak); } else { tally.streak = 0; tally.missed.push(q.id); S.wrong(); }
+  setTimeout(() => S.reveal(ok), 180);
 }
 
-function chips(q) {
-  return (q.lens || []).length ? h('div', { class: 'chips' }, q.lens.map((l) => h('span', { class: 'chip' }, LENS[l] || l))) : null;
+function lensChips(q) {
+  if (!(q.lens || []).length) return null;
+  return h('div', { class: 'chips' }, q.lens.map((l) => h('button', { class: 'chip', type: 'button',
+    onclick: () => sheet(h('h2', { class: 't-title' }, LENS[l][0]), h('p', { class: 't-body', style: 'margin-top:8px' }, LENS[l][1])) }, LENS[l]?.[0] || l)));
 }
 
-// Where it came from. The quoted words first, then — one tap away — the whole
-// paragraph with those words marked, then the link to the page itself.
+// Where it came from: the quoted words, then the whole paragraph (readable,
+// and read aloud in place), then the way into the full section.
 function revealCard(q, ok) {
-  const out = [];
-  out.push(h('div', { class: `verdict ${ok ? 'good' : 'bad'}` }, ok ? '✓ Right.' : '✗ Not quite.'));
-  out.push(h('div', { class: 'row' }, h('p', { class: 'answer' }, q.answer), sayBtn(q.answer)));
-  if ((q.lens || []).includes('contested')) {
-    out.push(h('p', { class: 'lede' }, 'The book itself says this is uncertain — which is the point of the question.'));
-  }
-  const bySection = new Map();
+  const out = [h('p', { class: `verdict ${ok ? 'good' : 'bad'}`, tabindex: '-1' }, ok ? '✓ Right.' : '✗ Not quite.')];
+  if (!ok) out.push(h('div', { class: 'q-head' }, h('p', { class: 'answer' }, q.answer), sayBtn(q.answer, 'Read the right answer aloud')));
+  if ((q.lens || []).includes('contested')) out.push(h('p', { class: 't-body' }, 'The book itself says this is uncertain — which is the point of the question.'));
+  const byPara = new Map();
   for (const e of q.ev) {
-    if (!bySection.has(e.para)) bySection.set(e.para, { ...e, quotes: [] });
-    bySection.get(e.para).quotes.push(e.quote);
+    if (!byPara.has(e.p)) byPara.set(e.p, { ...e, quotes: [] });
+    byPara.get(e.p).quotes.push(e.quote);
   }
-  for (const e of bySection.values()) {
-    const card = h('div', { class: 'card stack' },
-      h('div', { class: 'eyebrow' }, 'From the book'),
-      h('div', { class: 'row' }, h('blockquote', { class: 'quote' }, e.quotes.join(' … ')), sayBtn(e.quotes.join('. '))),
-      h('details', {},
-        h('summary', {}, 'The whole paragraph'),
-        h('p', { class: 'para', html: markQuotes(e.para, e.quotes) })),
-      h('div', { class: 'cite' }, h('a', { href: e.url, target: '_blank', rel: 'noopener' }, `§${e.sec}`), ' — ', e.cite));
-    out.push(card);
+  for (const e of byPara.values()) {
+    const paraBox = h('div', { hidden: true });
+    const toggle = h('button', { class: 'disclose', type: 'button', 'aria-expanded': 'false' }, 'Show the whole paragraph');
+    toggle.onclick = () => {
+      paraBox.hidden = !paraBox.hidden;
+      toggle.setAttribute('aria-expanded', String(!paraBox.hidden));
+      toggle.textContent = paraBox.hidden ? 'Show the whole paragraph' : 'Hide the paragraph';
+      if (!paraBox.hidden && !paraBox.firstChild) paraBox.append(paragraphWithPlayer(e.para, e.quotes));
+    };
+    out.push(h('section', { class: 'card stack' },
+      h('div', { class: 'src-head' }, h('p', { class: 't-label' }, 'From the book'), h('span', { class: 'spacer' }), sayBtn(e.quotes.join(' '), 'Read the quotation aloud')),
+      h('blockquote', { class: 'quote' }, e.quotes.join(' … ')),
+      toggle, paraBox, citeLine({ ...e, quote: e.quotes[0] })));
   }
-  out.push(chips(q));
+  out.push(lensChips(q));
   return out;
 }
 
-const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const normQ = (s) => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
-function markQuotes(para, quotes) {
-  let html = esc(para);
-  for (const q of quotes) {
-    const target = esc(q);
-    const at = normQ(html).indexOf(normQ(target));
-    if (at >= 0) html = html.slice(0, at) + '<mark>' + html.slice(at, at + target.length) + '</mark>' + html.slice(at + target.length);
-  }
-  return html;
-}
-
-function topBar() {
-  const done = tally.n;
-  const left = round.queue.length;
-  const total = done + left + 1;
-  return h('div', { class: 'row' },
-    h('button', { class: 'icon', 'aria-label': 'Stop and go home', onclick: home, html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>' }),
-    h('div', { class: 'pips', 'aria-label': `Question ${done + 1} of about ${total}` },
-      Array.from({ length: Math.min(total, 16) }, (_, i) => h('i', { class: i < done ? 'on' : i === done ? 'now' : '' }))),
-    h('span', { class: 'spacer' }),
-    round.practice ? h('span', { class: 'chip' }, 'practice') : null);
+// One paragraph, sentence-marked, with a compact player.
+function paragraphWithPlayer(text, quotes) {
+  const passage = h('div', { class: 'passage reading' });
+  passage.innerHTML = '<p>' + sentences(text).map((s, i) => {
+    let inner = esc(s);
+    for (const q of quotes) { const eq = esc(q); if (inner.includes(eq)) inner = inner.replace(eq, `<span class="quoted">${eq}</span>`); }
+    return `<span class="sn" data-s="${i}">${inner}</span>`;
+  }).join(' ') + '</p>';
+  let r = null;
+  const btn = iconBtn('play', 'Read the paragraph aloud', () => r.toggle());
+  r = new Reader(passage, { onChange: (x) => { btn.innerHTML = x.playing ? ICON.pause : ICON.play; btn.setAttribute('aria-label', x.playing ? 'Pause' : 'Read the paragraph aloud'); } });
+  return h('div', { class: 'stack' },
+    h('div', { class: 'row' }, btn, iconBtn('stop', 'Stop reading', () => r.stop()), h('span', { class: 't-small' }, 'Read aloud, sentence by sentence.')),
+    passage);
 }
 
 function finish() {
-  if (tally.n && tally.right === tally.n) fanfare();
+  round.finished = true;
+  setLeaveGuard(null);
+  if (tally.n && tally.right === tally.n) S.fanfare();
   const due = State.dueIds(IDS).length;
+  const fresh = IDS.filter((id) => !State.card(id)).length;
   const next = State.nextDue(IDS);
-  screen(
-    h('h1', { class: 'brand' }, round.practice ? 'Practice done' : 'Round done'),
-    h('div', { class: 'card stack' },
+  const missed = [...new Set(tally.missed)].map((id) => Q.get(id));
+  const practice = round.practice;
+  show('done', () => [
+    h('div', { class: 'topbar' }),
+    h('h1', { class: 't-title', style: 'font-size:1.8rem' }, practice ? 'Practice done' : 'Round done'),
+    h('section', { class: 'card stack' },
       h('p', { class: 'answer' }, `${tally.right} of ${tally.n} right.`),
-      round.practice ? h('p', { class: 'lede' }, 'Practice does not move the schedule.') : null,
-      !due && next ? h('p', { class: 'lede' }, nextDueSentence(next)) : null),
-    h('button', { class: 'btn primary wide', onclick: home }, 'Home'));
+      practice ? h('p', { class: 't-body' }, 'Practice doesn’t change your review dates.') : null,
+      !due && next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null),
+    missed.length ? h('h2', { class: 'group-title' }, 'What slipped — read it again') : null,
+    missed.length ? h('div', { class: 'list' }, missed.map((q) => {
+      const e = evOf(q)[0];
+      const w = sectionOf(e.p);
+      return h('button', { class: 'item', onclick: () => w && openReader(w.section.id, e.p, [e.quote]) },
+        h('div', {}, h('b', {}, splitPrompt(q.prompt).ask.length < 45 ? q.prompt : splitPrompt(q.prompt).ask), h('span', {}, `§${e.sec}`)), h('span', { html: ICON.chev }));
+    })) : null,
+    h('div', { class: 'stack' },
+      due || fresh ? h('button', { class: 'btn primary wide', onclick: () => play(false) }, 'Another round') : null,
+      h('button', { class: `btn wide${due || fresh ? '' : ' primary'}`, onclick: () => show('home', homeScreen, { replace: true }) }, 'Home')),
+  ], { replace: true });
 }
+route('done', homeScreen);
 
 // ── progress ────────────────────────────────────────────────────────────
-function progress() {
+function dayLabel(key) {
+  if (key === dayKey()) return 'Today';
+  if (key === dayKey(now() - DAY)) return 'Yesterday';
+  return new Date(key + 'T12:00:00').toLocaleDateString('en-CA', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+function progressScreen() {
+  const c = counts(IDS);
+  const total = IDS.length;
   const byLens = {};
   for (const q of PACK.questions) for (const l of q.lens) {
     const b = byLens[l] || (byLens[l] = { n: 0, known: 0, met: 0 });
@@ -299,47 +417,66 @@ function progress() {
     const st = cardState(State.card(q.id));
     if (st === 'known' || st === 'secure') b.known++; else if (st === 'met') b.met++;
   }
-  const days = Object.entries(State.data.days).sort().slice(-14);
-  screen(
-    h('div', { class: 'row' }, h('button', { class: 'icon', 'aria-label': 'Back', onclick: home, html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>' }), h('h2', {}, 'Progress')),
-    h('p', { class: 'lede' }, '“Known” means you had it after at least three weeks away. “Met” means you have seen it and are still learning it.'),
-    h('div', { class: 'card stack' },
-      h('div', { class: 'eyebrow' }, 'By thread'),
+  const days = Object.entries(State.data.days).sort().slice(-14).reverse();
+  const week = IDS.filter((id) => { const k = State.card(id); return k && k.st !== 'new' && k.due > now() && k.due < now() + 7 * DAY; }).length;
+  const bar = (b) => h('div', { class: 'bar', role: 'img', 'aria-label': `${b.known} known, ${b.met} met, of ${b.n}` },
+    h('i', { class: 'k', style: `width:${(b.known / b.n) * 100}%` }), h('i', { class: 'm', style: `width:${(b.met / b.n) * 100}%` }));
+  return [
+    h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'Progress')),
+    h('section', { class: 'card ring-row' }, ring(c, total),
+      h('div', { class: 'stack', style: 'gap:6px' },
+        h('p', { class: 't-body' }, h('b', {}, `${c.known} known`), ' — you still had them after three weeks away.'),
+        h('p', { class: 't-body' }, h('b', {}, `${c.met} met`), ' — seen, and still being learned.'),
+        h('p', { class: 't-small' }, `${c.unseen} not met yet · ${week} come round in the next seven days.`))),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'By thread'),
       Object.entries(byLens).map(([l, b]) => h('div', { class: 'stack', style: 'gap:6px' },
-        h('div', { class: 'row' }, h('span', {}, LENS[l] || l), h('span', { class: 'spacer' }), h('span', { class: 'cite' }, `${b.known} known · ${b.met} met · of ${b.n}`)),
-        h('div', { class: 'bar' }, h('i', { class: 'k', style: `width:${(b.known / b.n) * 100}%` }), h('i', { class: 'm', style: `width:${(b.met / b.n) * 100}%` }))))),
-    h('div', { class: 'card stack' },
-      h('div', { class: 'eyebrow' }, 'Recent days'),
-      days.length ? days.reverse().map(([d, v]) => h('div', { class: 'row' }, h('span', {}, d), h('span', { class: 'spacer' }), h('span', { class: 'cite' }, `${v.right} of ${v.n} right`)))
-        : h('p', { class: 'lede' }, 'Nothing yet.')));
+        h('div', { class: 'row' }, h('b', {}, LENS[l]?.[0] || l), h('span', { class: 'spacer' }), h('span', { class: 't-small num' }, `${b.known + b.met} of ${b.n} met`)),
+        bar(b)))),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'Recent days'),
+      days.length ? days.map(([d, v]) => h('div', { class: 'row' },
+        h('span', {}, dayLabel(d)), h('span', { class: 'spacer' }),
+        h('span', { class: 't-small num' }, `${v.n} answered · ${Math.round((v.right / v.n) * 100)}% right`)))
+        : h('p', { class: 't-body' }, 'Nothing yet. Your first round will show here.')),
+    h('p', { class: 't-small' }, 'Getting about four in five right on reviews is the sweet spot: hard enough to stick, easy enough to keep going.'),
+  ];
 }
+route('progress', progressScreen);
 
 // ── settings ────────────────────────────────────────────────────────────
-function settings() {
+function settingsScreen() {
   const s = State.data.settings;
-  const seg = (key, choices) => h('div', { class: 'seg' }, choices.map(([v, label]) =>
-    h('button', { 'aria-pressed': String(s[key] === v), onclick: () => { s[key] = v; State.save(); applySettings(); settings(); } }, label)));
-  const rate = h('input', { type: 'range', min: '0.6', max: '1.3', step: '0.05', value: String(s.rate), 'aria-label': 'Reading speed',
-    oninput: (e) => { s.rate = +e.target.value; setRate(s.rate); State.save(); }, onchange: () => say('This is the reading speed.') });
-  screen(
-    h('div', { class: 'row' }, h('button', { class: 'icon', 'aria-label': 'Back', onclick: home, html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>' }), h('h2', {}, 'Settings')),
-    h('div', { class: 'card' },
-      h('div', { class: 'setting' }, h('label', {}, 'Read aloud'), seg('readAloud', [['manual', 'When I tap'], ['auto', 'Automatically']])),
-      h('div', { class: 'setting' }, h('label', {}, 'Reading speed'), rate),
-      h('div', { class: 'setting' }, h('label', {}, 'Sound'), seg('sound', [[true, 'On'], [false, 'Off']])),
-      h('div', { class: 'setting' }, h('label', {}, 'Theme'), seg('theme', [['system', 'Phone'], ['light', 'Light'], ['dark', 'Dark']]))),
-    h('p', { class: 'cite' }, 'There is no timer anywhere in this app.'));
+  const seg = (key, label, choices, after) => {
+    const box = h('div', { class: 'seg', role: 'group', 'aria-label': label });
+    const draw = () => box.replaceChildren(...choices.map(([v, l]) => h('button', { type: 'button', 'aria-pressed': String(s[key] === v),
+      onclick: () => { s[key] = v; State.save(); applySettings(); after?.(v); draw(); } }, l)));
+    draw();
+    return h('div', { class: 'setting' }, h('div', { class: 'lbl' }, label), box);
+  };
+  const out = h('output', {}, `${s.rate.toFixed(2)}×`);
+  const rate = h('input', { type: 'range', id: 'set-rate', min: '0.6', max: '1.3', step: '0.05', value: String(s.rate),
+    oninput: (e) => { s.rate = +e.target.value; setRate(s.rate); out.textContent = `${s.rate.toFixed(2)}×`; State.save(); } });
+  return [
+    h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'Settings')),
+    h('section', { class: 'card' },
+      seg('readAloud', 'Read questions aloud', [['manual', 'When I tap'], ['auto', 'Automatically']]),
+      h('div', { class: 'setting' }, h('label', { class: 'lbl', for: 'set-rate' }, 'Reading speed', out), rate,
+        h('button', { class: 'btn', onclick: () => { unlock(); say('This is how fast I will read to you.'); } }, 'Try it')),
+      h('div', { class: 'setting' }, h('div', { class: 'lbl' }, 'Reading text'),
+        h('p', { class: 't-small' }, 'Size, spacing, line length, typeface and page tint.'),
+        h('button', { class: 'btn', onclick: () => readingSheet() }, 'Adjust reading')),
+      seg('sound', 'Sound effects', [[true, 'On'], [false, 'Off']], (v) => { if (!v) S.setAmbience(false); }),
+      seg('ambience', 'Room tone while you read', [[true, 'On'], [false, 'Off']], (v) => S.setAmbience(v && s.sound)),
+      seg('theme', 'Theme', [['system', 'Phone'], ['light', 'Light'], ['dark', 'Dark']])),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'Sources'),
+      h('p', { class: 't-body' }, 'Every question is built from openly licensed text and checked, word for word, against the paragraph it cites before it can ship.'),
+      h('p', { class: 't-body' }, 'John Douglas Belshaw, ', h('a', { href: 'https://opentextbc.ca/preconfederation/', target: '_blank', rel: 'noopener' }, 'Canadian History: Pre-Confederation'),
+        ' (BCcampus, 2015) and ', h('a', { href: 'https://opentextbc.ca/postconfederation/', target: '_blank', rel: 'noopener' }, 'Canadian History: Post-Confederation'), ' (BCcampus, 2016). CC BY 4.0.'),
+      h('p', { class: 't-small' }, 'This app’s questions: CC BY-NC-SA 4.0. Not for sale. There’s no timer anywhere in it.')),
+  ];
 }
-
-function about() {
-  screen(
-    h('div', { class: 'row' }, h('button', { class: 'icon', 'aria-label': 'Back', onclick: home, html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>' }), h('h2', {}, 'Sources')),
-    h('div', { class: 'card stack' },
-      h('p', { class: 'lede' }, 'Every question is built from openly licensed text and checked, word for word, against the paragraph it cites before it can ship.'),
-      h('p', {}, 'John Douglas Belshaw, ', h('a', { href: 'https://opentextbc.ca/preconfederation/', target: '_blank', rel: 'noopener' }, 'Canadian History: Pre-Confederation'),
-        ' (BCcampus, 2015) and ', h('a', { href: 'https://opentextbc.ca/postconfederation/', target: '_blank', rel: 'noopener' }, 'Canadian History: Post-Confederation'),
-        ' (BCcampus, 2016). CC BY 4.0.'),
-      h('p', { class: 'cite' }, 'This app’s questions and explanations: CC BY-NC-SA 4.0. Not for sale.')));
-}
+route('settings', settingsScreen);
 
 boot();

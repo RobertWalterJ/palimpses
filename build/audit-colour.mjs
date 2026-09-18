@@ -27,8 +27,11 @@ const SPEC = {
     // The progress bar: known, met and not-yet-met are told apart by lightness.
     { a: '--ink', b: '--met', channel: 'lightness', where: 'progress bar: known against met' },
     { a: '--met', b: '--surface-2', channel: 'lightness', where: 'progress bar: met against not yet met' },
-    { a: '--ink-2', b: '--surface-2', channel: 'lightness', where: 'round pips: answered against to come' },
-    { a: '--accent', b: '--ink-2', channel: 'tint', where: 'round pips: the current one (position also says it)' },
+    { a: '--accent', b: '--surface-2', channel: 'lightness', where: 'the round meter: done against to come' },
+    // The accent is a control colour; wrong is a verdict. They must not be
+    // mistakable for each other (the design audit's catch on the old rust).
+    { a: '--accent', b: '--bad', channel: 'tint', where: 'the accent against the wrong-answer red' },
+    { a: '--met', b: '--undertext', channel: 'tint', where: 'nothing — sanity: met is not the hero undertext' },
   ],
   text: [
     { fg: '--ink', bg: '--ground', where: 'titles on the page' },
@@ -48,6 +51,12 @@ const SPEC = {
     { fg: '--bad', bg: '--surface', where: 'the “✗ Not quite.” verdict' },
     { fg: '--good', bg: '--ground', where: 'the verdict line on the page' },
     { fg: '--bad', bg: '--ground', where: 'the verdict line on the page' },
+    { fg: '--ink', bg: '--accent-soft', where: 'key points box, hero' },
+    { fg: '--ink-2', bg: '--accent-soft', where: 'the tagline on the hero wash' },
+    { fg: '--accent', bg: '--accent-soft', where: 'icons on mode cards' },
+    { fg: '--ink', bg: '--mark', where: 'the sentence being read aloud' },
+    { fg: '--ink-3', bg: '--surface-2', where: 'the options that were neither picked nor right' },
+    { fg: '--ink', bg: '--surface-2', where: 'chips and settings buttons' }
   ],
 };
 

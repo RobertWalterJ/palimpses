@@ -85,3 +85,20 @@ function armGuard(seconds) {
   clearTimeout(guard);
   guard = setTimeout(() => onState?.(false), seconds * 1000);
 }
+
+// One utterance with callbacks, for the sentence-by-sentence reader. Kept here
+// so the voice choice, rate and ducking stay in one place.
+export function speakOne(text, { onStart, onEnd, onWord } = {}) {
+  if (!text || !('speechSynthesis' in window)) { onEnd?.(); return null; }
+  const u = new SpeechSynthesisUtterance(String(text));
+  if (!voice) voice = choose();
+  if (voice) { u.voice = voice; u.lang = voice.lang; }
+  u.rate = rate;
+  u.onstart = () => { onState?.(true); armGuard(6 + String(text).split(/\s+/).length * 1.2); onStart?.(); };
+  u.onboundary = (e) => { if (e.name === 'word' || e.name === undefined) onWord?.(e.charIndex, e.charLength || 0); };
+  u.onend = () => { clearTimeout(guard); onState?.(false); onEnd?.(); };
+  u.onerror = (e) => { clearTimeout(guard); onState?.(false); if (e.error !== 'interrupted' && e.error !== 'canceled') onEnd?.(); };
+  try { speechSynthesis.speak(u); } catch { onEnd?.(); }
+  return u;
+}
+export function getRate() { return rate; }

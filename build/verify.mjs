@@ -42,12 +42,33 @@ const files = [];
 })(join(ROOT, 'content'));
 
 const fails = [];
-let n = 0;
+let n = 0, entries = 0;
 const lensCount = {};
 for (const file of files) {
   const qs = (await import(pathToFileURL(file).href)).default;
   const where = relative(ROOT, file);
   const ids = new Set();
+  // The reference library's entries: every lead quote verbatim, and the match
+  // pattern must find the lead's own paragraph (else it indexes the wrong thing).
+  if (qs.length && qs[0].lead) {
+    for (const e of qs) {
+      entries++;
+      const bad = (m) => fails.push(`${where} · ${e.id}: ${m}`);
+      let re;
+      try { re = new RegExp(e.match, 'i'); } catch { bad('match is not a valid pattern'); continue; }
+      for (const ev of e.lead) {
+        const para = PARA.get(ev.p);
+        if (!para) { bad(`cites ${ev.p}, which is not in the corpus`); continue; }
+        if (!norm(para.text).includes(norm(ev.q))) bad(`lead quote not found in ${ev.p}: "${ev.q.slice(0, 70)}…"`);
+      }
+      const hits = [...PARA.values()].filter((p) => re.test(p.text)).length;
+      if (!hits) bad('match finds no passage at all');
+      // At least one lead paragraph must be one the pattern finds — a glossary
+      // lead's paragraph begins with the term itself, so it qualifies.
+      if (!e.lead.some((ev) => re.test(PARA.get(ev.p)?.text || ''))) bad('match does not find its own lead paragraph');
+    }
+    continue;
+  }
   for (const q of qs) {
     n++;
     const bad = (m) => fails.push(`${where} · ${q.id}: ${m}`);
@@ -82,11 +103,16 @@ for (const file of files) {
     const opts = (q.options || []).map(low);
     if (new Set(opts).size !== opts.length) bad('duplicate options');
     if (opts.includes(low(q.answer))) bad('the answer is also listed as a wrong option');
+    // A right answer that is conspicuously the longest can be picked without
+    // knowing anything (the dyslexia audit found nine). Keep lengths within 3 words.
+    const words = (x) => x.split(/\s+/).length;
+    const longestWrong = Math.max(...(q.options || []).map(words));
+    if (q.options?.length > 1 && words(q.answer) - longestWrong >= 3) bad(`the answer is ${words(q.answer) - longestWrong} words longer than any wrong option — it gives itself away`);
     if (!allOk) continue;
   }
 }
 
-console.log(`${n} questions in ${files.length} file(s)`);
+console.log(`${n} questions and ${entries} library entries in ${files.length} file(s)`);
 console.log('by lens: ' + Object.entries(lensCount).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · '));
 if (fails.length) {
   console.error(`\nverify FAILED — ${fails.length} problem(s):`);

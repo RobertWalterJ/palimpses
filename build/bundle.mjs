@@ -42,7 +42,7 @@ const CHAPTER_TITLE = {
 
 const evOut = (e) => {
   const p = PARA.get(e.p);
-  return { quote: e.q, para: p.text, sec: p.sec, url: p.url, cite: p.cite };
+  return { quote: e.q, p: e.p, para: p.text, sec: p.sec, url: p.url, cite: p.cite };
 };
 
 mkdirSync(join(ROOT, 'app', 'data'), { recursive: true });
@@ -50,8 +50,10 @@ for (const pack of PACKS) {
   const files = readdirSync(join(ROOT, pack.dir)).filter((f) => f.endsWith('.mjs')).sort();
   const questions = [];
   const chapters = [];
+  let entries = [];
   for (const f of files) {
     const qs = (await import(pathToFileURL(join(ROOT, pack.dir, f)).href)).default;
+    if (qs.length && qs[0].lead) { entries = qs; continue; }   // the library, not questions
     const firstP = qs[0].ev?.[0]?.p || qs[0].items?.[0]?.ev.p;
     const ch = CHAPTER_OF.get(firstP);
     const chId = f.replace(/\.mjs$/, '');
@@ -68,4 +70,57 @@ for (const pack of PACKS) {
   const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions };
   writeFileSync(join(ROOT, 'app', 'data', pack.id + '.json'), JSON.stringify(out));
   console.log(`wrote app/data/${pack.id}.json — ${questions.length} questions in ${chapters.length} chapter(s)`);
+  writeLibrary(pack, entries);
+}
+
+// ── the reference library ────────────────────────────────────────────────
+// Both books in full, reading order; the authors' own glossary; and the
+// peoples-and-periods entries with every passage that mentions each. Entries
+// carry paragraph ids only — the app looks the text up in the books — so the
+// text is stored once.
+function writeLibrary(pack, entries) {
+  const books = [];
+  const glossary = [];
+  for (const f of ['pre.json', 'post.json']) {
+    const book = JSON.parse(readFileSync(join(ROOT, 'corpus', f), 'utf8'));
+    const src = book.source;
+    books.push({
+      id: src.id, title: src.title, author: src.author, year: src.year, licence: src.licence, web: src.web.replace(/chapter\/$/, ''),
+      chapters: book.chapters.map((c) => ({
+        n: c.n, title: c.title,
+        sections: c.sections.map((s) => ({
+          id: s.id, num: s.num, title: s.title, url: s.url,
+          paras: s.paras.filter((p) => p.under !== 'Key Terms').map((p) => ({ id: p.id, t: p.text, h: p.under || null, k: p.key ? 1 : 0, ...(p.notes ? { n: p.notes } : {}) })),
+        })).filter((s) => s.paras.length),
+      })),
+    });
+    for (const c of book.chapters) for (const s of c.sections) for (const p of s.paras) {
+      if (p.under !== 'Key Terms') continue;
+      const m = p.text.match(/^([^:]{1,70}):\s+(.+)$/);
+      if (m) glossary.push({ term: m[1].trim(), def: m[2].trim(), id: p.id, book: src.id, sec: `${s.num} ${s.title}`, url: s.url });
+    }
+  }
+  // The same term is defined in several chapters; keep every definition, since
+  // they differ with context (potlatch is defined three times).
+  glossary.sort((a, b) => a.term.localeCompare(b.term, 'en', { sensitivity: 'base' }));
+
+  const where = new Map();
+  for (const b of books) for (const c of b.chapters) for (const s of c.sections) for (const p of s.paras) {
+    where.set(p.id, { book: b.id, ch: c.n, sec: s.id, t: p.t });
+  }
+  const outEntries = entries.map((e) => {
+    const re = new RegExp(e.match, 'i');
+    const mentions = [];
+    for (const [id, w] of where) if (re.test(w.t)) mentions.push(id);
+    return {
+      id: e.id, name: e.name, also: e.also || [], group: e.group, kind: e.kind, when: e.when || null, at: e.at ?? null,
+      lead: e.lead.map((l) => ({ quote: l.q, ...(({ sec, url, cite }) => ({ sec, url, cite }))(PARA.get(l.p)), p: l.p })),
+      mentions,
+    };
+  });
+  const lib = { books, glossary, entries: outEntries };
+  const json = JSON.stringify(lib);
+  writeFileSync(join(ROOT, 'app', 'data', pack.id + '-library.json'), json);
+  console.log(`wrote app/data/${pack.id}-library.json — ${books.length} books, ${glossary.length} glossary terms, `
+    + `${outEntries.length} entries (${(json.length / 1024 / 1024).toFixed(1)} MB)`);
 }

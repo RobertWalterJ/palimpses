@@ -10,12 +10,16 @@
 5. Cross-cutting "economy" thread from OpenStax *Introduction to Anthropology* (barter, credit, debt, the state).
 6. Find open-access sources for Kandiaronk and for Amazonian earthworks (CC-licensed articles count).
 
-## Audits — once the app runs (same set as Landfall, each by a separate agent where useful)
-- Colour & colour-blindness (build-failing, `build/audit-colour.mjs`)
-- Dyslexia (Robert's standing rule: no timers; read-aloud everywhere)
+## Audits
+Done (Sept 18, 2026), findings integrated:
+- Design & UX (agent) → ultraviolet palette, undertext hero, epicentre strip, sibling type family, round-end "what slipped", back button, 44px targets
+- Dyslexia (agent) → upright quotes, reading settings, sentence-by-sentence read-aloud with highlighting, glossary on tap, prompt split, option-length check in verify
+- Colour & colour-blindness (build-failing, `build/audit-colour.mjs`, 96 checks)
+- Sound (build/sound-lab.html) → materials not instruments; wrong ≤ right in level
+
+Still to run (same set as Landfall, each by a separate agent where useful):
 - Playability
 - Learning & improvement over time (scheduler measured with a seeded simulation)
-- Sound design
 - Interest & variety (question kinds, repetition across rounds in one day)
 - Data sources & licensing (every question cited; per-source licence recorded)
 - User journey (first run → daily habit → finishing a chapter)

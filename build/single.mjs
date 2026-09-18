@@ -30,13 +30,17 @@ let fonts = readFileSync(join(APP, 'fonts', 'fonts.css'), 'utf8')
   .replace(/url\((([\w-]+)\.woff2)\)/g, (_, file) =>
     `url(data:font/woff2;base64,${readFileSync(join(APP, 'fonts', file)).toString('base64')})`);
 const css = readFileSync(join(APP, 'styles.css'), 'utf8');
-const data = readFileSync(join(APP, 'data', 'canada.json'), 'utf8');
+const safe = (s) => s.replace(/<\/script/gi, '<\\/script');
+const data = safe(readFileSync(join(APP, 'data', 'canada.json'), 'utf8'));
+const lib = safe(readFileSync(join(APP, 'data', 'canada-library.json'), 'utf8'));
 
+// Function replacers throughout: a replacement STRING treats `$&`, `$'` and
+// `` $` `` specially, and minified code or the books' text can contain them.
 const html = readFileSync(join(APP, 'index.html'), 'utf8')
-  .replace('<link rel="stylesheet" href="fonts/fonts.css">', `<style>${fonts}</style>`)
-  .replace('<link rel="stylesheet" href="styles.css">', `<style>${css}</style>`)
-  .replace('<script type="module" src="js/app.js"></script>',
-    `<script>window.__PALIMPSEST_DATA={canada:${data.replace(/<\/script/gi, '<\\/script')}};</script>\n<script>${js}</script>`);
+  .replace('<link rel="stylesheet" href="fonts/fonts.css">', () => `<style>${fonts}</style>`)
+  .replace('<link rel="stylesheet" href="styles.css">', () => `<style>${css}</style>`)
+  .replace('<script type="module" src="js/app.js"></script>', () =>
+    `<script>window.__PALIMPSEST_DATA={canada:${data}};window.__PALIMPSEST_LIB={canada:${lib}};</script>\n<script>${safe(js)}</script>`);
 
 mkdirSync(join(ROOT, 'dist'), { recursive: true });
 writeFileSync(join(ROOT, 'dist', 'palimpsest.html'), html);
