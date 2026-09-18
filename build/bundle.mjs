@@ -39,6 +39,7 @@ const PACKS = [
 const CHAPTER_TITLE = {
   'ch02-before-contact': 'Before contact',
   'ch05-contact': 'Contact, on the nations’ terms',
+  'ch04-new-france': 'New France, inside other worlds',
 };
 
 const evOut = (e) => {
