@@ -38,6 +38,7 @@ const PACKS = [
 // own title is still carried (`book`) and shown with the citation.
 const CHAPTER_TITLE = {
   'ch02-before-contact': 'Before contact',
+  'ch05-contact': 'Contact, on the nations’ terms',
 };
 
 const evOut = (e) => {

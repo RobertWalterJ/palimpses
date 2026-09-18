@@ -24,6 +24,7 @@ export const DAY = 864e5;
 const LEARN_STEP = 4;                // questions later, inside the round
 const NEW_PER_ROUND = 5;
 const ROUND = 12;                    // slots, counting the in-round repeats
+const MAX_REPEATS = 4;                // in-round second looks, per round
 const LOAD_CEILING = 25;             // due reviews at which nothing new is introduced
 
 let clock = () => Date.now();
@@ -140,11 +141,18 @@ export class Round {
       return;
     }
     const due = State.dueIds(ids);
-    this.queue = due.slice(0, ROUND);
+    // Slots, not questions. A card still learning (new, or missed last time)
+    // is asked and then asked once more inside the round, so it costs two;
+    // reviews leave two slots spare for the repeats their misses earn.
+    // Counting every card as one let a round run to seventeen.
+    const cost = (id) => { const c = State.card(id); return !c || c.st === 'learning' || c.st === 'relearning' ? 2 : 1; };
+    let used = 0;
+    for (const id of due) {
+      if (used + cost(id) > ROUND - 2) break;
+      this.queue.push(id); used += cost(id);
+    }
     if (due.length < LOAD_CEILING) {
-      // A new question costs two slots: it is asked, then asked once more
-      // inside the round. Counting it as one let a round run to eighteen.
-      const room = Math.floor((ROUND - this.queue.length) / 2);
+      const room = Math.floor((ROUND - used) / 2);
       const fresh = ids.filter((id) => !State.card(id)).slice(0, Math.min(NEW_PER_ROUND, room));
       this.queue.push(...fresh);
     }
@@ -164,7 +172,12 @@ export class Round {
     this.seen = this.seen || new Map();
     const times = (this.seen.get(id) || 0) + 1;
     this.seen.set(id, times);
-    if (times < 2 && (card.st === 'learning' || card.st === 'relearning') && !this.queue.includes(id)) {
+    // And at most MAX_REPEATS a round: on a bad day every miss earns a repeat,
+    // and a round that GROWS the worse you're doing is the discouraging kind.
+    // A miss past the cap is simply due tomorrow.
+    this.repeats = this.repeats || 0;
+    if (times < 2 && this.repeats < MAX_REPEATS && (card.st === 'learning' || card.st === 'relearning') && !this.queue.includes(id)) {
+      this.repeats++;
       // Two to four questions later, varied: a fixed gap replayed the first
       // five questions in exactly the same order, which is recitation.
       const gap = 2 + Math.floor(Math.random() * (LEARN_STEP - 1));
