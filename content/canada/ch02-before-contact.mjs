@@ -87,15 +87,15 @@ export default [
   // ── the long past ──────────────────────────────────────────────────────
   {
     id: 'migration-story-served', kind: 'choice', lens: ['against-progress'],
-    prompt: 'Histories often open with migration routes into the Americas. Whose interest did the idea of Aboriginal peoples as recent, wandering arrivals serve?',
+    prompt: 'Histories often open with migration routes into the Americas. Whose interest did the idea of Indigenous peoples as recent, wandering arrivals serve?',
     answer: 'European empires — it justified taking the land',
-    options: ['Archaeologists, who needed funding for digs', 'The Aboriginal nations themselves, in treaty talks', 'No one; it was simply the best evidence of the day'],
+    options: ['Archaeologists, who needed funding for digs', 'The First Nations themselves, in treaty talks', 'No one; it was simply the best evidence of the day'],
     must: ['justified the dispossession'],
     ev: [{ p: 'pre-2.3-p1', q: 'This misperception, of course, served European empires in the Americas very well because it justified the dispossession of native peoples from their lands.' }],
   },
   {
     id: 'no-atlantic-roots', kind: 'choice', lens: ['against-progress'],
-    prompt: 'For centuries Europeans explained Aboriginal peoples as “Lost Tribes of Israel” or wayward Welshmen. What does the DNA show?',
+    prompt: 'For centuries Europeans explained Indigenous peoples as “Lost Tribes of Israel” or wayward Welshmen. What does the DNA show?',
     answer: 'No sign of migration from Europe or Africa before 1492',
     options: ['A small Norse contribution among nations of the northeast', 'A Welsh line of descent in the Ohio Valley', 'Evidence split evenly between Asia and Europe'],
     must: ['no genetic indication of migration from Europe or Africa'],
@@ -130,17 +130,18 @@ export default [
   // ── cities, villages, confederacies ────────────────────────────────────
   {
     id: 'cahokia-lisbon', kind: 'choice', lens: ['own-terms', 'against-progress'],
-    prompt: 'Cahokia, across the Mississippi from today’s St. Louis, held perhaps 30,000 people. Belshaw sets it beside which European city of its day?',
-    answer: 'Lisbon',
-    options: ['Paris', 'London', 'Rome'],
-    must: ['30,000', 'Lisbon'],
-    ev: [{ p: 'pre-2.4-p6', q: 'Cahokia was a walled complex made up of 120 mounds that housed perhaps as many as 30,000 people, making it a very large city for its day, certainly as large as contemporary Lisbon, Portugal.' }],
+    prompt: 'Cahokia’s 120 mounds, across the Mississippi from today’s St. Louis, took enormous labour. About how much earth did its builders move?',
+    answer: 'About 1.5 million cubic metres',
+    options: ['About 40,000 cubic metres', 'About 300,000 cubic metres', 'About 9 million cubic metres'],
+    must: ['1.5 million cubic metres of earth'],
+    ev: [{ p: 'pre-2.4-p6', q: 'Cahokia’s mounds took tremendous effort to build; labourers moved about 1.5 million cubic metres of earth in their construction.' },
+      { p: 'pre-2.4-p6', q: 'Cahokia was a walled complex made up of 120 mounds that housed perhaps as many as 30,000 people, making it a very large city for its day, certainly as large as contemporary Lisbon, Portugal.' }],
   },
   {
     id: 'cahokia-woodhenge', kind: 'choice', lens: ['own-terms'],
     prompt: 'What was Cahokia’s woodhenge — a circle of wooden posts — for?',
     answer: 'A calendar: it marked sunrise at solstices and equinoxes',
-    options: ['A rack for drying hides and meat in the sun', 'A display of trophies taken from defeated enemies', 'A fence around the chief’s household on the plaza'],
+    options: ['A rack for drying hides and meat in the sun', 'A frame for smoking fish over a fire', 'A fence around the chief’s household on the plaza'],
     must: ['solstices and equinoxes', 'calendar'],
     ev: [{ p: 'pre-2.4-p6', q: 'with poles in the henge marked to indicate the sun’s rising point on the solstices and equinoxes, making it a kind of community calendar or town-square clock.' }],
   },
@@ -181,7 +182,7 @@ export default [
     id: 'counting-coup', kind: 'choice', lens: ['own-terms'],
     prompt: 'In Plains warfare, what was the most highly valued coup?',
     answer: 'Touching a live enemy and living to tell about it',
-    options: ['Killing the enemy’s war leader in open battle', 'Capturing the enemy’s horses from their camp', 'Taking a scalp and bringing it home'],
+    options: ['Killing the enemy’s war leader in open battle', 'Capturing the enemy’s horses from their camp', 'Wounding the enemy from far away'],
     must: ['touch a live enemy'],
     ev: [{ p: 'pre-2.4-p12', q: 'The most highly valued coup was to touch a live enemy and live to tell about it.' }],
   },
@@ -229,6 +230,16 @@ export default [
       { p: 'pre-2.4-p25', q: 'Europeans would see these spaces as pastoral, natural, and available rather than anthropogenic — human-made — landscapes, the product of centuries of horticultural experimentation.' }],
   },
 
+  {
+    id: 'pacific-ranks', kind: 'choice', lens: ['against-progress', 'own-terms'],
+    prompt: 'How were many Pacific Northwest societies organised?',
+    answer: 'By rank: an elite, commoners and a slave class',
+    options: ['Without ranks — everyone was equal', 'Under one king for the whole coast', 'By age alone, the eldest ruling all'],
+    must: ['an elite, a commoner class, and a slave class'],
+    ev: [{ p: 'pre-2.4-p22', q: 'Society in Pacific Northwest groups was generally highly stratified and included, in many instances, an elite, a commoner class, and a slave class.' },
+      { p: 'pre-2.4-p23', q: 'The fact that slavery existed points to the competition that existed between coastal rivals.' }],
+  },
+
   // ── asked as contested ─────────────────────────────────────────────────
   {
     id: 'population-1400s', kind: 'choice', lens: ['contested'],
@@ -256,7 +267,7 @@ export default [
       { label: 'The Maritime Archaic begins trading along the Atlantic coast', at: -7000, when: 'c. 7000 BCE', ev: { p: 'pre-2.3-p24', q: 'They prospered from approximately 7000 BCE to 1500 BCE' } },
       { label: 'The Stl’atl’imx settle Keatley Creek above the Fraser', at: -2800, when: 'c. 2800 BCE', ev: { p: 'pre-2.4-p8', q: 'The Stl’atl’imx people who lived there from about 2800 BCE' } },
       { label: 'Cahokia rises on the Mississippi', at: 600, when: 'c. 600 CE', ev: { p: 'pre-2.4-p6', q: 'Cahokia (ca. 600-1400 CE)' } },
-      { label: 'French exploratory missions arrive', at: 1530, when: 'the 1530s', ev: { p: 'pre-2.4-p9', q: 'the arrival of French exploratory missions in the 1530s' } },
+      { label: 'The Haudenosaunee League comes together', at: 1450, when: 'c. 1450', ev: { p: 'pre-5.5-p5', q: 'came together sometime around 1450' } },
     ],
   },
 ];

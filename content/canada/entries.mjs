@@ -198,6 +198,15 @@ export default [
     ],
   },
 
+  {
+    id: 'casarabe', name: 'Casarabe culture', also: ['Llanos de Mojos', 'Cotoca', 'Landívar'], group: 'The continent’s other centres', kind: 'culture', when: 'c. 500–1400 CE',
+    match: 'Casarabe',
+    lead: [
+      { p: 'prumers2022-main-p1', q: 'The Casarabe culture developed here between around ad 500 and ad 1400, spreading over an area of 4,500 km2' },
+      { p: 'prumers2022-conclusions-p1', q: 'Our results put to rest arguments that western Amazonia was sparsely populated in pre-Hispanic times.' },
+    ],
+  },
+
   // ── newcomers ──────────────────────────────────────────────────────────
   {
     id: 'norse', name: 'Norse', also: ['Vikings', 'L’Anse aux Meadows'], group: 'Newcomers', kind: 'people',

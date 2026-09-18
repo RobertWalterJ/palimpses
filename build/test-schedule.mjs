@@ -16,6 +16,10 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const store = new Map();
 globalThis.localStorage = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k) };
 
+// Fully seeded: the scheduler shuffles and picks repeat gaps with
+// Math.random, so an unseeded run drifted between days 66 and 71.
+let mseed = 7;
+Math.random = () => ((mseed = (mseed * 16807) % 2147483647) / 2147483647);
 const S = await import('../app/js/schedule.js');
 const pack = JSON.parse(readFileSync(join(ROOT, 'app', 'data', 'canada.json'), 'utf8'));
 const ids = pack.questions.map((q) => q.id);
@@ -44,7 +48,7 @@ for (let day = 1; day <= DAYS; day++) {
     if (seen.has(id)) repeats++;
     seen.add(id);
     counts.set(id, (counts.get(id) || 0) + 1);
-    const c = S.State.answer(id, ok);
+    const c = S.State.answer(id, ok, { repeat: seen.has(id) && counts.get(id) > 1 });
     if (counts.get(id) === 1 && (c.st === 'learning' || c.st === 'relearning')) needsRepeat.add(id);
     round.after(id, c);
     asked++; if (ok) right++;

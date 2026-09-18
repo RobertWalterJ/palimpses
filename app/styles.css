@@ -167,11 +167,13 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .strip .rail::before { content: ''; position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: var(--line); border-radius: 2px; }
 .strip .dot { position: absolute; top: 6px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--surface); border: 2.5px solid var(--accent); }
 .strip .dot.contact { background: var(--ink-3); border-color: var(--ink-3); }
-.strip .labels { position: relative; height: 34px; }
+.strip .labels { position: relative; height: 66px; }
+.strip .labels span.lo { top: 32px; }
 .strip .caption { font: 450 .8rem/1.4 var(--ui); color: var(--ink-3); margin: 6px 0 0; text-align: center; }
 .strip .labels span { position: absolute; transform: translateX(-50%); font: 650 .74rem/1.15 var(--ui); color: var(--ink-2); white-space: nowrap; text-align: center; }
 .strip .labels span small { display: block; font-weight: 450; color: var(--ink-3); }
 .strip .labels span.r { transform: translateX(calc(-100% + 6px)); text-align: right; }
+.strip .labels span.l { transform: translateX(-6px); text-align: left; }
 
 /* ── surfaces ── */
 .card { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow); padding: 18px; }

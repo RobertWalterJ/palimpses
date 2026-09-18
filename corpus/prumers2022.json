@@ -1,0 +1,132 @@
+{
+ "source": {
+  "id": "prumers2022",
+  "title": "Lidar reveals pre-Hispanic low-density urbanism in the Bolivian Amazon",
+  "author": "Heiko Prümers, Carla Jaimes Betancourt, José Iriarte, Mark Robinson and Martin Schaich",
+  "publisher": "Nature 606, 325–328",
+  "year": 2022,
+  "licence": "CC BY 4.0",
+  "web": "https://www.nature.com/articles/s41586-022-04780-4",
+  "got": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9177426/fullTextXML"
+ },
+ "chapters": [
+  {
+   "n": 1,
+   "title": "Lidar reveals pre-Hispanic low-density urbanism in the Bolivian Amazon",
+   "sections": [
+    {
+     "id": "prumers2022-abstract",
+     "num": "1",
+     "title": "Abstract",
+     "url": "https://www.nature.com/articles/s41586-022-04780-4",
+     "paras": [
+      {
+       "id": "prumers2022-abstract-p1",
+       "under": null,
+       "key": false,
+       "text": "Archaeological remains of agrarian-based, low-density urbananism have been reported to exist beneath the tropical forests of Southeast Asia, Sri Lanka and Central America. However, beyond some large interconnected settlements in southern Amazonia, there has been no such evidence for pre-Hispanic Amazonia. Here we present lidar data of sites belonging to the Casarabe culture (around ad 500 to ad 1400) in the Llanos de Mojos savannah–forest mosaic, southwest Amazonia, revealing the presence of two remarkably large sites (147 ha and 315 ha) in a dense four-tiered settlement system. The Casarabe culture area, as far as known today, spans approximately 4,500 km2, with one of the large settlement sites controlling an area of approximately 500 km2. The civic-ceremonial architecture of these large settlement sites includes stepped platforms, on top of which lie U-shaped structures, rectangular platform mounds and conical pyramids (which are up to 22 m tall). The large settlement sites are surrounded by ranked concentric polygonal banks and represent central nodes that are connected to lower-ranked sites by straight, raised causeways that stretch over several kilometres. Massive water-management infrastructure, composed of canals and reservoirs, complete the settlement system in an anthropogenically modified landscape. Our results indicate that the Casarabe-culture settlement pattern represents a type of tropical low-density urbanism that has not previously been described in Amazonia."
+      }
+     ]
+    },
+    {
+     "id": "prumers2022-main",
+     "num": "2",
+     "title": "Main",
+     "url": "https://www.nature.com/articles/s41586-022-04780-4",
+     "paras": [
+      {
+       "id": "prumers2022-main-p1",
+       "under": null,
+       "key": false,
+       "text": "During the Late Holocene epoch, pre-Hispanic agriculturalists in the Llanos de Mojos, Bolivia, transformed the most-extensive, seasonally flooded, Amazonian savannahs (120,000 km2—roughly the size of England) into productive agricultural and aquacultural landscapes with an apparent diversity in sociopolitical organization, water-control systems and economic bases. The southeast sector of the Llanos de Mojos (our study region) benefits from soils that have advantageous agricultural properties because of the deposition of a mid-Holocene sedimentary lobe that creates a slightly more elevated topography than the surrounding Llanos de Mojos, which in turn, provides base-rich, Andean-derived, well-drained soils. The Casarabe culture developed here between around ad 500 and ad 1400, spreading over an area of 4,500 km2. Previous remote-sensing and field-reconnaissance analyses have revealed the presence of 189 large monumental sites (locally known as ‘lomas’), 273 smaller sites and 957 km of canals and causeways. Excavations and bioarchaeology indicate that monumental sites were not unoccupied ceremonial centres but inhabited throughout the year by agriculturalists who cultivated a diversity of crops, with maize (Zea mays) as the primary staple, and who met their protein needs by hunting and fishing."
+      },
+      {
+       "id": "prumers2022-main-p2",
+       "under": null,
+       "key": false,
+       "text": "Despite these important advances in the archaeology of the Casarabe culture, until now, we knew the extent and details of mounded architecture only from less than a handful of isolated sites because of the logistical difficulties of mapping sites in tropical forested settings. As a result, our understanding of the civic-ceremonial architecture of the major sites and the regional organization of the Casarabe-culture settlements has remained poorly understood. To remedy this situation, we conducted airborne laser mapping for six areas (10–85 km2) that have known concentrations of major settlements, totalling 204 km2."
+      },
+      {
+       "id": "prumers2022-main-p3",
+       "under": null,
+       "key": false,
+       "text": "Lidar (light detection and ranging) documented in detail the two large settlement sites and 24 smaller sites, of which only 15 were previously known to exist. The new data allowed us to define a four-tiered hierarchy classification of sites on the basis of (1) the dimensions of human-made base platforms; (2) the elaboration of the civic-ceremonial architecture on top of them; (3) the presence, number and total area enclosed by the outermost polygonal enclosures; (4) the number of constructed, straight causeways leading to the site; and (5) the scale of investment in water-management infrastructure, including systems of canals and water reservoirs (see for a detailed description of the architectural elements and a description of representative sites)."
+      }
+     ]
+    },
+    {
+     "id": "prumers2022-large-settlement-sites",
+     "num": "3",
+     "title": "Large settlement sites",
+     "url": "https://www.nature.com/articles/s41586-022-04780-4",
+     "paras": [
+      {
+       "id": "prumers2022-large-settlement-sites-p1",
+       "under": null,
+       "key": false,
+       "text": "Settlements that, at more than 100 ha in size, exceed most other settlements of the same culture many times over, are a very early and worldwide phenomenon. A formally agreed term for these sites is still missing, so in this Article we use the descriptive term ‘large settlement site’ when referring to the two most important sites in the region: Cotoca and Landívar. These two large settlement sites were already known, but their massive size and architectural elaboration became apparent only through the lidar survey."
+      },
+      {
+       "id": "prumers2022-large-settlement-sites-p2",
+       "under": null,
+       "key": false,
+       "text": "Both large settlement sites are surrounded by three concentric defensive structures consisting of a moat and rampart, some of which are constituted by double walls. At the Cotoca site, the inner defensive structures are only preserved in some sections, which may suggest that when the site grew, ramparts were adapted accordingly."
+      },
+      {
+       "id": "prumers2022-large-settlement-sites-p3",
+       "under": null,
+       "key": false,
+       "text": "The scale and elaboration of civic-ceremonial architecture are key aspects of the large settlement sites. Massive earthen platform buildings—some of which are U-shaped—and conical pyramids rise more than 20 m above the surrounding savannah on top of artificial terraces of up to 6 m in height. The orientation of the buildings that constitute the civic-ceremonial centres of the two large settlement sites is very uniform towards the north-northwest. This probably reflects a cosmological world view, which is also present in the orientation of extended burials of the Casarabe culture. The core area of Cotoca—as defined by the artificial terrace—is more than three times the size of the secondary centres. Earth to construct the artificial terraces and platform buildings was acquired, at least partially, from areas adjacent to the settlement’s centre. At Cotoca, for example, earth has been removed from a 50- to 80-m wide strip surrounding the central terrace. Today, these lower areas fill with water during the rainy season and are swampy during much of the dry season."
+      },
+      {
+       "id": "prumers2022-large-settlement-sites-p4",
+       "under": null,
+       "key": false,
+       "text": "Cotoca and Landívar were the primary centres of a regional settlement network connected by still-visible, straight causeways that radiate from these sites into the landscape for several kilometres. The presence of platforms (about 20 m by 25 m in size and up to 2 m high) located at strategic points of some of the causeways and in gaps in the intersection of causeways and polygonal enclosures suggest that access to these large settlement sites may have been restricted and controlled. Labour investment in the construction of the core area of the Landívar site (artificial terraces and platform buildings of the civic-ceremonial centre) is approximately 276,000 m3. The investment in site construction is even more impressive for Cotoca, for which the core area totals 570,690 m3. This latter figure is ten times the amount of earth moved for the construction of the Akapana (53,546 m3), the largest structure in Tiwanaku, capital of the eponymous expansive state that developed over several centuries in the Bolivian highlands, simultaneous with the Casarabe culture."
+      }
+     ]
+    },
+    {
+     "id": "prumers2022-low-density-urbanism-of-the-casarabe-culture",
+     "num": "4",
+     "title": "Low-density urbanism of the Casarabe culture",
+     "url": "https://www.nature.com/articles/s41586-022-04780-4",
+     "paras": [
+      {
+       "id": "prumers2022-low-density-urbanism-of-the-casarabe-culture-p1",
+       "under": null,
+       "key": false,
+       "text": "The large settlement sites Cotoca and Landívar were primary centres in the settlement network of the Casarabe culture. Secondary centres (El Cerrito and Salvatierra (sites 106, 186, 193 and 195)) are characterized by base platforms ranging from 2 to 6 ha and one still-visible polygonal enclosure that circumscribes areas between 21 and 41 ha. Civic-ceremonial architecture on top of the base platform consists of one to several platform mounds. Tertiary centres (sites 189 and 192) comprise a base platform of around 0.5 ha with a single platform situated on it and a circular ditch enclosing a maximum area of 2.5 ha. In addition to these built sites, there is a fourth tier composed of a diversity of small (average 0.34 ha) elevated sites (known as forest islands) that were probably used as temporary campsites or specialized activity sites. A potential fifth tier of small hamlets possibly exists without mounded architecture that cannot be captured by lidar."
+      },
+      {
+       "id": "prumers2022-low-density-urbanism-of-the-casarabe-culture-p2",
+       "under": null,
+       "key": false,
+       "text": "Lidar also reveals a clear correlation between the height of civic-ceremonial architecture and the size of the base platform. Within these broad patterns, the civic-ceremonial architecture within each tier is rather variable. This could be related to chronology as well as the function of the sites—a matter that will need to be clarified with future studies."
+      },
+      {
+       "id": "prumers2022-low-density-urbanism-of-the-casarabe-culture-p3",
+       "under": null,
+       "key": false,
+       "text": "At the regional level, the lidar data combined with previous archaeological-reconnaissance and remote-sensing data show that the Casarabe culture has a highly integrated, continuous and dense settlement system. Across the 4,500 km2 with documented Casarabe settlement, there are an average of 10 sites (including primary to tertiary centres) within a 10-km radius of each settlement (that is, within a 2-h walk). Density is higher in the eastern sector, with an average distance of 1,800–3,970 m between settlements. Within this distribution, sites tend to be spatially clustered, interconnected by causeways and canals forming clusters encompassing areas ranging from 100 km2 to more than 500 km2. Lower-tiered sites typically connect to higher-tier sites, with no formal causeways directly connecting the lower-tiered sites to each other. The large settlement Cotoca is the centre of an area of approximately 500 km2, half forest and half savannah, which includes 18 other monumental sites, which consist of three secondary centres (sites 186, 193 and 195), two tertiary centres (sites 187, 189 and 192), and clusters of small fourth-tier sites to the southeast and the west. The central role of Cotoca as a primary site is also underlined by the impressive system of canals and causeways that radiate from the base platform in all of the cardinal directions, connecting with lower-tier sites, the Ibare River to the south, and lakes to the east. A 7-km canal brought water from Laguna San José to Cotoca, indicating the scale of landscape management and labour mobilization. Spatial centrality was not a necessity for the location of the principal sites, with primary sites also appearing on the periphery of site clusters. In the absence of a primary centre, secondary centres could function as the central node for the lower-tiered sites in the region. For example, the secondary centre El Cerrito (site 33) appears to be the centre of an area of around 100 km2 and is surrounded by low-tiered settlements (sites 39, 41 and 106) connected to the core by causeways."
+      }
+     ]
+    },
+    {
+     "id": "prumers2022-conclusions",
+     "num": "5",
+     "title": "Conclusions",
+     "url": "https://www.nature.com/articles/s41586-022-04780-4",
+     "paras": [
+      {
+       "id": "prumers2022-conclusions-p1",
+       "under": null,
+       "key": false,
+       "text": "Our results put to rest arguments that western Amazonia was sparsely populated in pre-Hispanic times. The architectural layout of large settlement sites of the Casarabe culture indicates that the inhabitants of this region created a new social and public landscape through monumentality. We propose that the Casarabe-culture settlement system is a singular form of tropical agrarian low-density urbanism—to our knowledge, the first known case for the entire tropical lowlands of South America. The scale, monumentality, labour involved in the construction of the civic-ceremonial architecture and water-management infrastructure, and the spatial extent of settlement dispersal compare favourably to Andean cultures and are of a scale far beyond the sophisticated, interconnected settlements of southern Amazonia, which lack monumental civic-ceremonial architecture. As such, the data contribute to the discussion of the global wealth of early urban diversity, and will help to redefine the categories used for past and present Amazonian societies."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

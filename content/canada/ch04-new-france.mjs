@@ -79,7 +79,7 @@ export default [
   {
     id: 'salt-marshes', kind: 'choice', lens: ['own-terms'],
     prompt: 'The Acadiens drained salt marshes to make pasture for their cattle. What did that let them avoid?',
-    answer: 'Taking Aboriginal land',
+    answer: 'Taking Wabanaki land',
     options: ['Paying tithes to the Church', 'Trading with New England', 'Building forts on the coast'],
     must: ['without, importantly, alienating Aboriginal land'],
     ev: [{ p: 'pre-4.2-p9', q: 'the draining of the salt marshes, a distinctively Acadien practice that created coastal and river-mouth pasture land on which to raise substantial herds of cattle — without, importantly, alienating Aboriginal land.' }],
@@ -96,7 +96,7 @@ export default [
   },
   {
     id: 'no-permission', kind: 'choice', lens: ['own-terms', 'economy'],
-    prompt: 'Why did the young colony depend on Aboriginal traders for its furs?',
+    prompt: 'Why did the young colony depend on Indigenous traders for its furs?',
     answer: 'It lacked the people, and the nations’ permission, to trap',
     options: ['French law forbade its settlers to trap', 'The beaver lived only in the far north', 'The Church banned trapping as a sin'],
     must: ['neither the manpower nor the permission of the local First Nations to engage directly in trapping'],
@@ -104,7 +104,7 @@ export default [
   },
   {
     id: 'renewal', kind: 'choice', lens: ['own-terms', 'economy'],
-    prompt: 'Europeans often assumed a treaty or pact was made once and for all. What did Aboriginal peoples expect instead?',
+    prompt: 'Europeans often assumed a treaty or pact was made once and for all. What did the nations expect instead?',
     answer: 'Regular renewal, with gifts and declarations of loyalty',
     options: ['A written copy for each nation to keep', 'A fixed price set for every year after', 'Nothing more once the pact was agreed'],
     must: ['put an emphasis on renewal and reaffirmation', 'expected gifts and declarations of loyalty'],
@@ -114,7 +114,7 @@ export default [
     id: 'consensus', kind: 'choice', lens: ['own-terms'],
     prompt: 'How did Iroquoian councils try to reach decisions?',
     answer: 'By consensus from discussion — not always binding',
-    options: ['By the order of a hereditary king', 'By a vote of the richest families', 'By the ruling of the eldest priest'],
+    options: ['By a single ruler’s command', 'By a vote of the richest families', 'By the ruling of the eldest priest'],
     must: ['efforts were made to develop consensus arising from discussion', 'not always binding on all parties'],
     ev: [{ p: 'pre-4.4-p1', q: 'Even when councils, which dominated the longhouse societies, reached decisions, these were not always binding on all parties. In Iroquoian societies in particular, efforts were made to develop consensus arising from discussion' }],
   },
@@ -205,7 +205,7 @@ export default [
   {
     id: 'aboriginal-world', kind: 'choice', lens: ['own-terms', 'against-progress'],
     prompt: 'Across much of Louisiana and the Pays d’en Haut, what did French settlers find themselves part of?',
-    answer: 'An Aboriginal world more than a European one',
+    answer: 'An Indigenous world more than a European one',
     options: ['A tightly run province of the French Crown', 'A Spanish trading empire run from Mexico', 'An English market economy based in Boston'],
     must: ['integrated less into a European system and more into an Aboriginal world'],
     ev: [{ p: 'pre-4.8-p8', q: 'French settlers and farmers soon found themselves integrated less into a European system and more into an Aboriginal world.' }],
@@ -218,6 +218,15 @@ export default [
     must: ['puts the lie to the myth of unqualified positive relations', 'Only a few hundred Meskwaki survived'],
     ev: [{ p: 'pre-4.9-p4', q: 'Only a few hundred Meskwaki survived the Fox Wars.' },
       { p: 'pre-4.9-p5', q: 'First, it puts the lie to the myth of unqualified positive relations between the French and their Aboriginal neighbours.' }],
+  },
+
+  {
+    id: 'fox-wars-allies', kind: 'choice', lens: ['against-progress'],
+    prompt: 'Could the French have waged the Fox Wars on the Meskwaki alone?',
+    answer: 'No — it needed their Indigenous allies’ support',
+    options: ['Yes — French troops needed no help', 'Yes — the allies stayed neutral', 'No — the English did the fighting'],
+    must: ['could not come to pass without the support of the Aboriginal allies'],
+    ev: [{ p: 'pre-4.9-p5', q: 'It is important to note that, whatever Beauharnois might have wanted, it could not come to pass without the support of the Aboriginal allies.' }],
   },
 
   // ── in order ───────────────────────────────────────────────────────────

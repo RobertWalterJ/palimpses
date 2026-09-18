@@ -23,9 +23,9 @@ const Q = new Map();
 
 const LENS = {
   'own-terms': ['On its own terms', 'A society described by what it was, not by what it lacked.'],
-  'against-progress': ['Against the progress story', 'The “primitive, unchanging, new world” story — and what the evidence says instead.'],
+  'against-progress': ['Beyond the myths', 'Myths in either direction — “primitive and unchanging”, or “peaceful and untouched” — set against the evidence.'],
   economy: ['Exchange and obligation', 'Trade, currency, gifts and what they bound people to.'],
-  record: ['How the past was kept', 'Oral tradition, scrolls, wampum, landscape: the records that exist.'],
+  record: ['How the past is kept', 'Oral tradition, scrolls, wampum, landscape: the records that exist.'],
   contested: ['Still argued', 'The book itself says this is uncertain, so the question does too.'],
 };
 
@@ -79,22 +79,25 @@ function hero() {
   const pool = shuffle(passages()).slice(0, 3);
   const under = h('div', { class: 'undertext', 'aria-hidden': 'true' }, pool.map((p) => h('p', {}, p.quote)));
   // The pack's own centres on a line of years, from the first people here
-  // ("at least 14,000 years ago", pre-2.2-p6) to contact at the right.
-  const span = [-12000, 1600];
-  const x = (y) => ((y - span[0]) / (span[1] - span[0])) * 100;
+  // ("at least 14,000 years ago", pre-2.2-p6) to the Haudenosaunee League,
+  // c. 1450. It ends on a nation's own founding, not on Europe's arrival.
+  // Fourteen thousand years on a linear line would crowd everything after
+  // 1 CE into the last tenth, so the scale is compressed (log of years
+  // before 1500) and the caption says so.
+  const x = (y) => 100 - 100 * Math.log(1 + (1500 - y) / 100) / Math.log(1 + 13500 / 100);
   const centres = [
     { name: 'Maritime Archaic', when: 'c. 7000 BCE', at: -7000, go: () => openEntry('maritime-archaic') },
     { name: 'Keatley Creek', when: 'c. 2800 BCE', at: -2800, go: () => { const w = sectionOf('pre-2.4-p8'); if (w) openReader(w.section.id, 'pre-2.4-p8'); } },
     { name: 'Cahokia', when: 'c. 600 CE', at: 600, go: () => openEntry('mississippian') },
+    { name: 'Haudenosaunee League', when: 'c. 1450', at: 1450, go: () => openEntry('haudenosaunee') },
   ];
   const last = centres.length - 1;
   const strip = h('div', { class: 'strip' },
     h('div', { class: 'rail' },
-      centres.map((c) => h('button', { class: 'dot', style: `left:${x(c.at)}%;cursor:pointer;padding:0`, 'aria-label': `${c.name}, ${c.when} — open`, title: c.name, onclick: c.go })),
-      h('span', { class: 'dot contact', style: 'left:calc(100% - 6px)', title: 'Contact, 1530s', 'aria-hidden': 'true' })),
+      centres.map((c) => h('button', { class: 'dot', style: `left:${x(c.at)}%;cursor:pointer;padding:0`, 'aria-label': `${c.name}, ${c.when} — open`, title: c.name, onclick: c.go }))),
     h('div', { class: 'labels', 'aria-hidden': 'true' },
-      ...centres.map((c, i) => h('span', { class: i === last ? 'r' : '', style: `left:${i === last ? 100 : x(c.at)}%` }, c.name, h('small', {}, c.when)))),
-    h('p', { class: 'caption' }, 'Centres before contact, on a line of years from the first people here, 14,000 years ago, to the 1530s.'));
+      ...centres.map((c, i) => h('span', { class: [i === last ? 'r' : i === 0 ? 'l' : '', i % 2 ? 'lo' : ''].join(' ').trim(), style: `left:${i === last ? 100 : x(c.at)}%` }, c.name, h('small', {}, c.when)))),
+    h('p', { class: 'caption' }, 'Centres of their own, from the first people here, 14,000 years ago, to the League. The deep past is squeezed to fit: each step left covers more years.'));
   return h('header', { class: 'hero' }, under,
     h('h1', { class: 'wordmark' }, 'Palim', h('span', {}, 'psest')),
     h('p', { class: 'tagline' }, 'History from more than one centre. Every answer shows where it came from.'),
@@ -135,7 +138,7 @@ function homeScreen() {
       : h('section', { class: 'card stack' }, h('p', { class: 't-title' }, 'You’re up to date.'), next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null),
     first ? h('section', { class: 'card stack' },
       h('p', { class: 't-label' }, 'How it works'),
-      h('p', { class: 't-body' }, 'Each question comes from John Douglas Belshaw’s open textbook on Canadian history. After you answer, you see the exact passage — and you can read the whole section, or have it read to you.'),
+      h('p', { class: 't-body' }, 'Each question comes from an open source: John Douglas Belshaw’s textbooks on Canadian history, and new archaeology published openly. After you answer, you see the exact passage — and you can read the whole section, or have it read to you.'),
       h('p', { class: 't-body' }, h('b', {}, 'Met'), ' means you’ve seen a question. ', h('b', {}, 'Known'), ' means you still had it after three weeks away. There’s no timer anywhere.')) : null,
     !first ? h('section', { class: 'card ring-row' }, ring(c, total),
       h('div', { class: 'stack', style: 'gap:10px' },
@@ -313,7 +316,7 @@ function orderScreen(q) {
 }
 
 function grade(q, ok) {
-  const c = State.answer(q.id, ok, { practice: round.practice });
+  const c = State.answer(q.id, ok, { practice: round.practice, repeat: round.isRepeat(q.id) });
   round.after(q.id, c);
   tally.n++;
   if (ok) { tally.right++; tally.streak++; S.right(tally.streak); } else { tally.streak = 0; tally.missed.push(q.id); S.wrong(); }
@@ -473,8 +476,15 @@ function settingsScreen() {
       h('p', { class: 't-label' }, 'Sources'),
       h('p', { class: 't-body' }, 'Every question is built from openly licensed text and checked, word for word, against the paragraph it cites before it can ship.'),
       h('p', { class: 't-body' }, 'John Douglas Belshaw, ', h('a', { href: 'https://opentextbc.ca/preconfederation/', target: '_blank', rel: 'noopener' }, 'Canadian History: Pre-Confederation'),
-        ' (BCcampus, 2015) and ', h('a', { href: 'https://opentextbc.ca/postconfederation/', target: '_blank', rel: 'noopener' }, 'Canadian History: Post-Confederation'), ' (BCcampus, 2016). CC BY 4.0.'),
-      h('p', { class: 't-small' }, 'This app’s questions: CC BY-NC-SA 4.0. Not for sale. There’s no timer anywhere in it.')),
+        ' (BCcampus, 2015) and ', h('a', { href: 'https://opentextbc.ca/postconfederation/', target: '_blank', rel: 'noopener' }, 'Canadian History: Post-Confederation'),
+        ' (BCcampus, 2016), with sections by contributing historians credited where they appear. Used under ',
+        h('a', { href: 'https://creativecommons.org/licenses/by/4.0/', target: '_blank', rel: 'noopener' }, 'CC BY 4.0'), '.'),
+      h('p', { class: 't-body' }, 'Heiko Prümers, Carla Jaimes Betancourt, José Iriarte, Mark Robinson and Martin Schaich, ',
+        h('a', { href: 'https://www.nature.com/articles/s41586-022-04780-4', target: '_blank', rel: 'noopener' }, 'Lidar reveals pre-Hispanic low-density urbanism in the Bolivian Amazon'),
+        ', Nature 606 (2022). Used under ', h('a', { href: 'https://creativecommons.org/licenses/by/4.0/', target: '_blank', rel: 'noopener' }, 'CC BY 4.0'), '.'),
+      h('p', { class: 't-small' }, 'Adapted: footnotes and citation markers moved or removed; figures, image credits and reading lists left out; text split into sentences for reading aloud. Quoted text stays under its own licence. Texts as retrieved 18 September 2026.'),
+      h('p', { class: 't-small' }, 'This app’s own questions and explanations: ',
+        h('a', { href: 'https://creativecommons.org/licenses/by-nc-sa/4.0/', target: '_blank', rel: 'noopener' }, 'CC BY-NC-SA 4.0'), '. Not for sale. There’s no timer anywhere in it.')),
   ];
 }
 route('settings', settingsScreen);

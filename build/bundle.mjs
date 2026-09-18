@@ -21,7 +21,8 @@ for (const f of readdirSync(join(ROOT, 'corpus'))) {
   const book = JSON.parse(readFileSync(join(ROOT, 'corpus', f), 'utf8'));
   const cite = `${book.source.author}, ${book.source.title} (${book.source.publisher}, ${book.source.year}), ${book.source.licence}`;
   for (const c of book.chapters) for (const s of c.sections) for (const p of s.paras) {
-    PARA.set(p.id, { text: p.text, sec: `${s.num} ${s.title}`, url: s.url, cite });
+    // A section with its own author is credited to them, within the book.
+    PARA.set(p.id, { text: p.text, sec: `${s.num} ${s.title}`, url: s.url, cite: s.author ? `${s.author}, in ${cite}` : cite });
     CHAPTER_OF.set(p.id, c);
   }
 }
@@ -40,6 +41,7 @@ const CHAPTER_TITLE = {
   'ch02-before-contact': 'Before contact',
   'ch05-contact': 'Contact, on the nations’ terms',
   'ch04-new-france': 'New France, inside other worlds',
+  'ch03-amazonia': 'Amazonia, a centre of its own',
 };
 
 const evOut = (e) => {
@@ -83,7 +85,7 @@ for (const pack of PACKS) {
 function writeLibrary(pack, entries) {
   const books = [];
   const glossary = [];
-  for (const f of ['pre.json', 'post.json']) {
+  for (const f of ['pre.json', 'post.json', 'prumers2022.json']) {
     const book = JSON.parse(readFileSync(join(ROOT, 'corpus', f), 'utf8'));
     const src = book.source;
     books.push({
@@ -91,7 +93,7 @@ function writeLibrary(pack, entries) {
       chapters: book.chapters.map((c) => ({
         n: c.n, title: c.title,
         sections: c.sections.map((s) => ({
-          id: s.id, num: s.num, title: s.title, url: s.url,
+          id: s.id, num: s.num, title: s.title, url: s.url, author: s.author || null,
           paras: s.paras.filter((p) => p.under !== 'Key Terms').map((p) => ({ id: p.id, t: p.text, h: p.under || null, k: p.key ? 1 : 0, ...(p.notes ? { n: p.notes } : {}) })),
         })).filter((s) => s.paras.length),
       })),

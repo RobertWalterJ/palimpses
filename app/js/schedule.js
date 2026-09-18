@@ -24,7 +24,8 @@ export const DAY = 864e5;
 const LEARN_STEP = 4;                // questions later, inside the round
 const NEW_PER_ROUND = 5;
 const ROUND = 12;                    // slots, counting the in-round repeats
-const MAX_REPEATS = 4;                // in-round second looks, per round
+const MAX_REPEATS = 4;
+const NEW_PER_DAY = 15;               // new questions per day, across all rounds                // in-round second looks, per round
 const LOAD_CEILING = 25;             // due reviews at which nothing new is introduced
 
 let clock = () => Date.now();
@@ -41,10 +42,20 @@ const newCard = () => ({ iv: 0, e: EASE_START, reps: 0, lapses: 0, due: 0, last:
 
 export function cardState(c) {
   if (!c || c.st === 'new') return 'unseen';
-  if (c.iv >= SECURE_AT) return 'secure';
-  if (c.iv >= KNOWN_AT && c.ok) return 'known';
+  // KNOWN means what the app tells the learner: you answered right after at
+  // least three weeks away (`proven`, in days). It used to mean "the next check
+  // is three weeks out", which is set right after a ten-day gap — the claim
+  // ran ahead of the evidence (learning audit).
+  if (c.st === 'review' && c.ok && (c.proven || 0) >= SECURE_AT) return 'secure';
+  if (c.st === 'review' && c.ok && (c.proven || 0) >= KNOWN_AT) return 'known';
   return 'met';
 }
+// Settled but not yet proven: in review, last answer right, next check a week
+// or more out. Shown as progress between "met" and "known", so the first three
+// weeks are not a flat line.
+export const isHolding = (c) => !!c && c.st === 'review' && c.ok && c.iv >= 7 && cardState(c) === 'met';
+
+const tomorrow = () => { const d = new Date(now()); return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1, 4, 0).getTime(); };
 
 function blank() {
   return {
@@ -69,14 +80,29 @@ export const State = {
   save() { try { localStorage.setItem(KEY, JSON.stringify(this.data)); } catch { /* nothing to do */ } },
   card(id) { return this.data.cards[id] || null; },
 
-  answer(id, right, { practice = false } = {}) {
+  answer(id, right, { practice = false, repeat = false } = {}) {
+    const day = this.data.days[dayKey()] || (this.data.days[dayKey()] = { n: 0, right: 0 });
+    // Practice changes nothing about the card — not its status, not its
+    // streak, not its "last seen". A practice miss used to knock a known card
+    // back to "met" (both audits). It is logged on its own.
+    if (practice) {
+      day.pn = (day.pn || 0) + 1; if (right) day.pr = (day.pr || 0) + 1;
+      this.save();
+      return this.data.cards[id] || newCard();
+    }
     const c = this.data.cards[id] || newCard();
+    const wasReview = c.st === 'review';
+    const gapDays = c.last ? (now() - c.last) / DAY : 0;
+    // The daily log, by kind of answer, so accuracy can be read against the
+    // 80–85% target: first-try reviews only, not new cards or in-round repeats.
+    day.n++; if (right) day.right++;
+    if (wasReview && !repeat) { day.rn = (day.rn || 0) + 1; if (right) day.rr = (day.rr || 0) + 1; }
+    if (c.st === 'new') day.newN = (day.newN || 0) + 1;
+
     c.last = now();
     c.ok = right;
     c.run = right ? c.run + 1 : 0;
-    const d = this.data.days[dayKey()] || (this.data.days[dayKey()] = { n: 0, right: 0 });
-    d.n++; if (right) d.right++;
-    if (practice) { this.data.cards[id] = c; this.save(); return c; }
+    if (right && wasReview) c.proven = Math.max(c.proven || 0, Math.floor(gapDays));
 
     if (right) {
       c.reps++;
@@ -84,7 +110,10 @@ export const State = {
         c.st = 'learning';
         c.step++;
         if (c.step > 1) { c.st = 'review'; c.iv = 1; c.due = now() + DAY; c.step = 0; }
-        else c.due = now();                         // the round asks it once more
+        // Its second look happens inside this round (Round.after); after that
+        // it waits for TOMORROW, not for the next round the same evening —
+        // same question, same options, minutes later, is recognition.
+        else c.due = tomorrow();
       } else if (c.st === 'relearning') {
         c.iv = Math.max(1, Math.round((c.ivBefore || c.iv || 1) * 0.35));
         c.st = 'review';
@@ -96,14 +125,14 @@ export const State = {
       }
     } else {
       if (c.st === 'review' || c.st === 'relearning') {
-        if (c.st === 'review') { c.ivBefore = c.iv; c.lapses++; c.lapseRep = c.reps; }
+        if (c.st === 'review') { c.ivBefore = c.iv; c.lapses++; c.lapseRep = c.reps; c.proven = 0; }
         c.st = 'relearning';
         c.e = clamp(c.e - 0.25, EASE_MIN, EASE_MAX);
       } else {
         c.st = 'learning';
         c.step = 0;
       }
-      c.due = now();
+      c.due = tomorrow();
     }
     this.data.cards[id] = c;
     this.save();
@@ -151,13 +180,20 @@ export class Round {
       if (used + cost(id) > ROUND - 2) break;
       this.queue.push(id); used += cost(id);
     }
+    // Selected by due date, then SHUFFLED: cards learned together fall due
+    // together, and replaying them in the book's order turns order into a cue.
+    this.queue = shuffle(this.queue);
     if (due.length < LOAD_CEILING) {
-      const room = Math.floor((ROUND - used) / 2);
+      // At most NEW_PER_DAY new a day: five "another round"s used to mean
+      // twenty-five new questions and a wall of reviews tomorrow.
+      const newToday = State.data.days[dayKey()]?.newN || 0;
+      const room = Math.max(0, Math.min(Math.floor((ROUND - used) / 2), NEW_PER_DAY - newToday));
       const fresh = ids.filter((id) => !State.card(id)).slice(0, Math.min(NEW_PER_ROUND, room));
       this.queue.push(...fresh);
     }
   }
   get empty() { return this.queue.length === 0; }
+  isRepeat(id) { return (this.seen?.get(id) || 0) > 0; }
   next() { this.asked++; return this.queue.shift() || null; }
   // After an answer: a card still in its learning step (or just missed) comes
   // back a few questions later, once.

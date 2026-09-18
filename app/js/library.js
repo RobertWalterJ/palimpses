@@ -14,6 +14,11 @@ import { Reader, sentences } from './reader.js';
 import { setRate, getRate } from './speech.js';
 import { State } from './schedule.js';
 
+const LICENCE_URL = {
+  'CC BY 4.0': 'https://creativecommons.org/licenses/by/4.0/',
+  'CC BY-NC-SA 4.0': 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+};
+
 let LIB = null;
 let WHERE = null;           // para id → { book, chapter, section, para }
 let TERMS = null;           // lowercased term → [glossary rows]
@@ -212,8 +217,14 @@ function readerScreen({ sectionId, paraId, quotes = [] }) {
       h('h1', { class: 't-title' }, `${section.num} ${section.title}`),
       h('p', { class: 't-small' }, 'Tap ', h('b', {}, '▶'), ' to hear it read, sentence by sentence. Dotted words have a definition — tap one.')),
     body,
-    h('p', { class: 'cite' }, `${book.author}, ${book.title} (${book.year}). ${book.licence}. `,
-      h('a', { href: section.url, target: '_blank', rel: 'noopener' }, 'This section on the publisher’s site')),
+    // CC BY 4.0 asks for four things: who, what, the licence (linked), and
+    // what was changed. Sections with their own author are credited to them.
+    h('p', { class: 'cite' },
+      section.author ? `${section.author}, in ` : '',
+      `${book.author}, ${book.title} (${book.year}). Used under `,
+      h('a', { href: LICENCE_URL[book.licence] || '#', target: '_blank', rel: 'noopener' }, book.licence), '. ',
+      'Adapted for reading here: footnotes moved to Notes; figures, image credits and reading lists left out; text split into sentences. ',
+      h('a', { href: section.url, target: '_blank', rel: 'noopener' }, 'The original section')),
     h('div', { class: 'row' },
       prev ? h('button', { class: 'btn', onclick: () => show('reader', readerScreen, { arg: { sectionId: prev }, replace: true }) }, '← Previous') : null,
       h('span', { class: 'spacer' }),
