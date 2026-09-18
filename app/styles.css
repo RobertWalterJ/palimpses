@@ -159,7 +159,15 @@ a { color: var(--accent); text-underline-offset: 3px; }
   background: linear-gradient(95deg, var(--accent), var(--accent-2));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.whose { display: flex; margin: 2px auto 0; font-size: .92rem; }
+.foot-links { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 6px 0 10px; }
+.foot-links .disclose { font-size: .92rem; }
+/* Today's voice: the one card on Home in the reading face, on the soft tint,
+   with the accent's quotation mark — it should feel like a page, not a tile. */
+.card.voice-day { background: var(--accent-soft); box-shadow: none; display: grid; gap: 10px; }
+.voice-day .vq { margin: 0; font: 500 1.24rem/1.55 var(--read); color: var(--ink); text-wrap: pretty; }
+.voice-day .vq::before { content: '“'; display: block; font: 700 2.6rem/.7 var(--display); color: var(--accent); margin-bottom: -2px; }
+.voice-day .vwho { margin: 0; font: 650 .98rem/1.35 var(--ui); color: var(--ink); }
+.voice-day .t-small { margin: 0; }
 .voice { padding: 14px 0; border-top: 1px solid var(--line); }
 .voice .quote { margin: 0; }
 .tagline { font: 450 1.02rem/1.45 var(--ui); color: var(--ink-2); max-width: 31ch; margin: 10px auto 0; text-wrap: balance; }

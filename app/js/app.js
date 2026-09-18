@@ -107,12 +107,15 @@ function passages() {
 function dayIndex(n) { let x = 0; for (const ch of dayKey()) x = (x * 31 + ch.charCodeAt(0)) >>> 0; return x % n; }
 
 function hero() {
-  // Three voices from the past, re-drawn every visit, faint and cropped.
-  // Each is verified against its source, and "Whose voices?" says who.
+  // Three voices from the past, faint and cropped — three different people,
+  // none of them today's voice, changing once a day.
   const voices = PACK.voices?.length ? PACK.voices : passages();
-  // Three different people, not three lines from one speaker.
+  const today = todaysVoice();
+  const i0 = dayIndex(voices.length);
   const pool = [];
-  for (const v of shuffle(voices)) if (pool.length < 3 && !pool.some((p) => p.who && p.who === v.who)) pool.push(v);
+  for (const v of [...voices.slice(i0 + 1), ...voices.slice(0, i0 + 1)]) {
+    if (pool.length < 3 && v !== today && !(today && v.who === today.who) && !pool.some((p) => p.who && p.who === v.who)) pool.push(v);
+  }
   const under = h('div', { class: 'undertext', 'aria-hidden': 'true' }, pool.map((p) => h('p', {}, p.quote)));
   // The pack's own centres on a line of years, from the first people here
   // ("at least 14,000 years ago", pre-2.2-p6) to the Haudenosaunee League,
@@ -137,28 +140,45 @@ function hero() {
   return h('header', { class: 'hero' }, under,
     h('h1', { class: 'wordmark' }, 'Palim', h('span', {}, 'psest')),
     h('p', { class: 'tagline' }, 'History has many voices.'),
-    PACK.voices?.length ? h('button', { class: 'disclose whose', type: 'button', onclick: () => { S.press(); voicesSheet(pool); } }, 'Whose voices?') : null,
     strip);
 }
 
-// The voices behind the hero, named: who spoke, who wrote it down, where it
-// is. The three in the background now come first.
-function voicesSheet(shown) {
-  const rest = PACK.voices.filter((v) => !shown.includes(v));
+// ── voices ──────────────────────────────────────────────────────────────
+// One a day on Home; all of them, named, on their own screen at the foot of
+// Home — the details are there to browse, not in the way.
+function todaysVoice() {
+  const v = PACK.voices || [];
+  return v.length ? v[(dayIndex(997) * 7) % v.length] : null;
+}
+function voiceSource(v) {
+  return v.p && sectionOf(v.p)
+    ? h('button', { class: 'disclose', style: 'padding:2px 0', onclick: () => openReader(sectionOf(v.p).section.id, v.p, [v.quote]) }, `Read it in Belshaw — §${v.sec}`)
+    : h('p', { class: 'cite' }, h('a', { href: v.url, target: '_blank', rel: 'noopener' }, 'The scanned book'), ' — ', v.cite);
+}
+function voiceOfTheDay() {
+  const v = todaysVoice();
+  if (!v) return null;
+  return h('section', { class: 'card voice-day' },
+    h('div', { class: 'src-head' }, h('p', { class: 't-label' }, 'Today’s voice'), h('span', { class: 'spacer' }), sayBtn(v.quote, 'Read today’s voice aloud')),
+    h('blockquote', { class: 'vq' }, v.quote),
+    h('p', { class: 'vwho' }, v.who),
+    h('p', { class: 't-small' }, `${v.when[0].toUpperCase() + v.when.slice(1)}. ${v.recorded}.${v.note ? ' ' + v.note : ''}`));
+}
+function voicesScreen() {
+  const today = todaysVoice();
   const card = (v) => h('section', { class: 'voice stack' },
     h('div', { class: 'q-head' }, h('blockquote', { class: 'quote' }, v.quote), sayBtn(v.quote, 'Read these words aloud')),
     h('p', { class: 't-body' }, h('b', {}, v.who), `, ${v.when}.`),
     h('p', { class: 't-small' }, v.recorded + '.' + (v.note ? ' ' + v.note : '')),
-    v.p && sectionOf(v.p)
-      ? h('button', { class: 'disclose', style: 'padding:2px 0', onclick: () => { closeSheet(); openReader(sectionOf(v.p).section.id, v.p, [v.quote]); } }, `Read it in Belshaw — §${v.sec}`)
-      : h('p', { class: 'cite' }, h('a', { href: v.url, target: '_blank', rel: 'noopener' }, 'The scanned book'), ' — ', v.cite));
-  sheet(h('h2', { class: 't-title' }, 'Whose voices?'),
-    h('p', { class: 't-body', style: 'margin:6px 0 4px' }, 'People of the past in their own words, checked word for word against the source. Most Indigenous words from before 1800 survive only as a European wrote them down; each says who.'),
-    h('p', { class: 't-label', style: 'margin-top:14px' }, 'Behind the title now'),
-    ...shown.map(card),
-    rest.length ? h('p', { class: 't-label', style: 'margin-top:14px' }, 'More voices') : null,
-    ...rest.map(card));
+    voiceSource(v));
+  return [
+    h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'Voices')),
+    h('p', { class: 't-body' }, 'People of the past in their own words, checked word for word against the source. Most Indigenous words from before 1800 survive only as a European wrote them down; each says who.'),
+    h('section', { class: 'card' }, today ? card(today) : null,
+      ...PACK.voices.filter((v) => v !== today).map(card)),
+  ];
 }
+route('voices', voicesScreen);
 
 function ring(c, total) {
   const R = 40, C = 2 * Math.PI * R;
@@ -179,8 +199,6 @@ function homeScreen() {
   const run = State.runOfDays();
   const first = c.unseen === total;
   const next = !due && !fresh ? State.nextDue(IDS) : null;
-  const pool = passages();
-  const pod = pool[dayIndex(pool.length)];
 
   const mode = (cls, icon, title, sub, go) => h('button', { class: `mode ${cls}`, onclick: () => { S.press(); go(); } },
     h('span', { class: 'ic', html: ICON[icon] }), h('span', {}, h('b', {}, title), h('span', { class: 't-small' }, sub)),
@@ -192,6 +210,7 @@ function homeScreen() {
     hero(),
     due || fresh ? mode('primary', 'learn', due ? 'Revisit and learn' : 'Learn', learnSub, () => play(false))
       : h('section', { class: 'card stack' }, h('p', { class: 't-title' }, 'You’re up to date.'), next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null),
+    voiceOfTheDay(),
     first ? h('section', { class: 'card stack' },
       h('p', { class: 't-label' }, 'How it works'),
       h('p', { class: 't-body' }, 'Each question comes from an open source: John Douglas Belshaw’s textbooks on Canadian history, and new archaeology published openly. After you answer, you see the exact passage — and you can read the whole section, or have it read to you.'),
@@ -204,15 +223,15 @@ function homeScreen() {
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(run)), h('span', {}, run === 1 ? 'day' : 'days running'))),
         h('p', { class: 't-small' }, `${PACK.title}, ${PACK.chapters.length} chapters`))) : null,
     !first ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Chapters'), chapterRows(chapterStats())) : null,
-    pod ? h('section', { class: 'card stack' },
-      h('div', { class: 'src-head' }, h('p', { class: 't-label' }, 'Passage of the day'), h('span', { class: 'spacer' }), sayBtn(pod.quote, 'Read the passage aloud')),
-      h('blockquote', { class: 'quote' }, pod.quote),
-      citeLine(pod)) : null,
     !first ? mode('', 'practise', 'Practise', 'Anything you’ve met, in any order. Won’t change your review dates.', () => play(true)) : null,
     h('nav', { class: 'tiles', 'aria-label': 'More' },
       h('button', { class: 'tile', onclick: () => { S.press(); openLibrary(); } }, h('span', { html: ICON.library }), 'Library'),
       h('button', { class: 'tile', onclick: () => { S.press(); show('progress', progressScreen); } }, h('span', { html: ICON.progress }), 'Progress'),
       h('button', { class: 'tile', onclick: () => { S.press(); show('settings', settingsScreen); } }, h('span', { html: ICON.settings }), 'Settings')),
+    h('nav', { class: 'foot-links', 'aria-label': 'Browse and about' },
+      PACK.voices?.length ? h('button', { class: 'disclose', type: 'button', onclick: () => show('voices', voicesScreen) }, 'All the voices') : null,
+      h('button', { class: 'disclose', type: 'button', onclick: () => show('about', aboutScreen) }, 'About, sources and licences'),
+      h('span', { class: 't-small num' }, versionText())),
   ];
 }
 route('home', homeScreen);
@@ -572,21 +591,57 @@ function settingsScreen() {
       seg('sound', 'Sound effects', [[true, 'On'], [false, 'Off']], (v) => { if (!v) S.setAmbience(false); }),
       seg('ambience', 'Room tone while you read', [[true, 'On'], [false, 'Off']], (v) => S.setAmbience(v && s.sound)),
       seg('theme', 'Theme', [['system', 'Phone'], ['light', 'Light'], ['dark', 'Dark']])),
-    h('section', { class: 'card stack' },
-      h('p', { class: 't-label' }, 'Sources'),
-      h('p', { class: 't-body' }, 'Every question is built from openly licensed text and checked, word for word, against the paragraph it cites before it can ship.'),
-      h('p', { class: 't-body' }, 'John Douglas Belshaw, ', h('a', { href: 'https://opentextbc.ca/preconfederation/', target: '_blank', rel: 'noopener' }, 'Canadian History: Pre-Confederation'),
-        ' (BCcampus, 2015) and ', h('a', { href: 'https://opentextbc.ca/postconfederation/', target: '_blank', rel: 'noopener' }, 'Canadian History: Post-Confederation'),
-        ' (BCcampus, 2016), with sections by contributing historians credited where they appear. Used under ',
-        h('a', { href: 'https://creativecommons.org/licenses/by/4.0/', target: '_blank', rel: 'noopener' }, 'CC BY 4.0'), '.'),
-      h('p', { class: 't-body' }, 'Heiko Prümers, Carla Jaimes Betancourt, José Iriarte, Mark Robinson and Martin Schaich, ',
-        h('a', { href: 'https://www.nature.com/articles/s41586-022-04780-4', target: '_blank', rel: 'noopener' }, 'Lidar reveals pre-Hispanic low-density urbanism in the Bolivian Amazon'),
-        ', Nature 606 (2022). Used under ', h('a', { href: 'https://creativecommons.org/licenses/by/4.0/', target: '_blank', rel: 'noopener' }, 'CC BY 4.0'), '.'),
-      h('p', { class: 't-small' }, 'Adapted: footnotes and citation markers moved or removed; figures, image credits and reading lists left out; text split into sentences for reading aloud. Quoted text stays under its own licence. Texts as retrieved 18 September 2026.'),
-      h('p', { class: 't-small' }, 'This app’s own questions and explanations: ',
-        h('a', { href: 'https://creativecommons.org/licenses/by-nc-sa/4.0/', target: '_blank', rel: 'noopener' }, 'CC BY-NC-SA 4.0'), '. Not for sale. There’s no timer anywhere in it.')),
+    h('button', { class: 'item', onclick: () => show('about', aboutScreen) },
+      h('div', {}, h('b', {}, 'About, sources and licences'), h('span', {}, versionText())), h('span', { html: ICON.chev })),
   ];
 }
 route('settings', settingsScreen);
+
+// ── about ───────────────────────────────────────────────────────────────
+const BUILD = window.__PALIMPSEST_BUILD || { v: 'dev', commit: 'unbuilt', date: '' };
+function versionText() { return `v${BUILD.v} (${BUILD.commit})`; }
+const link = (href, text) => h('a', { href, target: '_blank', rel: 'noopener' }, text);
+const CC_BY = 'https://creativecommons.org/licenses/by/4.0/';
+
+function aboutScreen() {
+  // One entry per primary source behind the voices, from the pack itself.
+  const voiceBooks = [];
+  for (const v of PACK.voices || []) if (!v.p && !voiceBooks.some((b) => b.cite === v.cite)) voiceBooks.push(v);
+  const date = BUILD.date ? new Date(BUILD.date + 'T12:00:00').toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  return [
+    h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'About')),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'Version'),
+      h('p', { class: 'answer num' }, `Palimpsest ${BUILD.v}`),
+      h('p', { class: 't-small num' }, `Build ${BUILD.commit}${date ? ', ' + date : ''}. ${IDS.length} questions, ${(PACK.voices || []).length} voices, ${PACK.chapters.length} chapters.`),
+      h('p', { class: 't-body' }, 'Your progress is kept on this device only. Nothing is sent anywhere.')),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'How it’s checked'),
+      h('p', { class: 't-body' }, 'Every question and every voice is checked word for word against the source it cites before the app can be built. If a quotation isn’t in the source, the build fails.')),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'Sources for the questions and library'),
+      h('p', { class: 't-body' }, 'John Douglas Belshaw, ', link('https://opentextbc.ca/preconfederation/', 'Canadian History: Pre-Confederation'),
+        ' (BCcampus, 2015) and ', link('https://opentextbc.ca/postconfederation/', 'Canadian History: Post-Confederation'),
+        ' (BCcampus, 2016), with sections by contributing historians credited where they appear. ', link(CC_BY, 'CC BY 4.0'), '.'),
+      h('p', { class: 't-body' }, 'Heiko Prümers, Carla Jaimes Betancourt, José Iriarte, Mark Robinson and Martin Schaich, ',
+        link('https://www.nature.com/articles/s41586-022-04780-4', 'Lidar reveals pre-Hispanic low-density urbanism in the Bolivian Amazon'),
+        ', Nature 606 (2022). ', link(CC_BY, 'CC BY 4.0'), '.'),
+      h('p', { class: 't-small' }, 'Adapted: footnotes and citation markers moved or removed; figures, image credits and reading lists left out; text split into sentences for reading aloud. Texts as retrieved 18 September 2026.')),
+    voiceBooks.length ? h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'Sources for the voices'),
+      ...voiceBooks.map((v) => h('p', { class: 't-body' }, v.cite, '. ', link(v.url, 'The scan'), '.')),
+      h('p', { class: 't-small' }, 'Two further voices are quoted within Belshaw’s books, cited to the paragraph. Old spellings are kept; only the long s is printed as a modern s.')) : null,
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'Licences'),
+      h('p', { class: 't-body' }, h('b', {}, 'Questions, explanations and library entries: '), link('https://creativecommons.org/licenses/by-nc-sa/4.0/', 'CC BY-NC-SA 4.0'), '. Share and adapt them, with credit, not for sale, under the same licence.'),
+      h('p', { class: 't-body' }, h('b', {}, 'Code: '), 'MIT licence.'),
+      h('p', { class: 't-body' }, h('b', {}, 'Quoted text: '), 'stays under its own licence, above. The voices are public domain.'),
+      h('p', { class: 't-body' }, h('b', {}, 'Typefaces: '), 'Bricolage Grotesque, Instrument Sans and Literata, under the ', link('https://openfontlicense.org/', 'SIL Open Font License'), '.'),
+      h('p', { class: 't-body' }, 'Source code: ', link('https://github.com/RobertWalterJ/palimpses', 'github.com/RobertWalterJ/palimpses'), '.'),
+      h('p', { class: 't-small' }, 'Made by Robert Walter-Joseph. Not for sale. There’s no timer anywhere in it.')),
+  ];
+}
+route('about', aboutScreen);
+
 
 boot();

@@ -36,11 +36,21 @@ const lib = safe(readFileSync(join(APP, 'data', 'canada-library.json'), 'utf8'))
 
 // Function replacers throughout: a replacement STRING treats `$&`, `$'` and
 // `` $` `` specially, and minified code or the books' text can contain them.
+// The version shown in About: package.json's number, the commit it was built
+// from (with "+" if there were uncommitted changes), and the date.
+const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
+let commit = 'local';
+try {
+  commit = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT }).toString().trim();
+  if (execFileSync('git', ['status', '--porcelain', '--', 'app', 'content', 'build'], { cwd: ROOT }).toString().trim()) commit += '+';
+} catch { /* not a repo */ }
+const BUILD = JSON.stringify({ v: pkg.version, commit, date: new Date().toISOString().slice(0, 10) });
+
 const html = readFileSync(join(APP, 'index.html'), 'utf8')
   .replace('<link rel="stylesheet" href="fonts/fonts.css">', () => `<style>${fonts}</style>`)
   .replace('<link rel="stylesheet" href="styles.css">', () => `<style>${css}</style>`)
   .replace('<script type="module" src="js/app.js"></script>', () =>
-    `<script>window.__PALIMPSEST_DATA={canada:${data}};window.__PALIMPSEST_LIB={canada:${lib}};</script>\n<script>${safe(js)}</script>`);
+    `<script>window.__PALIMPSEST_BUILD=${BUILD};window.__PALIMPSEST_DATA={canada:${data}};window.__PALIMPSEST_LIB={canada:${lib}};</script>\n<script>${safe(js)}</script>`);
 
 mkdirSync(join(ROOT, 'dist'), { recursive: true });
 writeFileSync(join(ROOT, 'dist', 'palimpsest.html'), html);
