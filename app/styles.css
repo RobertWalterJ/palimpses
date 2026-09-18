@@ -159,6 +159,9 @@ a { color: var(--accent); text-underline-offset: 3px; }
   background: linear-gradient(95deg, var(--accent), var(--accent-2));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
+.whose { display: flex; margin: 2px auto 0; font-size: .92rem; }
+.voice { padding: 14px 0; border-top: 1px solid var(--line); }
+.voice .quote { margin: 0; }
 .tagline { font: 450 1.02rem/1.45 var(--ui); color: var(--ink-2); max-width: 31ch; margin: 10px auto 0; text-wrap: balance; }
 
 /* the epicentre strip: dated centres before contact */

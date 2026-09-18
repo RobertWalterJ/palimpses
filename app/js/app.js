@@ -107,8 +107,12 @@ function passages() {
 function dayIndex(n) { let x = 0; for (const ch of dayKey()) x = (x * 31 + ch.charCodeAt(0)) >>> 0; return x % n; }
 
 function hero() {
-  // Three real lines from the pack, re-drawn every visit, faint and cropped.
-  const pool = shuffle(passages()).slice(0, 3);
+  // Three voices from the past, re-drawn every visit, faint and cropped.
+  // Each is verified against its source, and "Whose voices?" says who.
+  const voices = PACK.voices?.length ? PACK.voices : passages();
+  // Three different people, not three lines from one speaker.
+  const pool = [];
+  for (const v of shuffle(voices)) if (pool.length < 3 && !pool.some((p) => p.who && p.who === v.who)) pool.push(v);
   const under = h('div', { class: 'undertext', 'aria-hidden': 'true' }, pool.map((p) => h('p', {}, p.quote)));
   // The pack's own centres on a line of years, from the first people here
   // ("at least 14,000 years ago", pre-2.2-p6) to the Haudenosaunee League,
@@ -132,8 +136,28 @@ function hero() {
     h('p', { class: 'caption' }, 'From the first people here, 14,000 years ago, to the League. Older years are squeezed to fit.'));
   return h('header', { class: 'hero' }, under,
     h('h1', { class: 'wordmark' }, 'Palim', h('span', {}, 'psest')),
-    h('p', { class: 'tagline' }, 'History has many centres.'),
+    h('p', { class: 'tagline' }, 'History has many voices.'),
+    PACK.voices?.length ? h('button', { class: 'disclose whose', type: 'button', onclick: () => { S.press(); voicesSheet(pool); } }, 'Whose voices?') : null,
     strip);
+}
+
+// The voices behind the hero, named: who spoke, who wrote it down, where it
+// is. The three in the background now come first.
+function voicesSheet(shown) {
+  const rest = PACK.voices.filter((v) => !shown.includes(v));
+  const card = (v) => h('section', { class: 'voice stack' },
+    h('div', { class: 'q-head' }, h('blockquote', { class: 'quote' }, v.quote), sayBtn(v.quote, 'Read these words aloud')),
+    h('p', { class: 't-body' }, h('b', {}, v.who), `, ${v.when}.`),
+    h('p', { class: 't-small' }, v.recorded + '.' + (v.note ? ' ' + v.note : '')),
+    v.p && sectionOf(v.p)
+      ? h('button', { class: 'disclose', style: 'padding:2px 0', onclick: () => { closeSheet(); openReader(sectionOf(v.p).section.id, v.p, [v.quote]); } }, `Read it in Belshaw — §${v.sec}`)
+      : h('p', { class: 'cite' }, h('a', { href: v.url, target: '_blank', rel: 'noopener' }, 'The scanned book'), ' — ', v.cite));
+  sheet(h('h2', { class: 't-title' }, 'Whose voices?'),
+    h('p', { class: 't-body', style: 'margin:6px 0 4px' }, 'People of the past in their own words, checked word for word against the source. Most Indigenous words from before 1800 survive only as a European wrote them down; each says who.'),
+    h('p', { class: 't-label', style: 'margin-top:14px' }, 'Behind the title now'),
+    ...shown.map(card),
+    rest.length ? h('p', { class: 't-label', style: 'margin-top:14px' }, 'More voices') : null,
+    ...rest.map(card));
 }
 
 function ring(c, total) {

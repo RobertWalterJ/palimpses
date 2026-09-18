@@ -51,7 +51,7 @@ const evOut = (e) => {
 
 mkdirSync(join(ROOT, 'app', 'data'), { recursive: true });
 for (const pack of PACKS) {
-  const files = readdirSync(join(ROOT, pack.dir)).filter((f) => f.endsWith('.mjs')).sort();
+  const files = readdirSync(join(ROOT, pack.dir)).filter((f) => f.endsWith('.mjs') && f !== 'voices.mjs').sort();
   const questions = [];
   const chapters = [];
   let entries = [];
@@ -71,10 +71,25 @@ for (const pack of PACKS) {
       }
     }
   }
-  const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions };
+  const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions, voices: await loadVoices(pack) };
   writeFileSync(join(ROOT, 'app', 'data', pack.id + '.json'), JSON.stringify(out));
   console.log(`wrote app/data/${pack.id}.json — ${questions.length} questions in ${chapters.length} chapter(s)`);
   writeLibrary(pack, entries);
+}
+
+// ── voices ──────────────────────────────────────────────────────────────
+// People of the past in their own words (verified in verify.mjs), each with
+// who said it, who wrote it down, and the source's credit and link.
+async function loadVoices(pack) {
+  const f = join(ROOT, pack.dir, 'voices.mjs');
+  let mod;
+  try { mod = await import(pathToFileURL(f).href); } catch { return []; }
+  return mod.default.map((v) => {
+    const base = { id: v.id, quote: v.q, who: v.who, when: v.when, recorded: v.recorded, note: v.note || null };
+    if (v.p) { const p = PARA.get(v.p); return { ...base, p: v.p, sec: p.sec, url: p.url, cite: p.cite }; }
+    const s = mod.VOICE_SOURCES[v.src];
+    return { ...base, url: s.url, cite: `${s.author}, ${s.title} (${s.publisher}, ${s.year}), ${s.licence}` };
+  });
 }
 
 // ── the reference library ────────────────────────────────────────────────

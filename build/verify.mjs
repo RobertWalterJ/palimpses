@@ -42,12 +42,41 @@ const files = [];
 })(join(ROOT, 'content'));
 
 const fails = [];
-let n = 0, entries = 0;
+let n = 0, entries = 0, voices = 0;
 const lensCount = {};
 for (const file of files) {
   const qs = (await import(pathToFileURL(file).href)).default;
   const where = relative(ROOT, file);
   const ids = new Set();
+  // Voices: each line verbatim in its scan's OCR text, or in a Belshaw
+  // paragraph. The OCR is normalised only for what scanning adds and the page
+  // did not say: words hyphenated across a line end, bracketed original-page
+  // numbers ("[80]"), and the space OCR puts before punctuation.
+  if (file.endsWith('voices.mjs')) {
+    const mod = await import(pathToFileURL(file).href);
+    const texts = {};
+    const ocr = (t) => norm(t.replace(/-\s*\n\s*/g, '').replace(/\s*\[\d+\]\s*/g, ' ')).replace(/\s+([;:,.?!])/g, '$1');
+    for (const v of qs) {
+      voices++;
+      const bad = (m) => fails.push(`${where} · ${v.id}: ${m}`);
+      if (ids.has(v.id)) bad('duplicate id');
+      ids.add(v.id);
+      if (!v.who || !v.when || !v.recorded) bad('needs who, when and recorded');
+      if (v.p) {
+        const para = PARA.get(v.p);
+        if (!para) bad(`cites ${v.p}, which is not in the corpus`);
+        else if (!norm(para.text).includes(norm(v.q))) bad(`not found in ${v.p}: "${v.q.slice(0, 60)}…"`);
+        continue;
+      }
+      const src = mod.VOICE_SOURCES[v.src];
+      if (!src) { bad(`unknown source ${v.src}`); continue; }
+      texts[v.src] ??= ocr(readFileSync(join(ROOT, src.file), 'utf8'));
+      let pat = norm(v.q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      if (src.longS) pat = pat.replace(/s/g, '[sf]');
+      if (!new RegExp(pat).test(texts[v.src])) bad(`not found verbatim in ${src.file}: "${v.q.slice(0, 60)}…"`);
+    }
+    continue;
+  }
   // The reference library's entries: every lead quote verbatim, and the match
   // pattern must find the lead's own paragraph (else it indexes the wrong thing).
   if (qs.length && qs[0].lead) {
@@ -112,7 +141,7 @@ for (const file of files) {
   }
 }
 
-console.log(`${n} questions and ${entries} library entries in ${files.length} file(s)`);
+console.log(`${n} questions, ${entries} library entries and ${voices} voices in ${files.length} file(s)`);
 console.log('by lens: ' + Object.entries(lensCount).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · '));
 if (fails.length) {
   console.error(`\nverify FAILED — ${fails.length} problem(s):`);
