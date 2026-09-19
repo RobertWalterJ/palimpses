@@ -42,6 +42,7 @@ const CHAPTER_TITLE = {
   'ch05-contact': 'Contact, on the nations’ terms',
   'ch04-new-france': 'New France, inside other worlds',
   'ch03-amazonia': 'Amazonia, a centre of its own',
+  'th01-empire-trade': 'Trade, empire and abolition, 1488–1842',
 };
 
 const evOut = (e) => {
@@ -63,12 +64,15 @@ for (const pack of PACKS) {
     const ch = CHAPTER_OF.get(firstP);
     const chId = f.replace(/\.mjs$/, '');
     chapters.push({ id: chId, title: CHAPTER_TITLE[chId] || (ch ? ch.title : chId), book: ch ? ch.title : null, n: ch?.n ?? null,
-      big: (mod.BIG || []).map((b) => ({ id: b.id, q: b.q, ev: b.ev.map(evOut) })) });
+      big: (mod.BIG || []).map((b) => ({ id: b.id, q: b.q, ev: b.ev.map(evOut) })),
+      // A thread (file name th…) crosses chapters and regions, with a timeline
+      // in lanes; it is listed apart from the chapters.
+      ...(chId.startsWith('th') ? { thread: true, lanes: mod.LANES || [], timeline: (mod.TIMELINE || []).map((e) => ({ lane: e.lane, at: e.at, label: e.label, ev: evOut(e.ev) })).sort((a, b) => a.at - b.at) } : {}) });
     // Significant questions first, the details after: new questions are
     // introduced in this order, so a chapter opens on what matters most.
     const ordered = [...qs.filter((q) => q.depth !== 'detail'), ...qs.filter((q) => q.depth === 'detail')];
     for (const q of ordered) {
-      const base = { id: `${pack.id}/${q.id}`, ch: chId, kind: q.kind, prompt: q.prompt, lens: q.lens || [], big: q.big, ...(q.depth ? { depth: q.depth } : {}) };
+      const base = { id: `${pack.id}/${q.id}`, ch: chId, kind: q.kind, prompt: q.prompt, lens: q.lens || [], big: q.big, ...(q.depth ? { depth: q.depth } : {}), ...(q.at != null ? { at: q.at } : {}) };
       if (q.kind === 'order') {
         questions.push({ ...base, items: q.items.map((it) => ({ label: it.label, at: it.at, when: it.when || null, ev: evOut(it.ev) })) });
       } else {
@@ -117,7 +121,9 @@ async function loadVoices(pack) {
 function writeLibrary(pack, entries) {
   const books = [];
   const glossary = [];
-  for (const f of ['pre.json', 'post.json', 'prumers2022.json']) {
+  // Ljungstedt's OCR is left out of the reader (a single quotation is used,
+  // shown in full on its question); the others are readable in full.
+  for (const f of ['pre.json', 'post.json', 'prumers2022.json', 'wh2.json', 'prince1831.json']) {
     const book = JSON.parse(readFileSync(join(ROOT, 'corpus', f), 'utf8'));
     const src = book.source;
     books.push({

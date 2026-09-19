@@ -117,6 +117,19 @@ for (const file of files) {
   // every question in the chapter serves one of them.
   const mod = await import(pathToFileURL(file).href);
   const BIG = new Set();
+  // A thread's timeline: every event quoted verbatim, its year in its quote,
+  // its lane one of the thread's lanes.
+  if (mod.TIMELINE) {
+    const lanes = new Set((mod.LANES || []).map((l) => l.id));
+    for (const e of mod.TIMELINE) {
+      const tag = where + ' · timeline ' + e.at + ' ' + e.label;
+      if (!lanes.has(e.lane)) fails.push(tag + ': unknown lane ' + e.lane);
+      const para = PARA.get(e.ev.p);
+      if (!para) { fails.push(tag + ': cites ' + e.ev.p + ', not in the corpus'); continue; }
+      if (!norm(para.text).includes(norm(e.ev.q))) fails.push(tag + ': quote not found in ' + e.ev.p);
+      if (!e.ev.q.includes(String(e.at))) fails.push(tag + ': its quote does not contain ' + e.at);
+    }
+  }
   for (const b of mod.BIG || []) {
     BIG.add(b.id);
     for (const ev of b.ev) {

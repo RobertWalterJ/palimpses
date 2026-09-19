@@ -48,3 +48,8 @@ CNXML from https://github.com/openstax/osbooks-world-history (collection
 world-history-volume-2, 80 modules, retrieved 19 September 2026), in
 `sources/openstax-wh2/`; extracted to `corpus/wh2.json` (15 chapters, 75
 sections, 2,455 paragraphs). Links go to openstax.org's pages.
+
+## Primary sources for the thread "Trade, empire and abolition" (public domain)
+
+- Mary Prince, *The History of Mary Prince, a West Indian Slave. Related by Herself*, ed. Thomas Pringle (London, 1831). Project Gutenberg #17851, via the Internet Archive (thehistoryofmary17851gut); `corpus/prince1831.json`.
+- Anders Ljungstedt, *An Historical Sketch of the Portuguese Settlements in China* (Boston, 1836). Internet Archive anhistoricalske00unkngoog (OCR); `corpus/ljungstedt1836.json`. Its 1557 date for Macau differs from OpenStax's 1577; the app asks about the disagreement rather than choosing.

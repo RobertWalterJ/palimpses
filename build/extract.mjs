@@ -232,3 +232,37 @@ for (const src of ARTICLES) {
     + `${paras.reduce((t, p) => t + p.text.split(' ').length, 0).toLocaleString()} words`);
   for (const c of chapters) console.log(`  ${String(c.n).padStart(2)}. ${c.title}  (${c.sections.length} sections)`);
 }
+
+// ── public-domain books as plain text (Project Gutenberg / Internet Archive) ─
+// Paragraphs are split on blank lines. OCR adds line-end hyphens and runs of
+// spaces, which are removed; nothing else is changed, so quotes still check
+// verbatim. Gutenberg's own header and licence are cut at its START/END lines.
+const PLAIN = [
+  {
+    id: 'prince1831', file: 'sources/voices/thehistoryofmary17851gut.txt',
+    title: 'The History of Mary Prince, a West Indian Slave. Related by Herself', author: 'Mary Prince (taken down from her own words; ed. Thomas Pringle)',
+    publisher: 'F. Westley and A. H. Davis, London', year: 1831, licence: 'Public domain',
+    web: 'https://www.gutenberg.org/ebooks/17851',
+  },
+  {
+    id: 'ljungstedt1836', file: 'sources/voices/ljungstedt-b.txt',
+    title: 'An Historical Sketch of the Portuguese Settlements in China', author: 'Anders Ljungstedt',
+    publisher: 'James Munroe, Boston', year: 1836, licence: 'Public domain',
+    web: 'https://archive.org/details/anhistoricalske00unkngoog',
+  },
+];
+for (const src of PLAIN) {
+  let raw = readFileSync(join(ROOT, src.file), 'utf8').replace(/\r\n/g, '\n');
+  const a = raw.indexOf('*** START OF'), b = raw.indexOf('*** END OF');
+  if (a >= 0) raw = raw.slice(raw.indexOf('\n', a) + 1, b >= 0 ? b : undefined);
+  const paras = raw.split(/\n\s*\n/)
+    // A word split at a line end ("stran-" / "gers"), sometimes with a stray
+    // space after the hyphen. Only a lowercase letter on both sides, so a
+    // real dash between words ("Work--work--work") is left alone.
+    .map((p) => clean(p.replace(/([a-z])- *\n\s*([a-z])/g, '$1$2').replace(/\n/g, ' ')))
+    .filter((t) => t.length >= 60)
+    .map((text, i) => ({ id: `${src.id}-p${i + 1}`, under: null, key: false, text }));
+  const section = { id: `${src.id}-1`, num: '1', title: src.title, url: src.web, paras };
+  writeFileSync(join(ROOT, 'corpus', src.id + '.json'), JSON.stringify({ source: { ...src, file: undefined }, chapters: [{ n: 1, title: src.title, sections: [section] }] }, null, 1));
+  console.log(`\n${src.title} (${src.year}): ${paras.length} paragraphs`);
+}

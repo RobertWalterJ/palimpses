@@ -113,6 +113,72 @@ function growthChart() {
     <circle cx="${x(snaps.length - 1)}" cy="${y(last.can)}" r="4" class="gd"/></svg>` });
 }
 
+// ── threads ─────────────────────────────────────────────────────────────
+// A thread lines up events across regions: a timeline in lanes, and its own
+// questions. Opened from Home; its questions can be played on their own.
+const threads = () => PACK.chapters.filter((c) => c.thread);
+function threadsCard() {
+  const ts = threads();
+  if (!ts.length) return null;
+  return h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Threads across the world'),
+    ...ts.map((t) => {
+      const ids = chapterIds(t.id);
+      const c = counts(ids);
+      return h('button', { class: 'chrow', type: 'button', onclick: () => { S.press(); show('thread', () => threadScreen(t.id)); } },
+        h('span', { class: 'chtop' }, h('b', {}, t.title), h('span', { class: 't-small num' }, `${c.known + c.met} of ${ids.length}`)),
+        h('span', { class: 't-small' }, `${t.timeline.length} dated events in ${t.lanes.length} regions · ${ids.length} questions`));
+    }));
+}
+function threadScreen(id) {
+  const t = PACK.chapters.find((c) => c.id === id);
+  const ids = chapterIds(id);
+  const laneName = new Map(t.lanes.map((l) => [l.id, l.name]));
+  let only = null;
+  const list = h('ol', { class: 'lanes' });
+  const draw = () => list.replaceChildren(...t.timeline.filter((e) => !only || e.lane === only).map((e) => {
+    const w = sectionOf(e.ev.p);
+    return h('li', { class: `lane-row lane-${e.lane}` },
+      h('b', { class: 'num yr' }, String(e.at)),
+      h('div', {}, h('span', { class: 'lane-tag' }, laneName.get(e.lane)), h('p', { class: 'lane-label' }, e.label),
+        w ? h('button', { class: 'disclose', style: 'padding:2px 0;min-height:32px', onclick: () => openReader(w.section.id, e.ev.p, [e.ev.quote]) }, 'Where this comes from')
+          : h('p', { class: 'cite' }, e.ev.cite)));
+  }));
+  draw();
+  const chips = h('div', { class: 'chips', role: 'group', 'aria-label': 'Show a region' },
+    [{ id: null, name: 'All regions' }, ...t.lanes].map((l) => {
+      const b = h('button', { class: 'chip', type: 'button', 'aria-pressed': String(l.id === only) }, l.name);
+      b.onclick = () => { only = l.id; for (const x of chips.children) x.setAttribute('aria-pressed', String(x === b)); draw(); };
+      return b;
+    }));
+  const due = State.dueIds(ids).length, fresh = ids.filter((x) => !State.card(x)).length;
+  return [
+    h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'Thread')),
+    h('h2', { class: 'thread-title' }, t.title),
+    h('p', { class: 't-body' }, 'The same years, seen from China, Europe, North America and the Caribbean. Every date is quoted from its source.'),
+    h('button', { class: 'btn primary wide', onclick: () => play(!(due || fresh), ids) }, due || fresh ? `Play this thread · ${fresh} new${due ? `, ${due} to revisit` : ''}` : 'Recall test on this thread'),
+    h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'The big questions'), h('ul', { class: 'bigs' }, t.big.map((b) => h('li', {}, b.q)))),
+    h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Timeline'), chips, list),
+  ];
+}
+route('thread', homeScreen);
+// "Meanwhile": events in other regions within fifteen years of a dated
+// question, from the thread timelines — the world at the same moment.
+function meanwhile(q) {
+  if (q.at == null) return null;
+  const own = PACK.chapters.find((c) => c.id === q.ch);
+  const pool = threads().flatMap((t) => t.timeline.map((e) => ({ ...e, laneName: t.lanes.find((l) => l.id === e.lane)?.name })));
+  // Leave out only the question's own region (its own event that year).
+  const ownLanes = new Set(own?.timeline?.filter((e) => e.at === q.at).map((e) => e.lane) || []);
+  const near = pool.filter((e) => Math.abs(e.at - q.at) <= 15 && e.at !== q.at && !ownLanes.has(e.lane))
+    .sort((a, b) => Math.abs(a.at - q.at) - Math.abs(b.at - q.at));
+  const seen = new Set(), pick = [];
+  for (const e of near) if (!seen.has(e.lane) && pick.length < 2) { seen.add(e.lane); pick.push(e); }
+  if (!pick.length) return null;
+  return h('section', { class: 'meanwhile' },
+    h('p', { class: 't-label' }, `Meanwhile, around ${q.at}`),
+    ...pick.map((e) => h('p', { class: 'mw' }, h('b', { class: 'num' }, String(e.at)), ` · ${e.laneName}: ${e.label}`)));
+}
+
 // ── chapters ────────────────────────────────────────────────────────────
 // Progress by chapter, and a round from one chapter. New questions come in
 // the order the chapter tells its story, so a chapter round reads as one.
@@ -123,8 +189,8 @@ function listTitle(q) {
   return ask.length < 45 ? q.prompt : ask;
 }
 function chapterIds(chId) { return PACK.questions.filter((q) => q.ch === chId).map((q) => q.id); }
-function chapterStats() {
-  return PACK.chapters.map((ch) => {
+function chapterStats(withThreads = false) {
+  return PACK.chapters.filter((ch) => withThreads || !ch.thread).map((ch) => {
     const ids = chapterIds(ch.id);
     const c = counts(ids);
     return { ch, ids, n: ids.length, ...c, due: State.dueIds(ids).length, fresh: ids.filter((id) => !State.card(id)).length };
@@ -198,7 +264,7 @@ function todaysVoice() {
 }
 function voiceSource(v) {
   return v.p && sectionOf(v.p)
-    ? h('button', { class: 'disclose', style: 'padding:2px 0', onclick: () => openReader(sectionOf(v.p).section.id, v.p, [v.quote]) }, `Read it in Belshaw — §${v.sec}`)
+    ? h('button', { class: 'disclose', style: 'padding:2px 0', onclick: () => openReader(sectionOf(v.p).section.id, v.p, [v.quote]) }, `Read the passage — ${v.sec}`)
     : h('p', { class: 'cite' }, h('a', { href: v.url, target: '_blank', rel: 'noopener' }, 'The scanned book'), ' — ', v.cite);
 }
 function voiceOfTheDay() {
@@ -274,6 +340,7 @@ function homeScreen() {
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(run)), h('span', {}, run === 1 ? 'day' : 'days running'))),
         h('p', { class: 't-small' }, growthLine(false)))) : null,
     !first ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Chapters'), chapterRows(chapterStats())) : null,
+    threadsCard(),
     !first ? mode('', 'practise', 'Recall test', 'Questions you’ve met, the ones you’re likeliest to have forgotten first. Won’t change your review dates.', () => play(true)) : null,
     h('nav', { class: 'tiles', 'aria-label': 'More' },
       h('button', { class: 'tile', onclick: () => { S.press(); openLibrary(); } }, h('span', { html: ICON.library }), 'Library'),
@@ -573,7 +640,7 @@ function revealCard(q, ok) {
     h('div', { class: 'q-head' }, h('blockquote', { class: 'quote' }, key.quote), sayBtn(key.quote, 'Read the key sentence aloud')),
     h('p', { class: 'cite' }, `§${key.sec}`),
     toggle, more));
-  out.push(bigPicture(q));
+  out.push(bigPicture(q), meanwhile(q));
   return out;
 }
 

@@ -94,6 +94,12 @@ export default [
     q: 'the Ojebways and the Six Nations were all to eat out of the same dish; that is, to have all their game in common.',
   },
   {
+    id: 'prince-feel', p: 'prince1831-p101',
+    who: 'Mary Prince, enslaved in Bermuda, Turks Island and Antigua', when: 'published 1831',
+    recorded: 'Told in her own words and taken down by a helper; published by Thomas Pringle in London',
+    q: 'I have been a slave myself--I know what slaves feel--I can tell by myself what other slaves feel, and by what they have told me.',
+  },
+  {
     id: 'las-casas', p: 'pre-1.2-p11',
     who: 'Bartolomé de las Casas, Spanish priest in the Caribbean', when: '1500s',
     recorded: 'Quoted in Belshaw',

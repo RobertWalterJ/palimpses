@@ -192,6 +192,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .then-now div { display: grid; gap: 2px; }
 .then-now b { font: 700 1.6rem/1 var(--display); color: var(--ink); }
 .then-now .arrow { font: 600 1.4rem/1 var(--ui); color: var(--accent); }
+/* Threads: a timeline in lanes, read top to bottom. Regions are named in
+   words on every row; nothing depends on colour. */
+.thread-title { margin: 0; font: 750 1.5rem/1.2 var(--display); text-wrap: balance; }
+.lanes { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.lane-row { display: grid; grid-template-columns: 52px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.lane-row:first-child { border-top: 0; }
+.lane-row .yr { font: 700 1rem/1.4 var(--display); color: var(--ink); }
+.lane-row div { display: grid; gap: 2px; }
+.lane-tag { font: 600 .76rem/1.2 var(--ui); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.lane-label { margin: 0; font: 450 1rem/1.4 var(--ui); color: var(--ink); }
+.chips button[aria-pressed="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.meanwhile { display: grid; gap: 4px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); }
+.meanwhile .mw { margin: 0; font: 450 .95rem/1.45 var(--ui); color: var(--ink-2); }
+.meanwhile .mw b { color: var(--ink); margin-right: 2px; }
 .versions { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
 .versions li { display: grid; gap: 2px; }
 .versions .vhead { margin: 0; font: 500 .95rem/1.35 var(--ui); color: var(--ink-2); }
