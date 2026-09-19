@@ -11,6 +11,7 @@
 // back-button behaviour.
 
 import { VERSIONS } from './versions.js';
+import { newLeftToday } from './schedule.js';
 import { State, Round, cardState, isHolding, nextDueSentence, shuffle, now, DAY, dayKey } from './schedule.js';
 import { initSpeech, unlock, say, setRate, onSpeaking } from './speech.js';
 import { Reader, sentences } from './reader.js';
@@ -203,8 +204,12 @@ function kbar(b) {
 function chapterRows(stats) {
   return h('div', { class: 'chapters' }, stats.map((s) => {
     const todo = s.due + s.fresh;
-    const note = todo ? (s.due ? `${s.due} to revisit` : `${s.fresh} new`) : s.unseen === 0 ? 'All met — take a recall test' : 'Up to date';
-    return h('button', { class: 'chrow', type: 'button', onclick: () => { S.press(); play(!todo, s.ids); } },
+    const left = newLeftToday(PACE());
+    const note = s.due ? `${s.due} to revisit`
+      : s.fresh ? (left ? `${s.fresh} new` : `${s.fresh} new · today’s new questions are done`)
+        : s.unseen === 0 ? 'All met — take a recall test' : 'Up to date';
+    const go = () => (!s.due && s.fresh && !left ? cappedSheet(s.ids) : play(!todo, s.ids));
+    return h('button', { class: 'chrow', type: 'button', onclick: () => { S.press(); go(); } },
       h('span', { class: 'chtop' }, h('b', {}, s.ch.title), h('span', { class: 't-small num' }, `${s.known + s.met} of ${s.n}`)),
       kbar(s),
       h('span', { class: 't-small' }, note));
@@ -315,8 +320,11 @@ function homeScreen() {
   const mode = (cls, icon, title, sub, go) => h('button', { class: `mode ${cls}`, onclick: () => { S.press(); go(); } },
     h('span', { class: 'ic', html: ICON[icon] }), h('span', {}, h('b', {}, title), h('span', { class: 't-small' }, sub)),
     h('span', { html: ICON.chev.replace('<svg', '<svg class="chev"') }));
+  const left = newLeftToday(PACE());
+  const freshNow = Math.min(fresh, left);
+  const perRound = PACE()?.newPerRound ?? 5;
   const learnSub = first ? 'Five questions, each with its source.'
-    : due ? `${due} to revisit${fresh ? ', then new questions' : ''}` : `${Math.min(fresh, 5)} new questions waiting`;
+    : due ? `${due} to revisit${freshNow ? ', then new questions' : ''}` : `${Math.min(freshNow, perRound)} new questions waiting`;
 
   return [
     hero(),
@@ -325,7 +333,13 @@ function homeScreen() {
       : null,
     first && !State.data.placement && PACK.placement?.length
       ? h('button', { class: 'disclose', style: 'justify-self:center', onclick: () => play(false) }, 'Skip it and start learning')
-      : due || fresh ? mode('primary', 'learn', due ? 'Revisit and learn' : 'Learn', learnSub, () => play(false))
+      : due || freshNow ? mode('primary', 'learn', due ? 'Revisit and learn' : 'Learn', learnSub, () => play(false))
+      : fresh ? h('section', { class: 'card stack' },
+        h('p', { class: 't-title' }, 'That’s today’s new questions.'),
+        h('p', { class: 't-body' }, `You’ve had ${newToday()} new questions today. New ones are spaced out so your reviews don’t pile up tomorrow.`),
+        h('div', { class: 'row' },
+          h('button', { class: 'btn primary', style: 'flex:1', onclick: () => play(true) }, 'Recall test'),
+          h('button', { class: 'btn', style: 'flex:1', onclick: () => play(false, IDS, { beyondDaily: true }) }, 'Learn more anyway')))
       : h('section', { class: 'card stack' }, h('p', { class: 't-title' }, 'You’re up to date.'), next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null),
     voiceOfTheDay(),
     first ? h('section', { class: 'card stack' },
@@ -372,15 +386,39 @@ const sessionAsked = new Set();
 // paragraph. Kept apart within a round.
 const GROUP_OF = (id) => { const q = Q.get(id); return q ? q.ch + ':' + q.big : null; };
 const PARAS_OF = (id) => { const q = Q.get(id); return q ? [...new Set(evOf(q).map((e) => e.p))] : []; };
-function play(practice, ids = IDS) {
-  round = new Round(ids, { practice, exclude: sessionAsked, pace: State.data.placement?.pace || null, groupOf: GROUP_OF, parasOf: PARAS_OF });
+const PACE = () => State.data.placement?.pace || null;
+const newToday = () => State.data.days[dayKey()]?.newN || 0;
+// When today's new questions are used up: say so, and offer a recall test or
+// a deliberate "more anyway" — never a round that turns out empty.
+function cappedSheet(ids) {
+  const met = ids.some((id) => State.card(id));
+  sheet(h('h2', { class: 't-title' }, 'That’s today’s new questions'),
+    h('p', { class: 't-body', style: 'margin:8px 0 16px' }, `You’ve had ${newToday()} new questions today. New ones are spaced out so your reviews don’t pile up tomorrow. You can take a recall test, or keep going with new ones.`),
+    h('div', { class: 'stack' },
+      met ? h('button', { class: 'btn primary wide', onclick: () => { closeSheet(); play(true, ids); } }, 'Recall test') : null,
+      h('button', { class: `btn wide${met ? '' : ' primary'}`, onclick: () => { closeSheet(); play(false, ids, { beyondDaily: true }); } }, 'Learn more anyway'),
+      h('button', { class: 'btn wide', onclick: closeSheet }, 'Not now')));
+}
+function play(practice, ids = IDS, { beyondDaily = false } = {}) {
+  round = new Round(ids, { practice, exclude: sessionAsked, pace: PACE(), groupOf: GROUP_OF, parasOf: PARAS_OF, beyondDaily });
   round.scope = ids;
   round.heldBefore = IDS.filter((id) => isHolding(State.card(id))).length;
   // Which chapters were still unfinished, to mark the ones this round finishes.
   round.openBefore = new Set(chapterStats().filter((s) => s.unseen).map((s) => s.ch.id));
   tally = { n: 0, right: 0, streak: 0, missed: [] };
   S.resetStreak();
-  if (round.empty) { sheet(h('p', { class: 't-body' }, 'Nothing to ask here yet.'), h('button', { class: 'btn primary wide', style: 'margin-top:14px', onclick: closeSheet }, 'OK')); return; }
+  if (round.empty) {
+    // Say why, and offer what there is.
+    if (!practice && ids.some((id) => !State.card(id)) && !newLeftToday(PACE())) return cappedSheet(ids);
+    const met = ids.some((id) => State.card(id));
+    sheet(h('h2', { class: 't-title' }, practice ? 'Nothing to test here yet' : 'Nothing due here right now'),
+      h('p', { class: 't-body', style: 'margin:8px 0 16px' }, practice ? 'Learn some questions first; a recall test draws on the ones you’ve met.'
+        : 'Everything here is either learned for now or waiting for its next review.'),
+      h('div', { class: 'stack' },
+        !practice && met ? h('button', { class: 'btn primary wide', onclick: () => { closeSheet(); play(true, ids); } }, 'Recall test') : null,
+        h('button', { class: `btn wide${!practice && met ? '' : ' primary'}`, onclick: closeSheet }, 'OK')));
+    return;
+  }
   round.total = round.queue.length;
   setLeaveGuard(() => {
     if (!round || round.finished) return false;
@@ -687,6 +725,7 @@ function finish() {
       practice && tally.n ? h('p', { class: 't-body' }, 'These were the questions you were likeliest to have forgotten.') : null,
       practice && round.early ? h('p', { class: 't-small' }, `${round.early} came back sooner than usual: you’ve been through everything you’ve met in the last few hours. Learn brings new questions.`) : null,
       practice ? h('p', { class: 't-body' }, 'Recall tests don’t change your review dates.') : null,
+      round.beyondDaily ? h('p', { class: 't-small' }, 'You went past today’s new questions: expect a few more to revisit tomorrow.') : null,
       !practice ? h('p', { class: 't-body' }, growthLine()) : null,
       turnedToday.length ? h('p', { class: 't-body' }, h('b', {}, `${turnedToday.length} turned around today`), ': missed the first time, right now.') : null,
       !practice && heldBefore != null && heldNow > heldBefore ? h('p', { class: 't-body' }, h('b', {}, `${heldNow - heldBefore} more holding`), ': right after a week or more away.') : null,

@@ -204,12 +204,23 @@ export const State = {
 // A round: what is due, oldest first; then new questions in the order the
 // story is told — the pack is authored as a narrative, so "new" follows it
 // rather than being shuffled; nothing new at all once reviews pile up.
+// How many new questions today still allows, at the player's pace. Screens
+// must ask this rather than count unseen questions: Home once promised
+// "5 new questions waiting" after the day's allowance was spent, and the round
+// it opened was empty (Robert, 19 Sept 2026).
+export function newLeftToday(pace = null) {
+  return Math.max(0, (pace?.newPerDay ?? NEW_PER_DAY) - (State.data.days[dayKey()]?.newN || 0));
+}
+
 export class Round {
   // `exclude`: questions already asked this session.
   // `pace`: { newPerRound, newPerDay } from the placement check.
   // `groupOf(id)`: the big question a question serves; `parasOf(id)`: the
   // paragraphs its evidence quotes. Used to keep similar questions apart.
-  constructor(ids, { practice = false, exclude = new Set(), pace = null, groupOf = null, parasOf = null } = {}) {
+  // `beyondDaily`: the player chose "Learn more anyway" — the day's allowance
+  // of new questions is lifted for this round (the per-round one still holds).
+  constructor(ids, { practice = false, exclude = new Set(), pace = null, groupOf = null, parasOf = null, beyondDaily = false } = {}) {
+    this.beyondDaily = beyondDaily;
     this.practice = practice;
     this.queue = [];
     this.asked = 0;
@@ -270,7 +281,7 @@ export class Round {
     // twenty-five new questions and a wall of reviews tomorrow.
     const newToday = State.data.days[dayKey()]?.newN || 0;
     const perRound = pace?.newPerRound ?? NEW_PER_ROUND;
-    const newRoom = Math.max(0, (pace?.newPerDay ?? NEW_PER_DAY) - newToday);
+    const newRoom = beyondDaily ? Infinity : Math.max(0, (pace?.newPerDay ?? NEW_PER_DAY) - newToday);
     // New questions scale with the reviews waiting: five when little is due,
     // three when some is, and one — never none — under a backlog. (Forcing
     // three into every round starved the reviews: persona study, 18 Sept.)
