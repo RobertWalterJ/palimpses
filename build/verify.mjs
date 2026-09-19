@@ -78,10 +78,10 @@ for (const file of files) {
     continue;
   }
   // The opening order: every id must be a real question, listed once.
-  if (file.endsWith('anchors.mjs')) {
+  if (file.endsWith('anchors.mjs') || file.endsWith('placement.mjs')) {
     const all = new Set();
     for (const f of files) {
-      if (/(anchors|voices|entries)\.mjs$/.test(f)) continue;
+      if (/(anchors|placement|voices|entries)\.mjs$/.test(f)) continue;
       for (const q of (await import(pathToFileURL(f).href)).default) all.add(q.id);
     }
     const seenA = new Set();

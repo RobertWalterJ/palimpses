@@ -187,7 +187,8 @@ export const State = {
 // rather than being shuffled; nothing new at all once reviews pile up.
 export class Round {
   // `exclude`: questions already asked this session, never asked again in it.
-  constructor(ids, { practice = false, exclude = new Set() } = {}) {
+  // `pace`: { newPerRound, newPerDay } from the placement check; defaults otherwise.
+  constructor(ids, { practice = false, exclude = new Set(), pace = null } = {}) {
     this.practice = practice;
     this.queue = [];
     this.asked = 0;
@@ -202,14 +203,15 @@ export class Round {
     // At most NEW_PER_DAY new a day: five "another round"s used to mean
     // twenty-five new questions and a wall of reviews tomorrow.
     const newToday = State.data.days[dayKey()]?.newN || 0;
-    const newRoom = Math.max(0, NEW_PER_DAY - newToday);
+    const perRound = pace?.newPerRound ?? NEW_PER_ROUND;
+    const newRoom = Math.max(0, (pace?.newPerDay ?? NEW_PER_DAY) - newToday);
     // New questions scale with the reviews waiting. Forcing three new into
     // every round (first try at this) let reviews pile up until they came
     // back too late to stick: the persona study's general player fell from
     // 88% to 49% on reviews. So: five new when little is due, three when some
     // is, and ONE — never none — under a backlog, so every round still has
     // something fresh in it.
-    const allowance = due.length > BACKLOG ? 1 : due.length > MIN_NEW + 2 ? MIN_NEW : NEW_PER_ROUND;
+    const allowance = due.length > BACKLOG ? 1 : due.length > MIN_NEW + 2 ? Math.min(MIN_NEW, perRound) : perRound;
     const nNew = Math.min(allowance, fresh.length, newRoom);
     // Reviews selected by due date, then SHUFFLED: cards learned together fall
     // due together, and replaying them in the book's order turns order into a cue.

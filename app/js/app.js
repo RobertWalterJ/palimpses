@@ -254,7 +254,12 @@ function homeScreen() {
 
   return [
     hero(),
-    due || fresh ? mode('primary', 'learn', due ? 'Revisit and learn' : 'Learn', learnSub, () => play(false))
+    first && !State.data.placement && PACK.placement?.length
+      ? mode('primary', 'learn', 'Where do you start?', 'Eight quick questions, easy to hard. Then your first round.', () => startPlacement())
+      : null,
+    first && !State.data.placement && PACK.placement?.length
+      ? h('button', { class: 'disclose', style: 'justify-self:center', onclick: () => play(false) }, 'Skip it and start learning')
+      : due || fresh ? mode('primary', 'learn', due ? 'Revisit and learn' : 'Learn', learnSub, () => play(false))
       : h('section', { class: 'card stack' }, h('p', { class: 't-title' }, 'You’re up to date.'), next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null),
     voiceOfTheDay(),
     first ? h('section', { class: 'card stack' },
@@ -297,7 +302,7 @@ let tally = null;
 // session, in any round or in practice.
 const sessionAsked = new Set();
 function play(practice, ids = IDS) {
-  round = new Round(ids, { practice, exclude: sessionAsked });
+  round = new Round(ids, { practice, exclude: sessionAsked, pace: State.data.placement?.pace || null });
   round.scope = ids;
   round.heldBefore = IDS.filter((id) => isHolding(State.card(id))).length;
   // Which chapters were still unfinished, to mark the ones this round finishes.
@@ -313,6 +318,45 @@ function play(practice, ids = IDS) {
   });
   nextQuestion(true);
 }
+// "Where do you start?" — a short, quick round: a one-line answer after
+// each question, no source card, and a result that sets the pace.
+const LEVELS = [
+  { min: 0, name: 'Starting out', pace: { newPerRound: 4, newPerDay: 10 }, say: 'Four new questions a round, so each one has room to settle.' },
+  { min: 4, name: 'Some grounding', pace: { newPerRound: 5, newPerDay: 12 }, say: 'Five new questions a round.' },
+  { min: 6, name: 'Well read', pace: { newPerRound: 7, newPerDay: 18 }, say: 'Seven new questions a round: you’ll get through the pack faster.' },
+];
+function levelFor(score) { return [...LEVELS].reverse().find((l) => score >= l.min); }
+function startPlacement() {
+  const ids = (PACK.placement || []).filter((id) => !State.card(id));
+  round = { placement: true, practice: false, queue: ids.slice(), total: ids.length, scope: IDS, openBefore: new Set(), heldBefore: 0,
+    next() { return this.queue.shift() || null; }, after() {}, isRepeat() { return false; } };
+  tally = { n: 0, right: 0, streak: 0, missed: [] };
+  S.resetStreak();
+  if (!ids.length) return;
+  setLeaveGuard(() => { if (!round || round.finished) return false; leaveSheet(); return true; });
+  nextQuestion(true);
+}
+function placementDone() {
+  round.finished = true;
+  setLeaveGuard(null);
+  const score = tally.right, n = tally.n;
+  const lv = levelFor(Math.round((score / Math.max(1, n)) * 8));
+  State.data.placement = { at: now(), score, n, ids: PACK.placement, level: lv.name, pace: lv.pace };
+  State.save();
+  State.snapshot(IDS);
+  show('done', () => [
+    h('div', { class: 'topbar' }),
+    h('h1', { class: 't-title', style: 'font-size:1.8rem' }, 'Where you start'),
+    h('section', { class: 'card stack' },
+      h('p', { class: 'answer num' }, `${score} of ${n}`),
+      h('p', { class: 't-body' }, h('b', {}, lv.name), '. ', lv.say),
+      h('p', { class: 't-body' }, 'The questions ran from widely known to specialist. You’ll meet these eight again in your rounds, and Progress will show how you do on them from here.')),
+    h('div', { class: 'stack' },
+      h('button', { class: 'btn primary wide', onclick: () => play(false) }, 'Start your first round'),
+      h('button', { class: 'btn wide', onclick: () => show('home', homeScreen, { replace: true }) }, 'Home')),
+  ], { replace: true });
+}
+
 function leaveSheet() {
   sheet(h('h2', { class: 't-title' }, 'Leave this round?'),
     h('p', { class: 't-body', style: 'margin:8px 0 16px' }, 'Your answers so far are saved.'),
@@ -337,7 +381,7 @@ function topBar() {
     h('div', { class: 'meter', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(total), 'aria-valuenow': String(done) },
       h('i', { style: `width:${(done / total) * 100}%` })),
     h('span', { class: 't-small num' }, `${done + 1} of ${total}`),
-    round.practice ? h('span', { class: 'chip' }, 'practice') : null);
+    round.practice ? h('span', { class: 'chip' }, 'practice') : round.placement ? h('span', { class: 'chip' }, 'where you start') : null);
 }
 
 // "Setting. Question?" → the setting in a lighter line, the question on its
@@ -380,7 +424,9 @@ function choiceScreen(q) {
       else r.b.classList.add('faded');
     }
     grade(q, ok);
-    reveal.replaceChildren(...revealCard(q, ok));
+    reveal.replaceChildren(...(round.placement
+      ? [h('p', { class: `verdict ${ok ? 'good' : 'bad'}`, tabindex: '-1' }, ok ? '✓ Right.' : `✗ It was: ${q.answer}`)]
+      : revealCard(q, ok)));
     foot.replaceChildren(h('button', { class: 'btn primary wide', onclick: () => { S.advance(); nextQuestion(); } }, 'Next'));
     afterAnswer(reveal);
     if (State.data.settings.readAloud === 'auto') say((ok ? 'Right. ' : `Not quite. The answer is: ${q.answer}. `) + q.ev[0].quote);
@@ -431,10 +477,15 @@ function orderScreen(q) {
     grade(q, ok);
     reveal.replaceChildren(
       h('p', { class: `verdict ${ok ? 'good' : 'bad'}`, tabindex: '-1' }, ok ? '✓ In order.' : '✗ Not quite. Oldest first:'),
-      ...truth.map((it) => h('section', { class: 'card stack' },
-        h('div', { class: 'q-head' }, h('p', { class: 'answer' }, `${it.when} — ${it.label}`), sayBtn(`${it.when}. ${it.label}. ${it.ev.quote}`)),
-        h('blockquote', { class: 'quote' }, it.ev.quote),
-        citeLine(it.ev))),
+      h('ol', { class: 'order-truth' }, truth.map((it) => h('li', {}, h('b', { class: 'num' }, it.when), ' ', it.label))),
+      (() => {
+        const box = h('div', { class: 'stack', hidden: true }, ...truth.map((it) => h('div', { class: 'stack', style: 'gap:6px' },
+          h('div', { class: 'q-head' }, h('blockquote', { class: 'quote' }, it.ev.quote), sayBtn(`${it.when}. ${it.label}. ${it.ev.quote}`)),
+          citeLine(it.ev))));
+        const t = h('button', { class: 'disclose', type: 'button', 'aria-expanded': 'false' }, 'Where each date comes from');
+        t.onclick = () => { box.hidden = !box.hidden; t.setAttribute('aria-expanded', String(!box.hidden)); };
+        return h('section', { class: 'card stack' }, t, box);
+      })(),
       bigPicture(q),
       lensChips(q));
     foot.replaceChildren(h('button', { class: 'btn primary wide', onclick: () => { S.advance(); nextQuestion(); } }, 'Next'));
@@ -461,20 +512,24 @@ function bigOf(q) {
   return ch?.big?.find((b) => b.id === q.big) || null;
 }
 function bigPicture(q) {
+  // One line, "Part of: <the big question>", that opens the author's summary.
+  // It used to be a full card on every answer: the answer card ran to about
+  // a hundred words (learning-journeys review, 18 Sept 2026).
   const b = bigOf(q);
   if (!b) return null;
   const ch = PACK.chapters.find((c) => c.id === q.ch);
   const n = ch.big.indexOf(b) + 1;
-  // Don't repeat what the evidence above already quoted.
   const seen = evOf(q).map((x) => x.quote);
   const fresh = b.ev.filter((x) => !seen.some((y) => y.includes(x.quote) || x.quote.includes(y)));
   const e = (fresh[0] || b.ev[0]);
   const w = sectionOf(e.p);
-  return h('section', { class: 'card big-picture' },
-    h('p', { class: 't-label' }, `The bigger picture · ${ch.title}, ${n} of ${ch.big.length}`),
-    h('div', { class: 'q-head' }, h('h3', { class: 'bq' }, b.q), sayBtn(b.q + ' ' + fresh.map((x) => x.quote).join(' '), 'Read the bigger picture aloud')),
-    fresh.length ? h('p', { class: 'bk' }, fresh.map((x) => x.quote).join(' ')) : null,
+  const box = h('div', { class: 'bp-more', hidden: true },
+    fresh.length ? h('div', { class: 'q-head' }, h('p', { class: 'bk' }, fresh.map((x) => x.quote).join(' ')), sayBtn(fresh.map((x) => x.quote).join(' '), 'Read the summary aloud')) : null,
     w ? h('button', { class: 'disclose', style: 'padding:2px 0', onclick: () => openReader(w.section.id, e.p, b.ev.filter((x) => x.p === e.p).map((x) => x.quote)) }, `The author’s summary — §${e.sec}`) : null);
+  const btn = h('button', { class: 'part-of', type: 'button', 'aria-expanded': 'false' },
+    h('span', { class: 't-label' }, `Part of · ${n} of ${ch.big.length}`), h('span', { class: 'bq' }, b.q));
+  btn.onclick = () => { box.hidden = !box.hidden; btn.setAttribute('aria-expanded', String(!box.hidden)); };
+  return h('section', { class: 'big-picture' }, btn, box);
 }
 
 function lensChips(q) {
@@ -485,30 +540,36 @@ function lensChips(q) {
 
 // Where it came from: the quoted words, then the whole paragraph (readable,
 // and read aloud in place), then the way into the full section.
+// The answer card, kept short: the verdict, the key sentence and where it's
+// from, and one line naming the big question. Everything else — the other
+// quotes, the whole paragraph read aloud, the full credit, the threads — is
+// one tap away under "More from the source". Target: under 60 words.
 function revealCard(q, ok) {
   const out = [h('p', { class: `verdict ${ok ? 'good' : 'bad'}`, tabindex: '-1' }, ok ? '✓ Right.' : '✗ Not quite.')];
   if (!ok) out.push(h('div', { class: 'q-head' }, h('p', { class: 'answer' }, q.answer), sayBtn(q.answer, 'Read the right answer aloud')));
-  if ((q.lens || []).includes('contested')) out.push(h('p', { class: 't-body' }, 'The book itself says this is uncertain — which is the point of the question.'));
-  const byPara = new Map();
-  for (const e of q.ev) {
-    if (!byPara.has(e.p)) byPara.set(e.p, { ...e, quotes: [] });
-    byPara.get(e.p).quotes.push(e.quote);
-  }
-  for (const e of byPara.values()) {
-    const paraBox = h('div', { hidden: true });
-    const toggle = h('button', { class: 'disclose', type: 'button', 'aria-expanded': 'false' }, 'Show the whole paragraph');
-    toggle.onclick = () => {
-      paraBox.hidden = !paraBox.hidden;
-      toggle.setAttribute('aria-expanded', String(!paraBox.hidden));
-      toggle.textContent = paraBox.hidden ? 'Show the whole paragraph' : 'Hide the paragraph';
-      if (!paraBox.hidden && !paraBox.firstChild) paraBox.append(paragraphWithPlayer(e.para, e.quotes));
-    };
-    out.push(h('section', { class: 'card stack' },
-      h('div', { class: 'src-head' }, h('p', { class: 't-label' }, 'From the book'), h('span', { class: 'spacer' }), sayBtn(e.quotes.join(' '), 'Read the quotation aloud')),
-      h('blockquote', { class: 'quote' }, e.quotes.join(' … ')),
-      toggle, paraBox, citeLine({ ...e, quote: e.quotes[0] })));
-  }
-  out.push(bigPicture(q), lensChips(q));
+  const key = q.ev[0];
+  const more = h('div', { class: 'stack', hidden: true });
+  const toggle = h('button', { class: 'disclose', type: 'button', 'aria-expanded': 'false' }, 'More from the source');
+  toggle.onclick = () => {
+    more.hidden = !more.hidden;
+    toggle.setAttribute('aria-expanded', String(!more.hidden));
+    toggle.textContent = more.hidden ? 'More from the source' : 'Less';
+    if (!more.hidden && !more.firstChild) {
+      const byPara = new Map();
+      for (const e of q.ev) { if (!byPara.has(e.p)) byPara.set(e.p, { ...e, quotes: [] }); byPara.get(e.p).quotes.push(e.quote); }
+      const rest = q.ev.slice(1).filter((e) => e.quote !== key.quote);
+      if ((q.lens || []).includes('contested')) more.append(h('p', { class: 't-body' }, 'The source itself says this is uncertain — which is the point of the question.'));
+      if (rest.length) more.append(h('blockquote', { class: 'quote' }, rest.map((e) => e.quote).join(' … ')));
+      for (const e of byPara.values()) more.append(paragraphWithPlayer(e.para, e.quotes), citeLine({ ...e, quote: e.quotes[0] }), h('p', { class: 'cite' }, e.cite));
+      const chips = lensChips(q);
+      if (chips) more.append(chips);
+    }
+  };
+  out.push(h('section', { class: 'card stack key-card' },
+    h('div', { class: 'q-head' }, h('blockquote', { class: 'quote' }, key.quote), sayBtn(key.quote, 'Read the key sentence aloud')),
+    h('p', { class: 'cite' }, `§${key.sec}`),
+    toggle, more));
+  out.push(bigPicture(q));
   return out;
 }
 
@@ -529,6 +590,7 @@ function paragraphWithPlayer(text, quotes) {
 }
 
 function finish() {
+  if (round.placement) return placementDone();
   round.finished = true;
   setLeaveGuard(null);
   if (tally.n && tally.right === tally.n) S.fanfare();
@@ -623,6 +685,17 @@ function progressScreen() {
       h('p', { class: 't-body' }, growthLine(false)),
       growthChart(),
       h('p', { class: 'key-line t-small' }, h('i', { class: 'kc' }), 'can answer: right the last time it was asked', h('i', { class: 'kk' }), 'known: right after three weeks away')),
+    State.data.placement ? (() => {
+      const pl = State.data.placement;
+      const nowCan = State.canAnswer(pl.ids);
+      return h('section', { class: 'card stack' },
+        h('p', { class: 't-label' }, 'Where you started'),
+        h('div', { class: 'then-now' },
+          h('div', {}, h('b', { class: 'num' }, `${pl.score}/${pl.n}`), h('span', { class: 't-small' }, shortDate(pl.at))),
+          h('span', { class: 'arrow', 'aria-hidden': 'true' }, '→'),
+          h('div', {}, h('b', { class: 'num' }, `${nowCan}/${pl.ids.length}`), h('span', { class: 't-small' }, 'now'))),
+        h('p', { class: 't-body' }, `The same eight questions, easy to hard. You started as “${pl.level}”.`));
+    })() : null,
     (() => {
       const t = turnedAround();
       return h('section', { class: 'card stack' },

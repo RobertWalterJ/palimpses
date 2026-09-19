@@ -109,6 +109,8 @@
 :root:not([data-theme="dark"])[data-tint="blue"] { --read-ground: #EEF3FA; }
 
 * { box-sizing: border-box; }
+/* Anything marked hidden stays hidden, whatever display a class gives it. */
+[hidden] { display: none !important; }
 html, body { margin: 0; }
 body {
   background: var(--ground); color: var(--ink);
@@ -176,6 +178,20 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .bm-row { display: grid; gap: 5px; }
 .bm-row .row { align-items: baseline; gap: 10px; }
 .bm-q { flex: 1; font: 450 .93rem/1.4 var(--ui); color: var(--ink-2); }
+/* The compact answer card and its one-line "Part of". */
+.key-card .cite { margin: -2px 0 0; }
+.big-picture { display: grid; gap: 8px; }
+.part-of { display: grid; gap: 3px; text-align: left; width: 100%; min-height: 44px; padding: 12px 14px; border: 0; border-left: 4px solid var(--accent); border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.part-of .bq { font: 650 1rem/1.35 var(--display); }
+.part-of:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.bp-more { display: grid; gap: 6px; padding: 0 4px; }
+.bp-more .bk { margin: 0; font: 400 1rem/1.6 var(--read); color: var(--ink-2); }
+.order-truth { margin: 0; padding-left: 1.4em; display: grid; gap: 6px; font: 450 1rem/1.45 var(--ui); }
+.order-truth b { font-weight: 700; margin-right: 4px; }
+.then-now { display: flex; align-items: center; gap: 18px; }
+.then-now div { display: grid; gap: 2px; }
+.then-now b { font: 700 1.6rem/1 var(--display); color: var(--ink); }
+.then-now .arrow { font: 600 1.4rem/1 var(--ui); color: var(--accent); }
 .versions { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
 .versions li { display: grid; gap: 2px; }
 .versions .vhead { margin: 0; font: 500 .95rem/1.35 var(--ui); color: var(--ink-2); }

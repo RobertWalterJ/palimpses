@@ -51,7 +51,7 @@ const evOut = (e) => {
 
 mkdirSync(join(ROOT, 'app', 'data'), { recursive: true });
 for (const pack of PACKS) {
-  const files = readdirSync(join(ROOT, pack.dir)).filter((f) => f.endsWith('.mjs') && f !== 'voices.mjs' && f !== 'anchors.mjs').sort();
+  const files = readdirSync(join(ROOT, pack.dir)).filter((f) => f.endsWith('.mjs') && f !== 'voices.mjs' && f !== 'anchors.mjs' && f !== 'placement.mjs').sort();
   const questions = [];
   const chapters = [];
   let entries = [];
@@ -82,7 +82,13 @@ for (const pack of PACKS) {
   const rank = new Map(anchors.map((a, i) => [a, i]));
   questions.sort((a, b) => (rank.get(a.id) ?? 1e9) - (rank.get(b.id) ?? 1e9));
   for (const q of questions) if (rank.has(q.id)) q.anchor = true;
-  const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions, voices: await loadVoices(pack) };
+  // How much a newcomer is likely to know about each question's subject
+  // (1 commonly known, 2 school-level, 3 specialist), from the question audit.
+  // The placement check samples across these levels.
+  const LEVEL = new Map((await import(pathToFileURL(join(ROOT, 'audits', '2026-09-19-questions.mjs')).href)).default.map(([id, fam]) => [id, fam]));
+  for (const q of questions) q.level = LEVEL.get(q.id.split('/')[1]) ?? 2;
+  const placement = (await import(pathToFileURL(join(ROOT, pack.dir, 'placement.mjs')).href)).default.map((a) => `${pack.id}/${a}`);
+  const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions, placement, voices: await loadVoices(pack) };
   writeFileSync(join(ROOT, 'app', 'data', pack.id + '.json'), JSON.stringify(out));
   console.log(`wrote app/data/${pack.id}.json — ${questions.length} questions in ${chapters.length} chapter(s)`);
   writeLibrary(pack, entries);
