@@ -44,7 +44,9 @@ try {
   commit = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT }).toString().trim();
   if (execFileSync('git', ['status', '--porcelain', '--', 'app', 'content', 'build'], { cwd: ROOT }).toString().trim()) commit += '+';
 } catch { /* not a repo */ }
-const BUILD = JSON.stringify({ v: pkg.version, commit, date: new Date().toISOString().slice(0, 10) });
+// The local calendar date: an evening build in Toronto is still today there.
+const d = new Date();
+const BUILD = JSON.stringify({ v: pkg.version, commit, date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` });
 
 const html = readFileSync(join(APP, 'index.html'), 'utf8')
   .replace('<link rel="stylesheet" href="fonts/fonts.css">', () => `<style>${fonts}</style>`)

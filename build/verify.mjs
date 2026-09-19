@@ -77,6 +77,21 @@ for (const file of files) {
     }
     continue;
   }
+  // The opening order: every id must be a real question, listed once.
+  if (file.endsWith('anchors.mjs')) {
+    const all = new Set();
+    for (const f of files) {
+      if (/(anchors|voices|entries)\.mjs$/.test(f)) continue;
+      for (const q of (await import(pathToFileURL(f).href)).default) all.add(q.id);
+    }
+    const seenA = new Set();
+    for (const id of qs) {
+      if (!all.has(id)) fails.push(where + ': ' + id + ' is not a question');
+      if (seenA.has(id)) fails.push(where + ': ' + id + ' listed twice');
+      seenA.add(id);
+    }
+    continue;
+  }
   // The reference library's entries: every lead quote verbatim, and the match
   // pattern must find the lead's own paragraph (else it indexes the wrong thing).
   if (qs.length && qs[0].lead) {
@@ -114,7 +129,7 @@ for (const file of files) {
     n++;
     if (!BIG.has(q.big)) fails.push(where + ' · ' + q.id + ': big question "' + q.big + '" is not one of this chapter’s');
     // The question is about the past, never about the book: a player who has
-    // never heard of the source must be able to answer (Robert, 19 Sept 2026).
+    // never heard of the source must be able to answer (Robert, 18 Sept 2026).
     const SOURCE_TALK = /\b(Belshaw|Prümers|the authors?|the book|the textbook|according to|in (his|her|their) view)\b/i;
     if (SOURCE_TALK.test(q.prompt || '')) fails.push(where + ' · ' + q.id + ': the prompt talks about the source ("' + (q.prompt.match(SOURCE_TALK) || [''])[0] + '"); ask about the past and let the answer card credit it');
     if (q.depth && q.depth !== 'detail') fails.push(where + ' · ' + q.id + ': depth must be detail or absent');

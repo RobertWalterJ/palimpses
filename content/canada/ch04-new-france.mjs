@@ -42,7 +42,7 @@ export default [
   },
   {
     id: 'fur-shaped', kind: 'choice', big: 'furs', lens: ['economy'],
-    prompt: 'What gave the colony of Canada its pattern of settlement and its relations with the nations?',
+    prompt: 'France’s colony of Canada lined the St. Lawrence River. What decided where it grew, and how it dealt with the nations?',
     answer: 'Reaching the furs farther inland',
     options: ['Farming the richest soil it found', 'Converting the nations to Catholicism', 'Guarding the river against Spain'],
     must: ['to tap fur resources farther inland', 'the foundation of all relations with Aboriginal peoples'],
@@ -69,7 +69,7 @@ export default [
   },
   {
     id: 'scurvy-cure', kind: 'choice', big: 'first-visits', lens: ['own-terms', 'against-progress'],
-    prompt: 'Most of Cartier’s crew were dying of scurvy in the winter at Stadacona. What saved the rest?',
+    prompt: 'Jacques Cartier’s men spent a bitter winter at Stadacona, a town of the St. Lawrence Iroquois. Most of the crew died of cold and scurvy. What saved the rest?',
     answer: 'A cure the Stadaconans gave them',
     options: ['Supplies shipped out from France', 'Fresh meat from Basque whalers', 'An early thaw and fresh greens'],
     must: ['a cure provided by the Stadaconans'],
@@ -210,7 +210,7 @@ export default [
   },
   {
     id: 'french-seventy', kind: 'choice', big: 'furs', lens: ['against-progress'],
-    prompt: 'As the 1620s opened, how many French residents were there in Canada?',
+    prompt: 'By the 1620s France had a colony on the St. Lawrence and a busy fur trade. How many French people actually lived in Canada then?',
     answer: 'Fewer than 70',
     options: ['About 1,500', 'About 12,000', 'About 40,000'],
     must: ['fewer than 70 French residents in Canada', 'utterly dependent on the engagement of Aboriginal partners'],

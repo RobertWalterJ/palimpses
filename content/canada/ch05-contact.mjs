@@ -46,9 +46,9 @@ export default [
   {
     id: 'most-pivotal', kind: 'choice', big: 'disease', lens: ['against-progress'],
     prompt: 'Crops, horses, pigs, guns and germs all crossed the Atlantic in the “Columbian Exchange.” Which mattered most?',
-    answer: 'Smallpox and the “virgin soil” epidemics',
+    answer: 'Smallpox and other new diseases',
     options: ['The horse, on the Plains', 'Guns and metal tools', 'The potato, in Europe'],
-    must: ['as pivotal as smallpox and the virgin soil epidemics'],
+    must: ['as pivotal as smallpox'],
     ev: [{ p: 'pre-5.3-p28', q: 'Nothing in the Columbian Exchange was as pivotal as smallpox and the virgin soil epidemics.' }],
   },
   {
@@ -178,7 +178,7 @@ export default [
   // ── the widowed land ───────────────────────────────────────────────────
   {
     id: 'tenochtitlan-fell', kind: 'choice', big: 'disease', lens: ['against-progress'],
-    prompt: 'The Aztecs drove Cortés out of Tenochtitlan in 1520. What turned it?',
+    prompt: 'In 1520 the Aztecs defeated the Spanish under Cortés and drove them out of their capital, Tenochtitlan. What turned things around for the Spanish?',
     answer: 'Smallpox, and an army of unhappy tributary nations',
     options: ['Better Spanish cannon, steel armour and fast cavalry', 'A treaty signed at last with Moctezuma’s heirs', 'Fresh soldiers and horses shipped in from Spain'],
     must: ['massive Aboriginal army', 'smallpox struck Tenochtitlan'],
@@ -247,7 +247,7 @@ export default [
   },
   {
     id: 'used-pelts', kind: 'choice', big: 'terms', depth: 'detail', lens: ['economy'],
-    prompt: 'Which beaver pelts did European buyers want most?',
+    prompt: 'Europeans bought beaver pelts from Indigenous traders in huge numbers. Which pelts did they want most?',
     answer: 'Used ones, worn or slept in until shiny',
     options: ['Fresh ones, straight from the trap', 'Ones from beavers taken in summer', 'Ones dyed red with ochre'],
     must: ['what the Europeans wanted most of all was used pelts'],

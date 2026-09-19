@@ -10,6 +10,7 @@
 // verdict that takes focus, a round-end that lists what slipped, and real
 // back-button behaviour.
 
+import { VERSIONS } from './versions.js';
 import { State, Round, cardState, isHolding, nextDueSentence, shuffle, now, DAY, dayKey } from './schedule.js';
 import { initSpeech, unlock, say, setRate, onSpeaking } from './speech.js';
 import { Reader, sentences } from './reader.js';
@@ -247,8 +248,11 @@ function citeLine(e) {
 let round = null;
 let tally = null;
 
+// Everything asked since the app was opened: never asked again in the same
+// session, in any round or in practice.
+const sessionAsked = new Set();
 function play(practice, ids = IDS) {
-  round = new Round(ids, { practice });
+  round = new Round(ids, { practice, exclude: sessionAsked });
   round.scope = ids;
   // Which chapters were still unfinished, to mark the ones this round finishes.
   round.openBefore = new Set(chapterStats().filter((s) => s.unseen).map((s) => s.ch.id));
@@ -281,12 +285,12 @@ route('round', () => [h('p', { class: 't-body', style: 'padding-top:40px' }, 'Th
 
 function topBar() {
   const done = tally.n;
-  const total = Math.max(round.total, done + round.queue.length + 1);
+  const total = round.total;          // exact now that nothing is re-queued
   return h('div', { class: 'topbar' },
     iconBtn('back', 'Leave the round', () => leaveSheet(), 'icon plain'),
     h('div', { class: 'meter', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(total), 'aria-valuenow': String(done) },
       h('i', { style: `width:${(done / total) * 100}%` })),
-    h('span', { class: 't-small num' }, `${done + 1} of about ${total}`),
+    h('span', { class: 't-small num' }, `${done + 1} of ${total}`),
     round.practice ? h('span', { class: 'chip' }, 'practice') : null);
 }
 
@@ -396,7 +400,8 @@ function orderScreen(q) {
 }
 
 function grade(q, ok) {
-  const c = State.answer(q.id, ok, { practice: round.practice, repeat: round.isRepeat(q.id) });
+  sessionAsked.add(q.id);
+  const c = State.answer(q.id, ok, { practice: round.practice, repeat: false });
   round.after(q.id, c);
   tally.n++;
   if (ok) { tally.right++; tally.streak++; S.right(tally.streak); } else { tally.streak = 0; tally.missed.push(q.id); S.wrong(); }
@@ -625,7 +630,8 @@ route('settings', settingsScreen);
 
 // ── about ───────────────────────────────────────────────────────────────
 const BUILD = window.__PALIMPSEST_BUILD || { v: 'dev', commit: 'unbuilt', date: '' };
-function versionText() { return `v${BUILD.v} (${BUILD.commit})`; }
+const longDate = (iso) => iso ? new Date(iso + 'T12:00:00').toLocaleDateString('en-CA', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+function versionText() { return `v${BUILD.v} · ${BUILD.commit}${BUILD.date ? ' · ' + longDate(BUILD.date) : ''}`; }
 const link = (href, text) => h('a', { href, target: '_blank', rel: 'noopener' }, text);
 const CC_BY = 'https://creativecommons.org/licenses/by/4.0/';
 
@@ -641,6 +647,11 @@ function aboutScreen() {
       h('p', { class: 'answer num' }, `Palimpsest ${BUILD.v}`),
       h('p', { class: 't-small num' }, `Build ${BUILD.commit}${date ? ', ' + date : ''}. ${IDS.length} questions, ${(PACK.voices || []).length} voices, ${PACK.chapters.length} chapters.`),
       h('p', { class: 't-body' }, 'Your progress is kept on this device only. Nothing is sent anywhere.')),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'Versions'),
+      h('ol', { class: 'versions' }, VERSIONS.map((x, i) => h('li', {},
+        h('p', { class: 'vhead num' }, h('b', {}, x.v), ` · ${longDate(i === 0 && BUILD.v === x.v ? BUILD.date || x.date : x.date)} · `, h('code', {}, i === 0 && BUILD.v === x.v ? BUILD.commit : x.code || '')),
+        h('p', { class: 't-small' }, x.notes))))),
     h('section', { class: 'card stack' },
       h('p', { class: 't-label' }, 'How it’s checked'),
       h('p', { class: 't-body' }, 'Every question and every voice is checked word for word against the source it cites before the app can be built. If a quotation isn’t in the source, the build fails.')),

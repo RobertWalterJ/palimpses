@@ -2,11 +2,12 @@
 //
 //   node build/test-schedule.mjs
 //
-// Plays the real scheduler for sixty days, one round a day, with a seeded
-// player who is right 60% of the time on first sight and 88% on review.
-// Fails if: a round is ever empty while work remains, a missed or new card is
-// not asked again inside its round, anything is left unmet after a fortnight,
-// or reviews pile past the round size.
+// Plays the real scheduler for 120 days, one session a day (two rounds every
+// third day), with a seeded player right 60% of the time on first sight and
+// 88% on review. Fails if a question is asked twice in one session, a round
+// runs past 10, a round has no new question while any
+// remain, new material stalls for a week, or the pack isn't all met within
+// one day per question.
 
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -34,37 +35,33 @@ const fails = [];
 const log = [];
 const DAYS = 120;
 for (let day = 1; day <= DAYS; day++) {
-  const round = new S.Round(ids);
-  let asked = 0, right = 0, repeats = 0;
-  const seen = new Set();
-  const counts = new Map();
-  const needsRepeat = new Set();
-  let id;
-  while ((id = round.next())) {
-    const before = S.State.card(id);
-    const first = !before;
-    const p = first ? 0.6 : before.st === 'review' ? 0.88 : 0.75;
-    const ok = rand() < p;
-    if (seen.has(id)) repeats++;
-    seen.add(id);
-    counts.set(id, (counts.get(id) || 0) + 1);
-    const c = S.State.answer(id, ok, { repeat: seen.has(id) && counts.get(id) > 1 });
-    if (counts.get(id) === 1 && (c.st === 'learning' || c.st === 'relearning')) needsRepeat.add(id);
-    round.after(id, c);
-    asked++; if (ok) right++;
-    t += 40e3;
-    if (asked > 40) { fails.push(`day ${day}: round did not end`); break; }
-  }
-  // Every card new or missed on its first appearance gets exactly one more
-  // look inside the round — and never more than one.
-  for (const [x, n] of counts) {
-    // …unless the round had already spent its four repeats (MAX_REPEATS).
-    if (needsRepeat.has(x) && n < 2 && repeats < 4) fails.push(`day ${day}: ${x} needed a repeat inside the round and did not get one`);
-    if (n > 2) fails.push(`day ${day}: ${x} was asked ${n} times in one round`);
+  // One session a day, with a second round on every third day ("Another
+  // round"): nothing may be asked twice in the session, across both rounds.
+  const session = new Set();
+  let asked = 0, right = 0, fresh = 0;
+  for (let r = 0; r < (day % 3 === 0 ? 2 : 1); r++) {
+    const remainingNew = ids.filter((x) => !S.State.card(x)).length;
+    const round = new S.Round(ids, { exclude: session });
+    let id, n = 0, nNew = 0;
+    while ((id = round.next())) {
+      const before = S.State.card(id);
+      if (session.has(id)) fails.push(`day ${day}: ${id} asked twice in one session`);
+      session.add(id);
+      if (!before) { nNew++; fresh++; }
+      const p = !before ? 0.6 : before.st === 'review' ? 0.88 : 0.75;
+      const ok = rand() < p;
+      S.State.answer(id, ok);
+      n++; asked++; if (ok) right++;
+      t += 40e3;
+      if (n > 10) { fails.push(`day ${day}: a round ran past 10 questions`); break; }
+    }
+    // Fresh material in every first round while any is left and the day's
+    // allowance isn't spent — so a round never feels like the same questions.
+    if (r === 0 && remainingNew >= 1 && nNew < 1 && (S.State.data.days[S.dayKey()]?.newN || 0) < 12) fails.push(`day ${day}: no new question with ${remainingNew} still unmet`);
   }
   const met = ids.filter((x) => S.State.card(x)).length;
   const known = ids.filter((x) => ['known', 'secure'].includes(S.cardState(S.State.card(x)))).length;
-  log.push({ day, asked, right, repeats, met, known });
+  log.push({ day, asked, right, fresh, met, known });
   t += 864e5 - asked * 40e3;
 }
 
@@ -79,10 +76,9 @@ if (!metBy || metBy > ids.length) fails.push(`all ${ids.length} not met until da
 for (let d = 7; d < log.length; d++) {
   if (log[d].met < ids.length && log[d].met === log[d - 7].met) { fails.push(`nothing new introduced from day ${d - 6} to day ${d + 1}`); break; }
 }
-if (Math.max(...log.map((l) => l.asked)) > 15) fails.push(`a round ran to ${Math.max(...log.map((l) => l.asked))} questions`);
 for (const d of [1, 7, 30, 60, 90, 120]) {
   const l = at(d);
-  console.log(`day ${String(d).padStart(2)}: asked ${String(l.asked).padStart(2)} (${l.repeats} in-round repeats), right ${l.right}, met ${l.met}/${ids.length}, known ${l.known}`);
+  console.log(`day ${String(d).padStart(2)}: asked ${String(l.asked).padStart(2)} (${l.fresh} new), right ${l.right}, met ${l.met}/${ids.length}, known ${l.known}`);
 }
 const idle = log.filter((l) => l.asked === 0).length;
 console.log(`all met by day ${metBy}`);

@@ -188,7 +188,7 @@ export default [
   },
   {
     id: 'cahokia-woodhenge', kind: 'choice', big: 'worlds', depth: 'detail', lens: ['own-terms'],
-    prompt: 'What was Cahokia’s woodhenge — a circle of wooden posts — for?',
+    prompt: 'Cahokia was a city on the Mississippi, across from today’s St. Louis. Its builders raised a “woodhenge,” a great circle of wooden posts. What was it for?',
     answer: 'A calendar: it marked sunrise at solstices and equinoxes',
     options: ['A rack for drying hides and meat in the sun', 'A frame for smoking fish over a fire', 'A fence around the chief’s household on the plaza'],
     must: ['solstices and equinoxes', 'calendar'],

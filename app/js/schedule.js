@@ -3,8 +3,9 @@
 // Ported from Landfall's scheduler, keeping the rules that were measured there
 // rather than re-deriving them:
 //   - SM-2-lite intervals, ease 1.35–3.0, capped at 270 days;
-//   - ONE repeat inside the round, then tomorrow (Karpicke & Roediger 2008;
-//     Cepeda et al. 2006 — retrieval spread across sessions is what lasts);
+//   - no repeats inside a session: a miss comes back on a later day
+//     (Cepeda et al. 2006 — retrieval spread across sessions is what lasts;
+//     Robert, 18 Sept 2026: repeats made the pack feel small);
 //   - ease can recover toward its start after three clean reviews, but never
 //     climbs past it (the "pawl");
 //   - practice never moves the schedule;
@@ -21,12 +22,15 @@ export const EASE_MAX = 3.0;
 export const KNOWN_AT = 21;          // days — "known" means you will still have it in three weeks
 export const SECURE_AT = 90;
 export const DAY = 864e5;
-const LEARN_STEP = 4;                // questions later, inside the round
+// A round is at most ROUND questions, each asked ONCE. In-round repeats were
+// removed on 18 Sept 2026: Robert found the same questions coming back inside
+// a session, and it made the pack feel small. A miss now simply comes back on
+// a later day — the spacing that actually builds memory.
 const NEW_PER_ROUND = 5;
-const ROUND = 12;                    // slots, counting the in-round repeats
-const MAX_REPEATS = 4;
-const NEW_PER_DAY = 15;              // new questions per day, across all rounds
-const LOAD_CEILING = 25;             // due reviews at which nothing new is introduced
+const MIN_NEW = 3;                   // new questions per round while some reviews are due
+const ROUND = 10;
+const NEW_PER_DAY = 12;              // new questions per day, across all rounds
+const BACKLOG = 14;                  // due reviews above which a round takes just one new question
 
 let clock = () => Date.now();
 export const now = () => clock();
@@ -109,10 +113,9 @@ export const State = {
       if (c.st === 'new' || c.st === 'learning') {
         c.st = 'learning';
         c.step++;
-        if (c.step > 1) { c.st = 'review'; c.iv = 1; c.due = now() + DAY; c.step = 0; }
-        // Its second look happens inside this round (Round.after); after that
-        // it waits for TOMORROW, not for the next round the same evening —
-        // same question, same options, minutes later, is recognition.
+        // Right on two separate days graduates it; the next look is three
+        // days out. (Right twice in one sitting was recognition, not memory.)
+        if (c.step > 1) { c.st = 'review'; c.iv = 3; c.due = now() + 3 * DAY; c.step = 0; }
         else c.due = tomorrow();
       } else if (c.st === 'relearning') {
         c.iv = Math.max(1, Math.round((c.ivBefore || c.iv || 1) * 0.35));
@@ -160,66 +163,48 @@ export const State = {
 // story is told — the pack is authored as a narrative, so "new" follows it
 // rather than being shuffled; nothing new at all once reviews pile up.
 export class Round {
-  constructor(ids, { practice = false } = {}) {
+  // `exclude`: questions already asked this session, never asked again in it.
+  constructor(ids, { practice = false, exclude = new Set() } = {}) {
     this.practice = practice;
     this.queue = [];
     this.asked = 0;
+    const pool = ids.filter((id) => !exclude.has(id));
     if (practice) {
-      const seen = ids.filter((id) => State.card(id));
+      const seen = pool.filter((id) => State.card(id));
       this.queue = shuffle(seen).slice(0, ROUND);
       return;
     }
-    const due = State.dueIds(ids);
-    // Slots, not questions. A card still learning (new, or missed last time)
-    // is asked and then asked once more inside the round, so it costs two;
-    // reviews leave two slots spare for the repeats their misses earn.
-    // Counting every card as one let a round run to seventeen.
-    const cost = (id) => { const c = State.card(id); return !c || c.st === 'learning' || c.st === 'relearning' ? 2 : 1; };
-    let used = 0;
-    for (const id of due) {
-      if (used + cost(id) > ROUND - 2) break;
-      this.queue.push(id); used += cost(id);
-    }
-    // Selected by due date, then SHUFFLED: cards learned together fall due
-    // together, and replaying them in the book's order turns order into a cue.
-    this.queue = shuffle(this.queue);
-    if (due.length < LOAD_CEILING) {
-      // At most NEW_PER_DAY new a day: five "another round"s used to mean
-      // twenty-five new questions and a wall of reviews tomorrow.
-      const newToday = State.data.days[dayKey()]?.newN || 0;
-      const room = Math.max(0, Math.min(Math.floor((ROUND - used) / 2), NEW_PER_DAY - newToday));
-      const fresh = ids.filter((id) => !State.card(id)).slice(0, Math.min(NEW_PER_ROUND, room));
-      this.queue.push(...fresh);
+    const due = State.dueIds(pool);
+    const fresh = pool.filter((id) => !State.card(id));
+    // At most NEW_PER_DAY new a day: five "another round"s used to mean
+    // twenty-five new questions and a wall of reviews tomorrow.
+    const newToday = State.data.days[dayKey()]?.newN || 0;
+    const newRoom = Math.max(0, NEW_PER_DAY - newToday);
+    // New questions scale with the reviews waiting. Forcing three new into
+    // every round (first try at this) let reviews pile up until they came
+    // back too late to stick: the persona study's general player fell from
+    // 88% to 49% on reviews. So: five new when little is due, three when some
+    // is, and ONE — never none — under a backlog, so every round still has
+    // something fresh in it.
+    const allowance = due.length > BACKLOG ? 1 : due.length > MIN_NEW + 2 ? MIN_NEW : NEW_PER_ROUND;
+    const nNew = Math.min(allowance, fresh.length, newRoom);
+    // Reviews selected by due date, then SHUFFLED: cards learned together fall
+    // due together, and replaying them in the book's order turns order into a cue.
+    this.queue = shuffle(due.slice(0, ROUND - nNew));
+    // New questions in the pack's teaching order (anchors first), mixed in
+    // among the reviews rather than saved for the end.
+    const add = fresh.slice(0, nNew);
+    for (const id of add) this.queue.splice(Math.floor(Math.random() * (this.queue.length + 1)), 0, id);
+    // …except the very first question of a player's first round: it should be
+    // the pack's opening anchor, not a random one.
+    if (!Object.keys(State.data.cards).length && add.length) {
+      this.queue = [add[0], ...this.queue.filter((x) => x !== add[0])];
     }
   }
   get empty() { return this.queue.length === 0; }
-  isRepeat(id) { return (this.seen?.get(id) || 0) > 0; }
+  isRepeat() { return false; }
   next() { this.asked++; return this.queue.shift() || null; }
-  // After an answer: a card still in its learning step (or just missed) comes
-  // back a few questions later, once.
-  //
-  // ONCE. A missed card used to come back until it was right twice running,
-  // which turned a five-new-question round into fifteen questions — the
-  // simulation caught it. Landfall measured why once is enough: the second
-  // retrieval inside a session adds little; tomorrow's adds a lot. A card still
-  // learning at the end of the round is simply due tomorrow.
-  after(id, card) {
-    if (this.practice) return;
-    this.seen = this.seen || new Map();
-    const times = (this.seen.get(id) || 0) + 1;
-    this.seen.set(id, times);
-    // And at most MAX_REPEATS a round: on a bad day every miss earns a repeat,
-    // and a round that GROWS the worse you're doing is the discouraging kind.
-    // A miss past the cap is simply due tomorrow.
-    this.repeats = this.repeats || 0;
-    if (times < 2 && this.repeats < MAX_REPEATS && (card.st === 'learning' || card.st === 'relearning') && !this.queue.includes(id)) {
-      this.repeats++;
-      // Two to four questions later, varied: a fixed gap replayed the first
-      // five questions in exactly the same order, which is recitation.
-      const gap = 2 + Math.floor(Math.random() * (LEARN_STEP - 1));
-      this.queue.splice(Math.min(gap, this.queue.length), 0, id);
-    }
-  }
+  after() { /* nothing is re-queued: each question once per session */ }
 }
 
 export function shuffle(a) {

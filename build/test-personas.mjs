@@ -13,7 +13,11 @@
 //                chance of guessing (1 in 4; an order of 4–5 items is ~1 in 20).
 //   memory       each answer card read lays down a trace of strength S days;
 //                recall after t days = exp(-t / S). A right answer multiplies
-//                S by 2.5, a miss resets it to 1.5 (standard spacing model).
+//                S by 1 + 2.5 x (1 - recall): hard-won retrievals build the most
+//                (the spacing effect); a miss resets S to 1.5.
+//   SCHED=path   run a different scheduler build, to compare versions, e.g.
+//                git show <commit>:app/js/schedule.js > build/_old.js;
+//                SCHED=./_old.js node build/test-personas.mjs
 //   answer       p = recall + (1 - recall) * p0.
 //   transfer     each question learned raises p0 of others under the same
 //                big question by 0.02 (cap +0.15) — the "bigger picture" card.
@@ -45,7 +49,7 @@ async function run(personaKey, orderKey, seedBase) {
   globalThis.localStorage = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k) };
   let mseed = seedBase;
   Math.random = () => ((mseed = (mseed * 16807) % 2147483647) / 2147483647);
-  const S = await import('../app/js/schedule.js?' + personaKey + orderKey + seedBase);
+  const S = await import((process.env.SCHED || '../app/js/schedule.js') + '?' + personaKey + orderKey + seedBase);
   let seed = seedBase * 31 + 7;
   const rand = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
   let t = new Date(2026, 8, 1, 19, 0).getTime();
@@ -82,7 +86,11 @@ async function run(personaKey, orderKey, seedBase) {
         const c = S.State.answer(id, ok, { repeat: counts.get(id) > 1 });
         round.after(id, c);
         // The answer card is read either way: a trace is laid down.
-        mem.set(id, { S: m ? (ok ? m.S * 2.5 : 1.5) : (ok ? 3 : 1.5), last: t });
+        // The spacing effect: a retrieval builds more memory the closer it came
+        // to being forgotten. A right answer minutes after seeing the card
+        // (recall near 1) adds almost nothing; one after a real gap multiplies
+        // strength by up to 3.5. A miss resets it.
+        mem.set(id, { S: m ? (ok ? m.S * (1 + 2.5 * (1 - recall)) : 1.5) : (ok ? 3 : 1.5), last: t });
         if (ok && !learned.has(id) && m) { learned.add(id); transfer.set(q.big, Math.min(0.15, (transfer.get(q.big) || 0) + 0.02)); }
         rec.asked++; if (ok) rec.right++;
         if (counts.get(id) === 1 && !firstSeen) { rec.firstTry++; if (ok) rec.firstTryRight++; }

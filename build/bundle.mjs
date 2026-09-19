@@ -51,7 +51,7 @@ const evOut = (e) => {
 
 mkdirSync(join(ROOT, 'app', 'data'), { recursive: true });
 for (const pack of PACKS) {
-  const files = readdirSync(join(ROOT, pack.dir)).filter((f) => f.endsWith('.mjs') && f !== 'voices.mjs').sort();
+  const files = readdirSync(join(ROOT, pack.dir)).filter((f) => f.endsWith('.mjs') && f !== 'voices.mjs' && f !== 'anchors.mjs').sort();
   const questions = [];
   const chapters = [];
   let entries = [];
@@ -76,6 +76,12 @@ for (const pack of PACKS) {
       }
     }
   }
+  // The order new questions are introduced in: the anchors first (the
+  // opening rounds), then each chapter, significant before detail.
+  const anchors = (await import(pathToFileURL(join(ROOT, pack.dir, 'anchors.mjs')).href)).default.map((a) => `${pack.id}/${a}`);
+  const rank = new Map(anchors.map((a, i) => [a, i]));
+  questions.sort((a, b) => (rank.get(a.id) ?? 1e9) - (rank.get(b.id) ?? 1e9));
+  for (const q of questions) if (rank.has(q.id)) q.anchor = true;
   const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions, voices: await loadVoices(pack) };
   writeFileSync(join(ROOT, 'app', 'data', pack.id + '.json'), JSON.stringify(out));
   console.log(`wrote app/data/${pack.id}.json — ${questions.length} questions in ${chapters.length} chapter(s)`);
