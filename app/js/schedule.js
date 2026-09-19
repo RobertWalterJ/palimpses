@@ -96,6 +96,11 @@ export const State = {
     }
     const c = this.data.cards[id] || newCard();
     const wasReview = c.st === 'review';
+    // Growth, from what actually happened: how the player did the first time
+    // they met a question, and the day a first miss was first answered right
+    // on a LATER day ("turned around") — then vs now.
+    if (c.st === 'new') { c.first = right ? 1 : 0; c.firstAt = now(); }
+    else if (right && c.first === 0 && !c.turnedAt && dayKey(c.firstAt) !== dayKey()) c.turnedAt = now();
     const gapDays = c.last ? (now() - c.last) / DAY : 0;
     // The daily log, by kind of answer, so accuracy can be read against the
     // 80–85% target: first-try reviews only, not new cards or in-round repeats.
@@ -140,6 +145,24 @@ export const State = {
     this.data.cards[id] = c;
     this.save();
     return c;
+  },
+
+  // What the player can answer: questions whose last (non-practice) answer
+  // was right. Recorded once a day it's looked at, so Progress can draw it
+  // rising — observed, not modelled.
+  canAnswer(ids) { return ids.filter((id) => { const c = this.card(id); return c && c.st !== 'new' && c.ok; }).length; },
+  snapshot(ids) {
+    const day = this.data.days[dayKey()];
+    if (!day) return;             // only days the player actually played
+    const known = ids.filter((id) => ['known', 'secure'].includes(cardState(this.card(id)))).length;
+    day.snap = { can: this.canAnswer(ids), met: ids.filter((id) => this.card(id)).length, holding: ids.filter((id) => isHolding(this.card(id))).length, known };
+    this.save();
+  },
+  // The snapshot nearest to (at or before) a past day, for "this week".
+  snapAt(t) {
+    const key = dayKey(t);
+    const keys = Object.keys(this.data.days).filter((k) => k <= key && this.data.days[k].snap).sort();
+    return keys.length ? this.data.days[keys[keys.length - 1]].snap : null;
   },
 
   dueIds(ids) {

@@ -44,6 +44,7 @@ async function boot() {
   for (const q of PACK.questions) Q.set(q.id, q);
   IDS = PACK.questions.map((q) => q.id);
   await loadLibrary();
+  State.snapshot(IDS);
   show('home', homeScreen, { replace: true });
 }
 
@@ -67,6 +68,50 @@ function counts(ids) {
 }
 
 const evOf = (q) => q.ev || q.items.map((i) => i.ev);
+
+// ── growth ──────────────────────────────────────────────────────────────
+// What changed, in words: "Up 6 this week", from the day snapshots.
+// `lead`: start with the count itself (the round-end card); off where the
+// count is already shown beside it.
+function growthLine(lead = true) {
+  const can = State.canAnswer(IDS);
+  const then = State.snapAt(now() - 7 * DAY);
+  const up = then ? can - then.can : null;
+  const turned = turnedAround().length;
+  const parts = lead ? [`You can answer ${can} of ${IDS.length}`] : [];
+  if (up != null && up > 0) parts.push(`up ${up} on a week ago`);
+  if (turned) parts.push(`${turned} turned around`);
+  if (!parts.length) return 'Questions you get right show up here, and climb as you learn.';
+  const txt = parts.join(' · ') + '.';
+  return txt[0].toUpperCase() + txt.slice(1);
+}
+// Questions missed at first sight and later answered right, on a later day.
+function turnedAround() {
+  return IDS.map((id) => [id, State.card(id)]).filter(([, k]) => k && k.turnedAt).sort((a, b) => b[1].turnedAt - a[1].turnedAt);
+}
+const shortDate = (t) => new Date(t).toLocaleDateString('en-CA', { day: 'numeric', month: 'short' });
+
+// A small line chart of the day snapshots: what you can answer (solid) and
+// what's known (dotted). Drawn only once there are two or more days.
+function growthChart() {
+  const snaps = Object.entries(State.data.days).filter(([, v]) => v.snap).sort().slice(-60);
+  if (snaps.length < 2) return h('p', { class: 't-body' }, 'The line starts after your second day of playing.');
+  // Scaled to what's been met so far (rounded up to ten), not the whole pack:
+  // against 118, a climb from 3 to 25 looks flat.
+  const top = Math.max(...snaps.map(([, v]) => Math.max(v.snap.met, v.snap.can)));
+  const W = 320, H = 130, L = 30, Rm = 8, T = 10, B = 22, max = Math.max(10, Math.ceil(top / 10) * 10);
+  const x = (i) => L + (i / (snaps.length - 1)) * (W - L - Rm);
+  const y = (v) => T + (1 - v / max) * (H - T - B);
+  const path = (f) => snaps.map(([, v], i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(f(v.snap)).toFixed(1)}`).join('');
+  const last = snaps[snaps.length - 1][1].snap;
+  const label = `From ${snaps[0][1].snap.can} to ${last.can} questions you can answer, over ${snaps.length} days played; ${last.known} known.`;
+  return h('div', { class: 'growth', html: `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">
+    ${[0, Math.round(max / 2), max].map((v) => `<line x1="${L}" x2="${W - Rm}" y1="${y(v)}" y2="${y(v)}" class="gl"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="ax">${v}</text>`).join('')}
+    <text x="${L}" y="${H - 6}" class="ax">${shortDate(snaps[0][0] + 'T12:00:00')}</text>
+    <text x="${W - Rm}" y="${H - 6}" text-anchor="end" class="ax">${shortDate(snaps[snaps.length - 1][0] + 'T12:00:00')}</text>
+    <path d="${path((s) => s.known)}" class="gk"/><path d="${path((s) => s.can)}" class="gc"/>
+    <circle cx="${x(snaps.length - 1)}" cy="${y(last.can)}" r="4" class="gd"/></svg>` });
+}
 
 // ── chapters ────────────────────────────────────────────────────────────
 // Progress by chapter, and a round from one chapter. New questions come in
@@ -219,10 +264,10 @@ function homeScreen() {
     !first ? h('section', { class: 'card ring-row' }, ring(c, total),
       h('div', { class: 'stack', style: 'gap:10px' },
         h('div', { class: 'stats' },
+          h('div', { class: 'stat' }, h('b', { class: 'num' }, String(State.canAnswer(IDS))), h('span', {}, 'can answer')),
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(c.known)), h('span', {}, h('i', { style: 'background:var(--ink)' }), 'known')),
-          h('div', { class: 'stat' }, h('b', { class: 'num' }, String(c.met)), h('span', {}, h('i', { style: 'background:var(--met)' }), 'met')),
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(run)), h('span', {}, run === 1 ? 'day' : 'days running'))),
-        h('p', { class: 't-small' }, `${PACK.title}, ${PACK.chapters.length} chapters`))) : null,
+        h('p', { class: 't-small' }, growthLine(false)))) : null,
     !first ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Chapters'), chapterRows(chapterStats())) : null,
     !first ? mode('', 'practise', 'Practise', 'Anything you’ve met, in any order. Won’t change your review dates.', () => play(true)) : null,
     h('nav', { class: 'tiles', 'aria-label': 'More' },
@@ -254,6 +299,7 @@ const sessionAsked = new Set();
 function play(practice, ids = IDS) {
   round = new Round(ids, { practice, exclude: sessionAsked });
   round.scope = ids;
+  round.heldBefore = IDS.filter((id) => isHolding(State.card(id))).length;
   // Which chapters were still unfinished, to mark the ones this round finishes.
   round.openBefore = new Set(chapterStats().filter((s) => s.unseen).map((s) => s.ch.id));
   tally = { n: 0, right: 0, streak: 0, missed: [] };
@@ -495,6 +541,10 @@ function finish() {
   const scoped = scope !== IDS;
   const sDue = State.dueIds(scope).length, sFresh = scope.filter((id) => !State.card(id)).length;
   const finished = practice ? [] : chapterStats().filter((s) => round.openBefore.has(s.ch.id) && !s.unseen);
+  State.snapshot(IDS);
+  const turnedToday = practice ? [] : turnedAround().filter(([, k]) => dayKey(k.turnedAt) === dayKey());
+  const heldBefore = round.heldBefore ?? null;
+  const heldNow = IDS.filter((id) => isHolding(State.card(id))).length;
   if (finished.length && !(tally.n && tally.right === tally.n)) setTimeout(() => S.fanfare(), 400);
   show('done', () => [
     h('div', { class: 'topbar' }),
@@ -502,6 +552,9 @@ function finish() {
     h('section', { class: 'card stack' },
       h('p', { class: 'answer' }, `${tally.right} of ${tally.n} right.`),
       practice ? h('p', { class: 't-body' }, 'Practice doesn’t change your review dates.') : null,
+      !practice ? h('p', { class: 't-body' }, growthLine()) : null,
+      turnedToday.length ? h('p', { class: 't-body' }, h('b', {}, `${turnedToday.length} turned around today`), ': missed the first time, right now.') : null,
+      !practice && heldBefore != null && heldNow > heldBefore ? h('p', { class: 't-body' }, h('b', {}, `${heldNow - heldBefore} more holding`), ': right after a week or more away.') : null,
       !due && next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null),
     ...finished.map((s) => {
       const q0 = s.ids.map((id) => Q.get(id)).find((q) => q.ev) || Q.get(s.ids[0]);
@@ -564,6 +617,38 @@ function progressScreen() {
     .sort((a, b) => b[1].last - a[1].last).slice(0, 8).map(([id]) => Q.get(id));
   return [
     h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'Progress')),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'What you can answer'),
+      h('p', { class: 'answer num' }, `${State.canAnswer(IDS)}`, h('span', { class: 't-small' }, ` of ${total}`)),
+      h('p', { class: 't-body' }, growthLine(false)),
+      growthChart(),
+      h('p', { class: 'key-line t-small' }, h('i', { class: 'kc' }), 'can answer: right the last time it was asked', h('i', { class: 'kk' }), 'known: right after three weeks away')),
+    (() => {
+      const t = turnedAround();
+      return h('section', { class: 'card stack' },
+        h('p', { class: 't-label' }, 'Then and now'),
+        t.length ? h('p', { class: 't-body' }, `${t.length} question${t.length === 1 ? '' : 's'} you missed the first time, and have since got right.`)
+          : h('p', { class: 't-body' }, 'Questions you miss the first time and get right on a later day will show here. That’s the clearest sign of learning.'),
+        t.length ? h('div', { class: 'list' }, t.slice(0, 8).map(([id, k]) => {
+          const q = Q.get(id);
+          const e = evOf(q)[0];
+          const w = sectionOf(e.p);
+          return h('button', { class: 'item', onclick: () => w && openReader(w.section.id, e.p, [e.quote]) },
+            h('div', {}, h('b', {}, listTitle(q)), h('span', {}, `Missed ${shortDate(k.firstAt)} · right ${shortDate(k.turnedAt)}`)), h('span', { html: ICON.chev }));
+        })) : null);
+    })(),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'The big questions'),
+      h('p', { class: 't-small' }, 'How much of each you can answer.'),
+      ...PACK.chapters.map((ch) => h('div', { class: 'bigmap' },
+        h('p', { class: 'bm-ch' }, ch.title),
+        ...(ch.big || []).map((b) => {
+          const ids = PACK.questions.filter((q) => q.ch === ch.id && q.big === b.id).map((q) => q.id);
+          const can = State.canAnswer(ids);
+          return h('div', { class: 'bm-row' },
+            h('div', { class: 'row' }, h('span', { class: 'bm-q' }, b.q), h('span', { class: 't-small num' }, `${can}/${ids.length}`)),
+            h('div', { class: 'bar', role: 'img', 'aria-label': `${can} of ${ids.length}` }, h('i', { class: 'k', style: `width:${(can / ids.length) * 100}%` })));
+        })))),
     h('section', { class: 'card ring-row' }, ring(c, total),
       h('div', { class: 'stack', style: 'gap:6px' },
         h('p', { class: 't-body' }, h('b', {}, `${c.known} known`), ' — you still had them after three weeks away.'),
