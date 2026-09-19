@@ -37,12 +37,13 @@ const lib = safe(readFileSync(join(APP, 'data', 'canada-library.json'), 'utf8'))
 // Function replacers throughout: a replacement STRING treats `$&`, `$'` and
 // `` $` `` specially, and minified code or the books' text can contain them.
 // The version shown in About: package.json's number, the commit it was built
-// from (with "+" if there were uncommitted changes), and the date.
+// from (with "+" if there were uncommitted changes — app/data is generated
+// by this build, so it doesn't count), and the date.
 const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
 let commit = 'local';
 try {
   commit = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT }).toString().trim();
-  if (execFileSync('git', ['status', '--porcelain', '--', 'app', 'content', 'build'], { cwd: ROOT }).toString().trim()) commit += '+';
+  if (execFileSync('git', ['status', '--porcelain', '--', 'app', 'content', 'build', ':!app/data'], { cwd: ROOT }).toString().trim()) commit += '+';
 } catch { /* not a repo */ }
 // The local calendar date: an evening build in Toronto is still today there.
 const d = new Date();
