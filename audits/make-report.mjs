@@ -135,7 +135,7 @@ footer { color: var(--ink-3); font-size: .88rem; }
 </style>
 <div class="wrap">
 <header>
-  <p class="eyebrow">Palimpsest · Canada pack · 19 September 2026</p>
+  <p class="eyebrow">Palimpsest · Canada pack · 18 September 2026</p>
   <h1>Question <span>audit</span></h1>
   <p class="lede">All ${RATINGS.length} questions, read as someone opening the app for the first time: do they know what it’s about, does it stand alone, does it teach, and where does it sit in the bigger picture?</p>
 </header>
