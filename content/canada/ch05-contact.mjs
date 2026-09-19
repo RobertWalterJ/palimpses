@@ -204,9 +204,9 @@ export default [
   },
   {
     id: 'wendat-deaths-two-figures', kind: 'choice', big: 'disease', depth: 'detail', lens: ['contested', 'record'],
-    prompt: 'The book gives a figure for Wendat deaths from smallpox in the 1630s in two places. What does it say?',
-    answer: 'Half in one place, perhaps two-thirds in another',
-    options: ['A tenth, in both places', 'Nine in ten, in both places', 'Almost none, in both places'],
+    prompt: 'Smallpox swept the Wendat towns in the late 1630s. How many Wendat died? Estimates differ.',
+    answer: 'Between half and perhaps two-thirds',
+    options: ['About one in ten', 'Nine in ten or more', 'Only the very old and young'],
     must: ['claiming half the Wendat population', 'perhaps two-thirds of the Wendat population died'],
     ev: [{ p: 'pre-5.3-p14', q: 'In those years smallpox laid waste to the towns of the Wendat Confederacy, claiming half the Wendat population.' },
       { p: 'pre-5.6-p7', q: 'perhaps two-thirds of the Wendat population died in the space of four years.' }],

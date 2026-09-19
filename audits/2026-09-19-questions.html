@@ -1,0 +1,892 @@
+<title>Palimpsest question audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400..700&family=Literata:opsz,wght@7..72,400..600&display=swap">
+<style>
+:root {
+  --ground: #F5F4F8; --surface: #FFFFFF; --surface-2: #ECEAF2; --line: #E2DFEA;
+  --ink: #1B1726; --ink-2: #4D4860; --ink-3: #6A6580;
+  --accent: #7A2A8C; --accent-2: #4B3AA8; --accent-soft: #F1E8F6;
+  --anchor: #0e7061; --deep: #4B3AA8; --rethink: #7A2A8C; --detail: #8a8599;
+  --warn-bg: #fff1e0; --warn: #8a4b00;
+  --display: 'Bricolage Grotesque', 'Instrument Sans', system-ui, sans-serif;
+  --ui: 'Instrument Sans', system-ui, sans-serif;
+  --read: 'Literata', Georgia, serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ground: #121019; --surface: #1B1824; --surface-2: #252131; --line: #2E2940;
+  --ink: #EEEBF5; --ink-2: #BDB7CC; --ink-3: #9C96AD;
+  --accent: #C58BD6; --accent-2: #A99BF0; --accent-soft: #2A1F36;
+  --anchor: #5CC9B3; --deep: #A99BF0; --rethink: #C58BD6; --detail: #7d7890;
+  --warn-bg: #3a2a14; --warn: #f0b765;
+} }
+:root[data-theme="dark"] {
+  --ground: #121019; --surface: #1B1824; --surface-2: #252131; --line: #2E2940;
+  --ink: #EEEBF5; --ink-2: #BDB7CC; --ink-3: #9C96AD;
+  --accent: #C58BD6; --accent-2: #A99BF0; --accent-soft: #2A1F36;
+  --anchor: #5CC9B3; --deep: #A99BF0; --rethink: #C58BD6; --detail: #7d7890;
+  --warn-bg: #3a2a14; --warn: #f0b765;
+}
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font: 400 16px/1.55 var(--ui); margin: 0; }
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: 18px; padding-block: 28px 64px; display: grid; gap: 28px; }
+h1 { font: 800 clamp(1.9rem, 6vw, 2.7rem)/1.05 var(--display); margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+h1 span { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+h2 { font: 700 1.35rem/1.25 var(--display); margin: 0 0 10px; text-wrap: balance; }
+h3 { font: 700 1.08rem/1.3 var(--display); margin: 0; display: flex; justify-content: space-between; align-items: baseline; }
+h3 span { font: 500 .85rem var(--ui); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.eyebrow { font: 600 .78rem/1 var(--ui); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 10px; }
+.lede { font: 400 1.12rem/1.6 var(--read); color: var(--ink-2); margin: 10px 0 0; max-width: 60ch; }
+p { margin: 0; }
+.panel { background: var(--surface); border-radius: 18px; padding: 20px; display: grid; gap: 12px; }
+.verdict { background: var(--accent-soft); }
+.verdict p:not(.eyebrow) { font: 400 1.05rem/1.6 var(--read); }
+.stack-bar { display: flex; height: 14px; border-radius: 99px; overflow: hidden; gap: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; }
+.legend div { display: flex; gap: 6px; align-items: baseline; }
+.legend dt { display: flex; gap: 6px; align-items: center; color: var(--ink-2); font-size: .92rem; }
+.legend dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.rA { background: var(--anchor); } .rD { background: var(--deep); } .rR { background: var(--rethink); } .rF { background: var(--detail); }
+.f1 i:nth-child(-n+1), .f2 i:nth-child(-n+2), .f3 i:nth-child(-n+3) { background: var(--ink-2); }
+.famb1 { background: var(--anchor); } .famb2 { background: var(--deep); } .famb3 { background: var(--detail); }
+.findings { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: f; }
+.findings li { display: grid; gap: 4px; padding-left: 38px; position: relative; }
+.findings li::before { counter-increment: f; content: counter(f); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--surface); font: 700 .9rem/26px var(--ui); text-align: center; }
+.findings b { font: 650 1rem/1.4 var(--ui); }
+.findings span { color: var(--ink-2); }
+.ladder { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ladder div { border-radius: 14px; padding: 14px; display: grid; gap: 6px; background: var(--surface-2); }
+.ladder b { font: 700 1rem var(--display); }
+.ladder div:nth-child(1) b { color: var(--anchor); } .ladder div:nth-child(2) b { color: var(--deep); } .ladder div:nth-child(3) b { color: var(--rethink); }
+.ladder p { font-size: .92rem; color: var(--ink-2); }
+.ladder em { font-style: normal; font-family: var(--read); color: var(--ink); }
+@media (max-width: 560px) { .ladder { grid-template-columns: 1fr; } }
+.round { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; font-family: var(--read); }
+.round small { display: block; font: 400 .86rem var(--ui); color: var(--ink-3); }
+.gaps { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.gaps li { display: grid; gap: 2px; border-top: 1px solid var(--line); padding-top: 10px; }
+.gaps b { font-weight: 650; }
+.gaps span { color: var(--ink-2); font-size: .95rem; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; position: sticky; top: env(safe-area-inset-top, 0px); background: var(--ground); padding-block: 10px; z-index: 2; }
+.filters button { font: 600 .9rem var(--ui); border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 99px; padding: 8px 14px; min-height: 40px; cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.filters button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.chap { display: grid; gap: 10px; }
+.qs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.q { background: var(--surface); border-radius: 14px; padding: 14px 16px; display: grid; gap: 6px; }
+.qtop { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.role { font: 700 .74rem/1 var(--ui); letter-spacing: .06em; text-transform: uppercase; color: var(--surface); padding: 5px 8px; border-radius: 6px; }
+.fam { display: flex; align-items: center; gap: 3px; font-size: .8rem; color: var(--ink-3); }
+.fam i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); display: inline-block; }
+.ask { font: 400 1rem/1.5 var(--read); }
+.ans { font-size: .9rem; color: var(--ink-3); }
+.ans::before { content: 'Answer: '; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 600 .78rem/1 var(--ui); background: var(--warn-bg); color: var(--warn); padding: 5px 8px; border-radius: 6px; }
+.fix { font-size: .93rem; color: var(--ink-2); border-left: 3px solid var(--line); padding-left: 10px; }
+.q[hidden], .chap[hidden] { display: none; }
+footer { color: var(--ink-3); font-size: .88rem; }
+@media (prefers-reduced-motion: no-preference) { .filters button { transition: background .15s, color .15s; } }
+</style>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Palimpsest · Canada pack · 19 September 2026</p>
+  <h1>Question <span>audit</span></h1>
+  <p class="lede">All 118 questions, read as someone opening the app for the first time: do they know what it’s about, does it stand alone, does it teach, and where does it sit in the bigger picture?</p>
+</header>
+
+<section class="panel verdict">
+  <p class="eyebrow">The short answer</p>
+  <p>Most questions are sound history, but the app asks them in the wrong order and pitches too many at specialists. Only <b>18</b> of 118 are anchors: things an ordinary player already knows, like Cortés, potatoes, Cartier, scurvy or the fur trade. The first round today opens with <b>5 questions that challenge a story</b> the player hasn’t been told yet, starting with how reliable oral history is.</p>
+  <p>The fix is a ladder: <b>anchor, then deepen, then rethink</b>. Open on what people know, then build on it.</p>
+</section>
+
+<section class="panel">
+  <h2>What kind of question each one is</h2>
+  <div class="stack-bar" role="img" aria-label="Anchor 18, Deepens 52, Rethinks 27, Detail 21"><span class="rA" style="flex:18"></span><span class="rD" style="flex:52"></span><span class="rR" style="flex:27"></span><span class="rF" style="flex:21"></span></div>
+  <dl class="legend"><div><dt><i class="rA"></i>Anchor</dt><dd>18</dd></div><div><dt><i class="rD"></i>Deepens</dt><dd>52</dd></div><div><dt><i class="rR"></i>Rethinks</dt><dd>27</dd></div><div><dt><i class="rF"></i>Detail</dt><dd>21</dd></div></dl>
+  <h2 style="margin-top:8px">How much the player needs to know already</h2>
+  <div class="stack-bar" role="img" aria-label="Commonly known 22, School-level 59, Specialist 37"><span class="famb1" style="flex:22"></span><span class="famb2" style="flex:59"></span><span class="famb3" style="flex:37"></span></div>
+  <dl class="legend"><div><dt><i class="famb1"></i>Commonly known</dt><dd>22</dd></div><div><dt><i class="famb2"></i>School-level</dt><dd>59</dd></div><div><dt><i class="famb3"></i>Specialist</dt><dd>37</dd></div></dl>
+</section>
+
+<section class="panel">
+  <h2>Findings</h2>
+  <ol class="findings">
+    <li><b>The opening is back to front.</b><span>The first round rethinks stories the player hasn’t heard yet. Rethinking works only after the anchor it pushes against.</span></li>
+    <li><b>18 questions can be answered by picking the most enlightened-sounding option.</b><span>When the counter-myth is always right, players learn the pattern, not the history. Every rethink question needs one wrong option that also sounds revisionist.</span></li>
+    <li><b>25 questions use a name or term the player hasn’t met.</b><span>Pays d’en Haut, Five Nations, Mourning Wars, “virgin soil”, matrilineal, Stadacona. Rule: the first time a name appears, the question says in a clause what it is.</span></li>
+    <li><b>Sources were leaking into questions.</b><span>“In Belshaw’s view” and similar (17 questions) are fixed in 1.2.1. Rule: the question is about the past, never about the book; the answer card says where it comes from.</span></li>
+    <li><b>8 questions have options nobody would pick, and 11 test a number rather than an idea.</b><span>Numbers are kept where the number is the point (fewer than 70 French residents in the 1620s).</span></li>
+    <li><b>Well-known facts that should anchor chapters aren’t asked at all.</b><span>Columbus, the Norse, Cabot, the Hudson’s Bay Company. The sources state them; see the list below.</span></li>
+  </ol>
+</section>
+
+<section class="panel">
+  <h2>The ladder</h2>
+  <div class="ladder">
+    <div><b>Anchor</b><p>Something the player knows, with one new fact in the question itself.</p><p><em>“Cartier’s crew were dying of scurvy at Stadacona, today’s Quebec City. What saved them?”</em></p></div>
+    <div><b>Deepen</b><p>What was going on behind it, using the anchor they now hold.</p><p><em>“Why did Donnacona try to stop Cartier leaving?”</em></p></div>
+    <div><b>Rethink</b><p>What the school version leaves out, now that it has been set up.</p><p><em>“You may have learned Cartier explored a new land. What does the record show?”</em></p></div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>A first round from what’s already here</h2>
+  <ol class="round">
+    <li>Potatoes and maize: what did they do to the rest of the world? <small>crops-population · anchor</small></li>
+    <li>Cortés was driven out of Tenochtitlan. What turned it? <small>tenochtitlan-fell · anchor that rethinks</small></li>
+    <li>Cartier’s crew and scurvy: who saved them? <small>scurvy-cure · anchor</small></li>
+    <li>The Haudenosaunee League: older than Canada, the US and the UK? <small>league-older · anchor</small></li>
+    <li>Why did the Americas look like a “vacant land”? <small>vacant-land · anchor</small></li>
+  </ol>
+  <p style="color:var(--ink-2)">There are 18 anchors in all, enough for the first three or four rounds while new anchors are written: giant-beaver, no-atlantic-roots, tenochtitlan, wampum-record, how-people-came, three-sisters, cahokia-woodhenge, fur-shaped, scurvy-cure, french-seventy, false-diamonds, most-pivotal, crops-population, pigs, tenochtitlan-fell, vacant-land, league-older, used-pelts.</p>
+</section>
+
+<section class="panel">
+  <h2>Anchors to add</h2>
+  <p style="color:var(--ink-2)">Commonly known, stated plainly in the sources, not yet asked.</p>
+  <ul class="gaps"><li><b>Columbus, 1492</b><span>The fixed point most players already have. Anchor, then: what Spain wanted (Asia’s spice trade) and what it got.</span><span style="color:var(--ink-3);font-size:.82rem">Source paragraph pre-3.3-p12</span></li><li><b>The Norse at L’Anse aux Meadows</b><span>Widely known; the rethink is that it had few lasting effects (pre-3.2-p14).</span><span style="color:var(--ink-3);font-size:.82rem">Source paragraph pre-3.2-p8</span></li><li><b>Fishing fleets on the Grand Banks before Cabot (1497)</b><span>Anchor on Cabot, rethink: Basque and Bristol fleets were already there.</span><span style="color:var(--ink-3);font-size:.82rem">Source paragraph pre-3.2-p11</span></li><li><b>Cartier’s voyages, 1534 onward</b><span>The school starting point. Anchor, then the scurvy and Donnacona pair.</span><span style="color:var(--ink-3);font-size:.82rem">Source paragraph pre-3.6-p2</span></li><li><b>The Hudson’s Bay Company, chartered 1670</b><span>Known to nearly everyone; anchors the fur trade and food-imperialism.</span><span style="color:var(--ink-3);font-size:.82rem">Source paragraph pre-8.12-p13</span></li><li><b>Turtle Island</b><span>The name is widely heard now; ask where it comes from.</span><span style="color:var(--ink-3);font-size:.82rem">Source paragraph pre-2.3-p17</span></li><li><b>The Treaty of Utrecht, 1713</b><span>School-level; anchors the shift from French to British power.</span><span style="color:var(--ink-3);font-size:.82rem">Source paragraph pre-4.6-p13</span></li></ul>
+</section>
+
+<section>
+  <h2>Every question</h2>
+  <div class="filters" role="group" aria-label="Show">
+    <button type="button" data-f="all" aria-pressed="true">All 118</button>
+    <button type="button" data-f="role:A" aria-pressed="false">Anchors 18</button>
+    <button type="button" data-f="issue:guess" aria-pressed="false">Guessable 18</button>
+    <button type="button" data-f="issue:unplaced" aria-pressed="false">Unexplained 25</button>
+    <button type="button" data-f="fam:3" aria-pressed="false">Specialist 37</button>
+  </div>
+  <div style="display:grid;gap:22px"><section class="chap"><h3>Before contact <span>33</span></h3><ol class="qs"><li class="q" data-role="R" data-fam="2" data-issues="guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Many nations kept their history by telling it, generation to generation. As evidence, how reliable are these oral traditions?</p>
+    <p class="ans">Equally reliable, tested the same way</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">Strong idea. Pair it with a first question on something oral history got right (the giant beaver) so the claim is earned, not asserted.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="context">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">The Mississippi and Ohio valleys had farming towns and cities from about 500 CE. What was happening to them before Europeans came?</p>
+    <p class="ans">They were already in decline</p>
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">Name Cahokia in the stem so it has a hook; players meet the idea of pre-contact decline cold.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="guess weak">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Was the population of the Americas at its height in the late 1400s?</p>
+    <p class="ans">Perhaps not — it may have been higher centuries earlier</p>
+    <p class="chips"><span class="chip">Guessable</span><span class="chip">Weak option</span></p>
+    <p class="fix">Hedged answer stands out; &quot;Nobody lived in most of it yet&quot; is not a real option.</p>
+  </li><li class="q" data-role="D" data-fam="1" data-issues="weak">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">What keeps happening to the dates for when people first reached the Americas?</p>
+    <p class="ans">New evidence keeps pushing them earlier</p>
+    <p class="chips"><span class="chip">Weak option</span></p>
+    <p class="fix">Good. Replace &quot;fixed since the 1950s&quot;.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="recall">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Trails across the land carried rock cairns, markers and boundaries. In a society that keeps its history by memory, what do they do?</p>
+    <p class="ans">They work like volumes on a shelf, prompting memory</p>
+    <p class="chips"><span class="chip">Tests a phrase</span></p>
+    <p class="fix">Tests the book’s metaphor (&quot;volumes on a shelf&quot;). Ask what the markers are for instead.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="context">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Which nation made birchbark scrolls, some carbon-dated to the mid-1500s — the nearest thing in Canada to a written script?</p>
+    <p class="ans">The Anishinaabeg</p>
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">Options are nation names a newcomer can’t tell apart. Teach the nation in the stem, ask about the scrolls.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="long">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Oral traditions told of a giant beaver that outsiders took for myth. What did the bones show?</p>
+    <p class="ans">It was real: up to 2.5 metres long, extinct about 10,000 years ago</p>
+    <p class="chips"><span class="chip">Long</span></p>
+    <p class="fix">Excellent first-round hook: Ice Age animal plus oral history proved right. Shorten the answer.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="context">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">The Nlaka’pamux remember their first meeting with a European in their own oral history. A historian set it beside that European’s written account. Whose?</p>
+    <p class="ans">Simon Fraser’s, from 1808</p>
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">Fine as detail once Simon Fraser has been met elsewhere.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="guess long">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">The Americas had written records before Europeans arrived. Why do so many people believe they had none?</p>
+    <p class="ans">Europeans ignored or destroyed the records that existed, and attacked oral tradition</p>
+    <p class="chips"><span class="chip">Guessable</span><span class="chip">Long</span></p>
+    <p class="fix">The long, critical answer is the obvious pick. Ask for an example of a record that existed.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Histories often open with migration routes into the Americas. Whose interest did the idea of Indigenous peoples as recent, wandering arrivals serve?</p>
+    <p class="ans">European empires — it justified taking the land</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">Good point, obvious answer. Offer a second plausible &quot;power&quot; option.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">For centuries Europeans explained Indigenous peoples as “Lost Tribes of Israel” or wayward Welshmen. What does the DNA show?</p>
+    <p class="ans">No sign of migration from Europe or Africa before 1492</p>
+    
+    <p class="fix">Strong hook (Lost Tribes, Welsh princes). Good for round one.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">What was Tenochtitlan, the Aztec capital, in the late 1400s?</p>
+    <p class="ans">One of the largest cities on the planet</p>
+    
+    <p class="fix">Round one. Add Tenochtitlan’s place in the stem (today’s Mexico City) only if a source states it.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="number">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Cahokia’s 120 mounds, across the Mississippi from today’s St. Louis, took enormous labour. About how much earth did its builders move?</p>
+    <p class="ans">About 1.5 million cubic metres</p>
+    <p class="chips"><span class="chip">Tests a number</span></p>
+    <p class="fix">Works as scale; keep as the second Cahokia question, not the first.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="context">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Why did Cahokia become a centre of power?</p>
+    <p class="ans">It sat where three rivers meet, and controlled the trade</p>
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">Needs &quot;a city near today’s St. Louis&quot; in the stem.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="context">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Keatley Creek, above the Fraser Canyon, was a village of up to 115 pit houses. Why does it matter to the story of how towns begin?</p>
+    <p class="ans">A dense town built on salmon, not on farming</p>
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">Big idea (towns built on salmon, not farming) hidden behind an unknown place. Lead with the idea.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">The Haudenosaunee and Wendat confederacies formed in the 500 years before contact. What were they an effective means of reducing?</p>
+    <p class="ans">Long-running blood feuds between bands and clans</p>
+    
+    <p class="fix">Good. Say &quot;Iroquois&quot; once, beside Haudenosaunee, for recognition.</p>
+  </li><li class="q" data-role="A" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Wampum shells had a currency value. Strung on belts and in patterns, what else were they?</p>
+    <p class="ans">A record: they held the details of treaties and agreements</p>
+    
+    <p class="fix">Wampum is widely heard of; good early question.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="jargon">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">At a potlatch the host gave property away. What did a guest take on by accepting it?</p>
+    <p class="ans">A duty to witness that the event was legitimate</p>
+    <p class="chips"><span class="chip">Unexplained term</span></p>
+    <p class="fix">Explain the potlatch in one clause first.</p>
+  </li><li class="q" data-role="R" data-fam="1" data-issues="guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Before contact, some peoples hunted and gathered, some farmed, and some hunted sea mammals from boats. Which of them traded?</p>
+    <p class="ans">All of them</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">&quot;All of them&quot; is the tell. Reframe: which traded goods over the longest distance?</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Settlers in the Pacific Northwest saw open berry patches and camas meadows as natural and free for the taking. What were they?</p>
+    <p class="ans">Human-made, kept open by centuries of controlled burning</p>
+    
+    <p class="fix">Strong. Ties to Amazonia; make that link visible.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">How were many Pacific Northwest societies organised?</p>
+    <p class="ans">By rank: an elite, commoners and a slave class</p>
+    
+    <p class="fix">Important counter-myth (not &quot;noble savage&quot;). Keep.</p>
+  </li><li class="q" data-role="D" data-fam="1" data-issues="guess weak">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">How many people lived in what is now Canada in the late 1400s?</p>
+    <p class="ans">Nobody knows: estimates run from 200,000 to 2 million</p>
+    <p class="chips"><span class="chip">Guessable</span><span class="chip">Weak option</span></p>
+    <p class="fix">&quot;Nobody knows&quot; answers are guessable; &quot;Exactly 500,000, from censuses&quot; is not credible.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Land bridge from Siberia, or boats down the Pacific coast: how did people first reach the Americas?</p>
+    <p class="ans">Probably both, over a long span — and neither is proven</p>
+    
+    <p class="fix">Round one: the land bridge is what school taught; the answer complicates it.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="context">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Put in order: The Maritime Archaic begins trading along the Atlantic coast; The Stl’atl’imx settle Keatley Creek above the Fraser…</p>
+    
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">Unknown names in an order question are pure guessing. Move later.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">The grease trails of the Chilcotin Plateau linked the coast to the interior. Why the name?</p>
+    <p class="ans">Freight-bearers carried oolichan grease, a fish oil, along them</p>
+    
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="jargon">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">As the birchbark scrolls grew fragile, who preserved and recopied them?</p>
+    <p class="ans">The Midewiwin, a medicine society</p>
+    <p class="chips"><span class="chip">Unexplained term</span></p>
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="jargon">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">The thinker Harold Innis sorted media by what they carry best: ideas that last through time, like carvings in stone, or orders sent across distance. Which is speech?</p>
+    <p class="ans">Time-biased: it lasts</p>
+    <p class="chips"><span class="chip">Unexplained term</span></p>
+    <p class="fix">Two options, abstract. Consider retiring.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="context">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">The Maritime Archaic people of the Atlantic coast (c. 7000–1500 BCE) traded over long distances. What did they use as currency?</p>
+    <p class="ans">White chert, a quarried stone</p>
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Why do the “three sisters” — corn, beans and squash — grow better together?</p>
+    <p class="ans">Corn holds up beans, squash shades the soil, beans feed it nitrogen</p>
+    
+    <p class="fix">Taught in many schools. Promote from detail to anchor.</p>
+  </li><li class="q" data-role="A" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">What was Cahokia’s woodhenge — a circle of wooden posts — for?</p>
+    <p class="ans">A calendar: it marked sunrise at solstices and equinoxes</p>
+    
+    <p class="fix">&quot;Woodhenge&quot; hooks on Stonehenge. Promote: a good first Cahokia question.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="jargon">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Mississippian descent ran through the mother’s line. Who was a boy’s most important male figure?</p>
+    <p class="ans">His mother’s brother</p>
+    <p class="chips"><span class="chip">Unexplained term</span></p>
+    <p class="fix">Detail; &quot;matrilineal&quot; should be explained.</p>
+  </li><li class="q" data-role="F" data-fam="2" data-issues="number">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Head-Smashed-In, the buffalo jump near Lethbridge, was used into historic times. When did it first come into use?</p>
+    <p class="ans">About 5,700 years ago</p>
+    <p class="chips"><span class="chip">Tests a number</span></p>
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="F" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">In Plains warfare, what was the most highly valued coup?</p>
+    <p class="ans">Touching a live enemy and living to tell about it</p>
+    
+    <p class="fix">Detail; the phrase is known, the practice isn’t — a nice surprise.</p>
+  </li></ol></section><section class="chap"><h3>Amazonia, a centre of its own <span>10</span></h3><ol class="qs"><li class="q" data-role="R" data-fam="2" data-issues="guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Laser mapping from the air (lidar) has revealed whole settlements under the Bolivian Amazon’s forest. What idea do the archaeologists say it puts to rest?</p>
+    <p class="ans">The idea that western Amazonia was thinly peopled</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">Round two: the Amazon is known, its cities are not.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Were the big Casarabe mound sites empty ceremonial centres?</p>
+    <p class="ans">No — farmers lived there all year round</p>
+    
+    <p class="fix">Good follow-up.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="weak">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">How were the two large Casarabe centres linked to smaller sites?</p>
+    <p class="ans">By straight, raised causeways kilometres long</p>
+    <p class="chips"><span class="chip">Weak option</span></p>
+    <p class="fix">&quot;Inca-style mountain roads&quot; in a floodplain is not plausible.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="context number">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Compare the earth moved to build Cotoca’s core with the largest structure at Tiwanaku, in the Andes.</p>
+    <p class="ans">Cotoca took about ten times as much</p>
+    <p class="chips"><span class="chip">Unplaced name</span><span class="chip">Tests a number</span></p>
+    <p class="fix">Tiwanaku is unknown to most. Compare with something known, if a source allows.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="guess">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">A 7-km canal brought water from a lake to the Casarabe town of Cotoca. What does it show?</p>
+    <p class="ans">The scale of landscape management and labour</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">Vague answer.</p>
+  </li><li class="q" data-role="R" data-fam="3" data-issues="guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Canals and reservoirs completed the Casarabe settlement system. In what kind of landscape?</p>
+    <p class="ans">One shaped and modified by people</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">Duplicates made-landscapes’ idea; merge or link.</p>
+  </li><li class="q" data-role="R" data-fam="3" data-issues="jargon">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Towns, causeways, canals and farms spread across the Llanos de Mojos. What kind of settlement was it?</p>
+    <p class="ans">Low-density urbanism, the first known in lowland South America</p>
+    <p class="chips"><span class="chip">Unexplained term</span></p>
+    <p class="fix">&quot;Low-density urbanism&quot; needs one clause of explanation.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="context">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Put in order: The Maritime Archaic trade along the Atlantic coast; The Stl’atl’imx settle Keatley Creek…</p>
+    
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">Move later.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="number">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">When did the Casarabe culture flourish in the Llanos de Mojos?</p>
+    <p class="ans">About 500 to 1400 CE</p>
+    <p class="chips"><span class="chip">Tests a number</span></p>
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="number">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">The Casarabe centres had conical pyramids. How tall?</p>
+    <p class="ans">Up to 22 metres</p>
+    <p class="chips"><span class="chip">Tests a number</span></p>
+    <p class="fix">Detail.</p>
+  </li></ol></section><section class="chap"><h3>New France, inside other worlds <span>31</span></h3><ol class="qs"><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">What did Spain and Portugal’s conquests in the Americas do for northwestern Europe?</p>
+    <p class="ans">Brought rapid growth, and spurred rivals to follow</p>
+    
+    <p class="fix">Good big-picture question.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">The Dutch, English and French came to North America later. Whose model of empire shaped their decisions?</p>
+    <p class="ans">The one Spain and Portugal built</p>
+    
+    <p class="fix">Good.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">What gave the colony of Canada its pattern of settlement and its relations with the nations?</p>
+    <p class="ans">Reaching the furs farther inland</p>
+    
+    <p class="fix">The fur trade is common knowledge. Round one.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="jargon">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">At its largest, New France reached from the St. Lawrence to the Gulf of Mexico. What were Louisiana and the Pays d’en Haut, mostly?</p>
+    <p class="ans">Areas of French influence, not settlement</p>
+    <p class="chips"><span class="chip">Unexplained term</span></p>
+    <p class="fix">&quot;Pays d’en Haut&quot; unexplained (&quot;the upper country, around the Great Lakes&quot;).</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Most of Cartier’s crew were dying of scurvy in the winter at Stadacona. What saved the rest?</p>
+    <p class="ans">A cure the Stadaconans gave them</p>
+    
+    <p class="fix">Round one: Cartier and scurvy are both known; the answer reverses the rescue story.</p>
+  </li><li class="q" data-role="R" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Donnacona had supported Cartier’s men through that winter. What did Cartier do next?</p>
+    <p class="ans">Abducted him, his sons and seven others to France</p>
+    
+    <p class="fix">Right after scurvy-cure: the pair teaches more than either.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="guess">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">By 1541 Hochelaga was gone. What happened to it?</p>
+    <p class="ans">Nobody knows: war, disease, or a planned move</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">&quot;Nobody knows&quot; again. Also say Hochelaga is today’s Montreal, if a source states it.</p>
+  </li><li class="q" data-role="R" data-fam="3" data-issues="jargon context">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Acadia “wasn’t entirely the imposition of one people over another.” Who took in whom?</p>
+    <p class="ans">The Wabanaki grafted the Acadiens onto their lives</p>
+    <p class="chips"><span class="chip">Unexplained term</span><span class="chip">Unplaced name</span></p>
+    <p class="fix">Quote-heavy; explain Wabanaki and Acadiens first.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Why did the Wabanaki prefer the French to the English?</p>
+    <p class="ans">The French were fewer, so posed fewer threats</p>
+    
+    <p class="fix">Fine after the Wabanaki are introduced.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">The Acadiens drained salt marshes to make pasture for their cattle. What did that let them avoid?</p>
+    <p class="ans">Taking Wabanaki land</p>
+    
+    <p class="fix">Good: Acadians are known, the dykes are a surprise.</p>
+  </li><li class="q" data-role="R" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Why did the young colony depend on Indigenous traders for its furs?</p>
+    <p class="ans">It lacked the people, and the nations’ permission, to trap</p>
+    
+    <p class="fix">Good.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Europeans often assumed a treaty or pact was made once and for all. What did the nations expect instead?</p>
+    <p class="ans">Regular renewal, with gifts and declarations of loyalty</p>
+    
+    <p class="fix">Strong and current (treaties today).</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">How did Iroquoian councils try to reach decisions?</p>
+    <p class="ans">By consensus from discussion — not always binding</p>
+    
+    <p class="fix">Fine.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Many histories have Champlain drawing the Wendat into an alliance. Who actually approached whom?</p>
+    <p class="ans">The Wendat approached the French</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">Reversal answers are becoming a pattern; vary.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="context">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">The Wendat visited Champlain’s habitation in 1609 to size up the newcomers. What was their other purpose?</p>
+    <p class="ans">To bring the Innu into their existing trade alliance</p>
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">The Wendat were canny traders. What was wealth for?</p>
+    <p class="ans">Giving away — generosity brought status</p>
+    
+    <p class="fix">Core Graeber idea. Keep early.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">What let the Wendat stockpile furs as no one else north of Lake Ontario could?</p>
+    <p class="ans">They were settled; longhouses doubled as warehouses</p>
+    
+    <p class="fix">Good.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="number">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Wendake was 700 km of river from Montreal. How much of all the furs traded in the 1620s did it produce?</p>
+    <p class="ans">About half</p>
+    <p class="chips"><span class="chip">Tests a number</span></p>
+    <p class="fix">Keep as scale after the Wendat are established.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="number">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">As the 1620s opened, how many French residents were there in Canada?</p>
+    <p class="ans">Fewer than 70</p>
+    <p class="chips"><span class="chip">Tests a number</span></p>
+    <p class="fix">A number, but a shocking one that teaches the whole point. Round one.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Much of what historians know about the Wendat comes from one set of writings. Whose?</p>
+    <p class="ans">Jesuit missionaries’ letters, the Jesuit Relations</p>
+    
+    <p class="fix">Good &quot;how we know&quot; question.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">How did the Jesuits’ approach differ from most other missionaries’?</p>
+    <p class="ans">They didn’t try to make people European first</p>
+    
+    <p class="fix">Fine.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="long">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Why did most nations of the Great Lakes and Ohio support the French?</p>
+    <p class="ans">They took no land, came as guests, and gave gifts</p>
+    <p class="chips"><span class="chip">Long</span></p>
+    <p class="fix">Answer runs long.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">An allied nation offered the French a captive as a gift. What did accepting it do?</p>
+    <p class="ans">Ruled out the captive’s nation as an ally</p>
+    
+    <p class="fix">Good surprise.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="jargon guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Across much of Louisiana and the Pays d’en Haut, what did French settlers find themselves part of?</p>
+    <p class="ans">An Indigenous world more than a European one</p>
+    <p class="chips"><span class="chip">Unexplained term</span><span class="chip">Guessable</span></p>
+    <p class="fix">Pays d’en Haut again.</p>
+  </li><li class="q" data-role="R" data-fam="3" data-issues="guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">The French and their allies waged war on the Meskwaki (Fox) until only a few hundred survived. What does it show about French relations with the nations?</p>
+    <p class="ans">French relations with the nations weren’t all benign</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">The answer restates the stem. Rewrite.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Could the French have waged the Fox Wars on the Meskwaki alone?</p>
+    <p class="ans">No — it needed their Indigenous allies’ support</p>
+    
+    <p class="fix">Fine.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Put in order: Cartier finds the Innu hunting at Tadoussac; Port-Royal is founded on the Bay of Fundy…</p>
+    
+    
+    <p class="fix">Fine.</p>
+  </li><li class="q" data-role="F" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Hochelaga, near Mount Royal, was a town of about 3,000 people. How was it defended?</p>
+    <p class="ans">A triple palisade of wood</p>
+    
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Cartier sailed home with “diamonds” and “gold” from Canada. What were they?</p>
+    <p class="ans">Quartz and iron pyrites</p>
+    
+    <p class="fix">Fool’s gold is widely known. Promote: a light, memorable round-one question.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="weak">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">By the late 1600s, how did the number of Catholic Mi’kmaq compare with Catholic Acadiens?</p>
+    <p class="ans">Perhaps about the same</p>
+    <p class="chips"><span class="chip">Weak option</span></p>
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="context">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Tadoussac was a fine place for hunting seals and whales. Who was doing that when Cartier visited in 1535?</p>
+    <p class="ans">The Innu</p>
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">Detail.</p>
+  </li></ol></section><section class="chap"><h3>Contact, on the nations’ terms <span>44</span></h3><ol class="qs"><li class="q" data-role="R" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Metal goods and new ideas often reached a nation before any European did. When did much of the change happen?</p>
+    <p class="ans">Before direct contact, as goods moved nation to nation</p>
+    
+    <p class="fix">Important. Keep early in Contact.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="weak">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Epidemics took terrible losses. How did the nations respond?</p>
+    <p class="ans">By consolidating, adopting, conquering and moving</p>
+    <p class="chips"><span class="chip">Weak option</span></p>
+    <p class="fix">&quot;They despaired&quot; is a straw man.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="jargon">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Crops, horses, pigs, guns and germs all crossed the Atlantic in the “Columbian Exchange.” Which mattered most?</p>
+    <p class="ans">Smallpox and the “virgin soil” epidemics</p>
+    <p class="chips"><span class="chip">Unexplained term</span></p>
+    <p class="fix">Round one, but explain &quot;virgin soil&quot; (a population never exposed before).</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">The nations forged many alliances among themselves. Against whom?</p>
+    <p class="ans">Their neighbours as well as the newcomers</p>
+    
+    <p class="fix">Fine.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="context">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">After destroying Wendake, what did the Five Nations’ campaigns win them?</p>
+    <p class="ans">A huge territory, and a place between two empires</p>
+    <p class="chips"><span class="chip">Unplaced name</span></p>
+    <p class="fix">&quot;Five Nations&quot; = Haudenosaunee; say so.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Wendake, the Wendat homeland, was destroyed by Haudenosaunee raids in the late 1640s. What else played a part?</p>
+    <p class="ans">The missions, and too few French guns</p>
+    
+    <p class="fix">Good.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="weak">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">When Europeans showed up, how did the nations mainly understand them?</p>
+    <p class="ans">As a source of goods, and as allies or enemies</p>
+    <p class="chips"><span class="chip">Weak option</span></p>
+    <p class="fix">&quot;Messengers from the spirit world&quot; is a caricature.</p>
+  </li><li class="q" data-role="R" data-fam="1" data-issues="guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Who set the terms and protocols of trade?</p>
+    <p class="ans">Indigenous traders — Europeans had to conform</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">Good point; obvious answer.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Potatoes, maize and other crops went from the Americas to the rest of the world. What did they do there?</p>
+    <p class="ans">They turbo-charged population growth</p>
+    
+    <p class="fix">Round one: potatoes and maize are universally known.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Once European food crops reached the Americas, what were most of them used for?</p>
+    <p class="ans">Feeding the settler communities, not trade</p>
+    
+    <p class="fix">Fine.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="number">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">With the horse, what happened to the size of Cree and Assiniboine bands?</p>
+    <p class="ans">They grew from under 50 to over 200</p>
+    <p class="chips"><span class="chip">Tests a number</span></p>
+    <p class="fix">Keep; horses are a strong hook.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Why were many nations less than keen on European pigs?</p>
+    <p class="ans">Pigs broke into gardens and wrecked camas pastures</p>
+    
+    <p class="fix">Light and memorable. Round one or two.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">In the 1600s the Hudson’s Bay Company brought British planted foods to the far north. What did that do to the Cree (Mushkegowuck) ways of finding food?</p>
+    <p class="ans">Disrupted them, with food insecurity lasting to today</p>
+    
+    <p class="fix">Good; the Hudson’s Bay Company is known.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">The Aztecs drove Cortés out of Tenochtitlan in 1520. What turned it?</p>
+    <p class="ans">Smallpox, and an army of unhappy tributary nations</p>
+    
+    <p class="fix">Round one: Cortés is known; the answer corrects the conquest story.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="weak">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Why did the Americas look like a “vacant land” to many newcomers?</p>
+    <p class="ans">Disease had killed as many as nine in ten people</p>
+    <p class="chips"><span class="chip">Weak option</span></p>
+    <p class="fix">Round one. Replace &quot;Nations hid themselves from the ships&quot;.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Quarantine might have slowed smallpox. Why did the Wendat never attempt it?</p>
+    <p class="ans">Leaving someone to die alone was unforgivable</p>
+    
+    <p class="fix">Strong.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Smallpox killed many Wendat elders. Why was that loss so deep?</p>
+    <p class="ans">They kept the stories and the political memory</p>
+    
+    <p class="fix">Strong.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="number">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">European goods were reaching Wendat villages by 1580. How long was that before Champlain met the first Wendat envoy?</p>
+    <p class="ans">A full quarter century</p>
+    <p class="chips"><span class="chip">Tests a number</span></p>
+    <p class="fix">Pair with change-before-contact.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Donnacona, headman at Stadacona, tried to stop Cartier leaving. Why?</p>
+    <p class="ans">To control the French trade through him</p>
+    
+    <p class="fix">Good, after scurvy-cure.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">In the eastern woodlands, the price the French paid for furs barely moved. What do some historians take that to show?</p>
+    <p class="ans">Trade was a social act — the relationship mattered most</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">Keep with its counter-question.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Every European trader’s journal describes what came before any trading began. What was it?</p>
+    <p class="ans">Gift-giving, speeches and welcoming rituals, sometimes for days</p>
+    
+    <p class="fix">Good.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Fur-trade marriages were made “à la façon du pays” — by the custom of the country. Whose custom?</p>
+    <p class="ans">Indigenous — it turned traders into relatives</p>
+    
+    <p class="fix">Good.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">The Haudenosaunee League came together around 1450. How does its age compare with today’s countries?</p>
+    <p class="ans">It is older than Canada, the US and the UK</p>
+    
+    <p class="fix">Round one: &quot;older than Canada, the US and the UK&quot; is the perfect hook.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="jargon">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">The Haudenosaunee were a matrilineal culture. Who gave much direction to their council?</p>
+    <p class="ans">The women of the community</p>
+    <p class="chips"><span class="chip">Unexplained term</span></p>
+    <p class="fix">Explain &quot;matrilineal&quot;.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">The Great Peacemaker set out to end the Mourning Wars among Iroquoian-speaking peoples. Where did he come from?</p>
+    <p class="ans">The Wendat villages of the north</p>
+    
+    <p class="fix">Fine later.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">At their height, what could the Wendat do along the interior canoe routes?</p>
+    <p class="ans">Charge tolls for passage</p>
+    
+    <p class="fix">Fine.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="guess">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Who is credited with persuading the Chipewyan and the Cree to make a lasting peace in the 1710s?</p>
+    <p class="ans">Thanadelthur, a Chipewyan woman</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">The only named woman among the options gives it away.</p>
+  </li><li class="q" data-role="R" data-fam="3" data-issues="guess">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">The Wabanaki fought the English for a century after Metacomet’s War. Whose agenda were they following?</p>
+    <p class="ans">Their own: holding and restoring their lands</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">&quot;Their own&quot; is the tell.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="jargon">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">After years of war and adopting captives, what had the Haudenosaunee League become by the 1660s?</p>
+    <p class="ans">A more cosmopolitan power, full of adopted people</p>
+    <p class="chips"><span class="chip">Unexplained term</span></p>
+    <p class="fix">&quot;Cosmopolitan&quot; in the answer; plainer words.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">In 1701 the Haudenosaunee made peace at Montreal. What else did they do that year?</p>
+    <p class="ans">Signed a separate treaty with the English at Albany</p>
+    
+    <p class="fix">Fine.</p>
+  </li><li class="q" data-role="R" data-fam="3" data-issues="">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Some historians doubt that stable fur prices prove the trade was mainly social. What do they argue?</p>
+    <p class="ans">Stable prices hid rising demands made elsewhere</p>
+    
+    <p class="fix">Good contested pair.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">After the smallpox of the 1630s, the Haudenosaunee attacked Wendake. What did that offer them?</p>
+    <p class="ans">Revenge, victory, profit, and captives to adopt</p>
+    
+    <p class="fix">Good.</p>
+  </li><li class="q" data-role="D" data-fam="3" data-issues="jargon">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">In 1647–48 the Haudenosaunee turned from raiding Wendat fur fleets to attacking Wendat villages. How had the Mourning Wars been different before?</p>
+    <p class="ans">Retaliatory, but not a scorched-earth campaign</p>
+    <p class="chips"><span class="chip">Unexplained term</span></p>
+    <p class="fix">&quot;Mourning Wars&quot; unexplained.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">The Haudenosaunee raided Wendake in part to rebuild their own numbers. What does the evidence show?</p>
+    <p class="ans">Many Wendat women and children were taken captive</p>
+    
+    <p class="fix">Good.</p>
+  </li><li class="q" data-role="R" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rR">Rethinks</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">What does the record show about early relationships between newcomer men and Indigenous women?</p>
+    <p class="ans">Not always consensual, though women held power</p>
+    
+    <p class="fix">Good.</p>
+  </li><li class="q" data-role="D" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rD">Deepens</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Put in order: The Haudenosaunee League comes together; Smallpox strikes Wendake…</p>
+    
+    
+    <p class="fix">Fine.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">In what is now central and northern Ontario, which language did traders adopt?</p>
+    <p class="ans">Wendat</p>
+    
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="guess">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">Chinook, or chinuk wawa, was a trade language of the Pacific coast. When did it exist?</p>
+    <p class="ans">Before Europeans arrived</p>
+    <p class="chips"><span class="chip">Guessable</span></p>
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="F" data-fam="2" data-issues="number">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Horses were traded north from New Spain, nation to nation. When did they reach the northern Plains?</p>
+    <p class="ans">The 1730s</p>
+    <p class="chips"><span class="chip">Tests a number</span></p>
+    <p class="fix">Detail.</p>
+  </li><li class="q" data-role="F" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">Who bred the Spanish mustang into the hardier horse known as the cayuse?</p>
+    <p class="ans">The Liksiyu of the Columbia Plateau</p>
+    
+    <p class="fix">Detail; &quot;cayuse&quot; is known in the West.</p>
+  </li><li class="q" data-role="F" data-fam="3" data-issues="recall">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f3" title="Specialist"><i></i><i></i><i></i> Specialist</span></div>
+    <p class="ask">The book gives a figure for Wendat deaths from smallpox in the 1630s in two places. What does it say?</p>
+    <p class="ans">Half in one place, perhaps two-thirds in another</p>
+    <p class="chips"><span class="chip">Tests a phrase</span></p>
+    <p class="fix">About the book, not the past. Retire or reframe as &quot;sources disagree&quot;.</p>
+  </li><li class="q" data-role="F" data-fam="2" data-issues="">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">How did the Mi’kmaq meet Cartier’s boats?</p>
+    <p class="ans">Twenty canoes paddled out, loaded with furs</p>
+    
+    <p class="fix">Detail; a vivid image — could anchor the Contact chapter.</p>
+  </li><li class="q" data-role="A" data-fam="1" data-issues="">
+    <div class="qtop"><span class="role rA">Anchor</span><span class="fam f1" title="Commonly known"><i></i><i></i><i></i> Commonly known</span></div>
+    <p class="ask">Which beaver pelts did European buyers want most?</p>
+    <p class="ans">Used ones, worn or slept in until shiny</p>
+    
+    <p class="fix">Beaver hats are widely known; the answer surprises. Promote.</p>
+  </li><li class="q" data-role="F" data-fam="2" data-issues="number">
+    <div class="qtop"><span class="role rF">Detail</span><span class="fam f2" title="School-level"><i></i><i></i><i></i> School-level</span></div>
+    <p class="ask">About how many Wendat lived in Wendake when Champlain visited in 1615?</p>
+    <p class="ans">Some 25,000 to 30,000</p>
+    <p class="chips"><span class="chip">Tests a number</span></p>
+    <p class="fix">Detail.</p>
+  </li></ol></section></div>
+</section>
+
+<footer>Ratings are judgements against the brief, made by reading every question; counts are computed from them. Source file: audits/2026-09-19-questions.mjs.</footer>
+</div>
+<script>
+(() => {
+  const btns = [...document.querySelectorAll('.filters button')];
+  const qs = [...document.querySelectorAll('.q')];
+  const show = (f) => {
+    for (const b of btns) b.setAttribute('aria-pressed', String(b.dataset.f === f));
+    for (const q of qs) {
+      const iss = q.dataset.issues.split(' ');
+      q.hidden = f === 'all' ? false
+        : f === 'role:A' ? q.dataset.role !== 'A'
+        : f === 'issue:guess' ? !iss.includes('guess')
+        : f === 'issue:unplaced' ? !(iss.includes('context') || iss.includes('jargon'))
+        : f === 'fam:3' ? q.dataset.fam !== '3' : false;
+    }
+    for (const c of document.querySelectorAll('.chap')) c.hidden = ![...c.querySelectorAll('.q')].some((q) => !q.hidden);
+  };
+  for (const b of btns) b.addEventListener('click', () => show(b.dataset.f));
+})();
+</script>

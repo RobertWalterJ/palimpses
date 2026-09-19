@@ -113,6 +113,10 @@ for (const file of files) {
   for (const q of qs) {
     n++;
     if (!BIG.has(q.big)) fails.push(where + ' · ' + q.id + ': big question "' + q.big + '" is not one of this chapter’s');
+    // The question is about the past, never about the book: a player who has
+    // never heard of the source must be able to answer (Robert, 19 Sept 2026).
+    const SOURCE_TALK = /\b(Belshaw|Prümers|the authors?|the book|the textbook|according to|in (his|her|their) view)\b/i;
+    if (SOURCE_TALK.test(q.prompt || '')) fails.push(where + ' · ' + q.id + ': the prompt talks about the source ("' + (q.prompt.match(SOURCE_TALK) || [''])[0] + '"); ask about the past and let the answer card credit it');
     if (q.depth && q.depth !== 'detail') fails.push(where + ' · ' + q.id + ': depth must be detail or absent');
     const bad = (m) => fails.push(`${where} · ${q.id}: ${m}`);
     if (ids.has(q.id)) bad('duplicate id');
