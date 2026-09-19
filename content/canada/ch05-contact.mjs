@@ -45,7 +45,7 @@ export default [
   },
   {
     id: 'most-pivotal', kind: 'choice', big: 'disease', lens: ['against-progress'],
-    prompt: 'Crops, horses, pigs, guns and germs all crossed the Atlantic. What does Belshaw call the most pivotal?',
+    prompt: 'Crops, horses, pigs, guns and germs all crossed the Atlantic in the “Columbian Exchange.” Which mattered most?',
     answer: 'Smallpox and the “virgin soil” epidemics',
     options: ['The horse, on the Plains', 'Guns and metal tools', 'The potato, in Europe'],
     must: ['as pivotal as smallpox and the virgin soil epidemics'],
@@ -70,11 +70,12 @@ export default [
   },
   {
     id: 'wendake-undone', kind: 'choice', big: 'power', lens: ['against-progress'],
-    prompt: 'Haudenosaunee raids destroyed Wendake. What else does Belshaw say played a part?',
+    prompt: 'Wendake, the Wendat homeland, was destroyed by Haudenosaunee raids in the late 1640s. What else played a part?',
     answer: 'The missions, and too few French guns',
     options: ['A Wendat civil war over land', 'A famine after years of drought', 'English soldiers fighting beside the League'],
     must: ['missionary presence played a role in the destruction', 'reluctance or inability to trade more rifles'],
-    ev: [{ p: 'pre-5.6-p15', q: 'French reluctance or inability to trade more rifles more rapidly to the Wendat contributed to fractiousness within the Confederacy and severe losses to Haudenosaunee raids.' },
+    ev: [{ p: 'pre-5.6-p12', q: 'The retreat from Wendake (Huronia) in 1649-50' },
+      { p: 'pre-5.6-p15', q: 'French reluctance or inability to trade more rifles more rapidly to the Wendat contributed to fractiousness within the Confederacy and severe losses to Haudenosaunee raids.' },
       { p: 'pre-5.6-p16', q: 'The missionary presence played a role in the destruction of Wendake (Huronia).' }],
   },
 
@@ -166,7 +167,7 @@ export default [
   },
   {
     id: 'food-imperialism', kind: 'choice', big: 'crossings', lens: ['against-progress', 'economy'],
-    prompt: 'Historian Beverly Soloway studied the Hudson’s Bay Company’s British planted-food model in the far north. What did it do to Cree (Mushkegowuck) foodways?',
+    prompt: 'In the 1600s the Hudson’s Bay Company brought British planted foods to the far north. What did that do to the Cree (Mushkegowuck) ways of finding food?',
     answer: 'Disrupted them, with food insecurity lasting to today',
     options: ['Improved diets across the whole subarctic', 'Changed little, since the Cree ignored it', 'Replaced fishing with farming for good'],
     must: ['disrupted', 'food insecurity'],
@@ -283,7 +284,7 @@ export default [
   // ── alliances ──────────────────────────────────────────────────────────
   {
     id: 'league-older', kind: 'choice', big: 'power', lens: ['own-terms', 'against-progress'],
-    prompt: 'The Haudenosaunee League came together around 1450. What does the book compare its age with?',
+    prompt: 'The Haudenosaunee League came together around 1450. How does its age compare with today’s countries?',
     answer: 'It is older than Canada, the US and the UK',
     options: ['It is about as old as Canada itself', 'It is a little younger than New France', 'It began after contact, in the early 1600s'],
     must: ['sometime around 1450', 'significantly older than Canada, the United States, and the United Kingdom'],

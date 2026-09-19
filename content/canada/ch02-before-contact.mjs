@@ -34,7 +34,7 @@ export default [
   // ── the bigger picture (from the author's Key Points) ──────────────────
   {
     id: 'oral-standard', kind: 'choice', big: 'records', lens: ['record'],
-    prompt: 'How reliable are oral traditions as evidence, in Belshaw’s view?',
+    prompt: 'Many nations kept their history by telling it, generation to generation. As evidence, how reliable are these oral traditions?',
     answer: 'Equally reliable, tested the same way',
     options: ['Less reliable: memory always drifts', 'Useful only where nothing was written', 'Reliable only when archaeology agrees'],
     must: ['as reliable as written primary sources', 'same tests of verifiability and reliability'],
@@ -76,7 +76,7 @@ export default [
   },
   {
     id: 'trail-markers', kind: 'choice', big: 'records', lens: ['record', 'own-terms'],
-    prompt: 'In an oral society, what do the cairns and markers along a trail do, according to William Turkel?',
+    prompt: 'Trails across the land carried rock cairns, markers and boundaries. In a society that keeps its history by memory, what do they do?',
     answer: 'They work like volumes on a shelf, prompting memory',
     options: ['They mark who owns each stretch of the trail', 'They warn travellers off sacred ground', 'They count the days of a journey'],
     must: ['volumes on a shelf'],
@@ -109,7 +109,7 @@ export default [
   },
   {
     id: 'wickwire-fraser', kind: 'choice', big: 'records', lens: ['record'],
-    prompt: 'Wendy Wickwire tested the Nlaka’pamux oral account of first contact against whose written one?',
+    prompt: 'The Nlaka’pamux remember their first meeting with a European in their own oral history. A historian set it beside that European’s written account. Whose?',
     answer: 'Simon Fraser’s, from 1808',
     options: ['Jacques Cartier’s, from 1535', 'Samuel de Champlain’s, from 1609', 'George Vancouver’s, from 1792'],
     must: ['Simon Fraser', '1808'],
@@ -117,14 +117,15 @@ export default [
   },
   {
     id: 'innis-speech', kind: 'choice', big: 'records', depth: 'detail', lens: ['record'],
-    prompt: 'Harold Innis split media into time-biased and space-biased. Which is speech?',
-    answer: 'Time-biased',
-    options: ['Space-biased'],
+    prompt: 'The thinker Harold Innis sorted media by what they carry best: ideas that last through time, like carvings in stone, or orders sent across distance. Which is speech?',
+    answer: 'Time-biased: it lasts',
+    options: ['Space-biased: it travels'],
+    must: ['time-biased'],
     ev: [{ p: 'pre-2.2-p2', q: 'For Innis, speech is also a time-biased medium.' }],
   },
   {
     id: 'written-record-ignored', kind: 'choice', big: 'records', lens: ['against-progress', 'record'],
-    prompt: 'Belshaw says the Americas had written records before contact. Why do so many people believe they had none?',
+    prompt: 'The Americas had written records before Europeans arrived. Why do so many people believe they had none?',
     answer: 'Europeans ignored or destroyed the records that existed, and attacked oral tradition',
     options: ['No Indigenous society kept records of any kind', 'The records were written in scripts no one can read', 'The records were all lost to epidemics before contact'],
     must: ['ignore or attempt to destroy'],
@@ -262,7 +263,7 @@ export default [
   },
   {
     id: 'everyone-traded', kind: 'choice', big: 'exchange', lens: ['economy', 'against-progress'],
-    prompt: 'Hunter-gatherers, farmers and seafaring mammal hunters — which did Belshaw find engaged in commerce before contact?',
+    prompt: 'Before contact, some peoples hunted and gathered, some farmed, and some hunted sea mammals from boats. Which of them traded?',
     answer: 'All of them',
     options: ['Only the farmers, who had surplus', 'Only the coastal peoples', 'None; exchange arrived with the fur trade'],
     must: ['all of whom were engaged in commerce'],

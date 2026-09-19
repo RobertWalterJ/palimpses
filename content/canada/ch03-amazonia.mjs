@@ -17,7 +17,7 @@ export const BIG = [
 export default [
   {
     id: 'amazon-sparse', kind: 'choice', big: 'amazon', lens: ['against-progress'],
-    prompt: 'Lidar surveys mapped Casarabe sites in the Bolivian Amazon. What do the authors say their results put to rest?',
+    prompt: 'Laser mapping from the air (lidar) has revealed whole settlements under the Bolivian Amazon’s forest. What idea do the archaeologists say it puts to rest?',
     answer: 'The idea that western Amazonia was thinly peopled',
     options: ['The idea that farming began in the Andes', 'The idea that the region had any cities', 'The idea that lidar works under forest'],
     must: ['put to rest arguments that western Amazonia was sparsely populated'],
@@ -65,7 +65,7 @@ export default [
   },
   {
     id: 'casarabe-canal', kind: 'choice', big: 'amazon', lens: ['own-terms', 'economy'],
-    prompt: 'A 7-km canal brought water from Laguna San José to Cotoca. What do the authors say it shows?',
+    prompt: 'A 7-km canal brought water from a lake to the Casarabe town of Cotoca. What does it show?',
     answer: 'The scale of landscape management and labour',
     options: ['That Cotoca was built by Andean settlers', 'That the site flooded and was abandoned', 'That canals were dug only for defence'],
     must: ['indicating the scale of landscape management and labour mobilization'],
@@ -81,7 +81,7 @@ export default [
   },
   {
     id: 'casarabe-urbanism', kind: 'choice', big: 'amazon', lens: ['contested', 'own-terms'],
-    prompt: 'What do the authors propose the Casarabe settlement system was?',
+    prompt: 'Towns, causeways, canals and farms spread across the Llanos de Mojos. What kind of settlement was it?',
     answer: 'Low-density urbanism, the first known in lowland South America',
     options: ['Scattered camps of mobile foragers', 'An outpost of the Inca Empire', 'A copy of an Andean capital city'],
     must: ['We propose', 'tropical agrarian low-density urbanism', 'the first known case'],

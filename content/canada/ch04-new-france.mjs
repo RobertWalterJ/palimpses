@@ -262,7 +262,7 @@ export default [
   },
   {
     id: 'fox-wars', kind: 'choice', big: 'alliance', lens: ['against-progress'],
-    prompt: 'The French and their allies waged war on the Meskwaki (Fox) until only a few hundred survived. What does Belshaw say it shows?',
+    prompt: 'The French and their allies waged war on the Meskwaki (Fox) until only a few hundred survived. What does it show about French relations with the nations?',
     answer: 'French relations with the nations weren’t all benign',
     options: ['The Meskwaki had attacked Quebec itself', 'The French avoided wars in the west', 'The allies refused to take part'],
     must: ['puts the lie to the myth of unqualified positive relations', 'Only a few hundred Meskwaki survived'],
