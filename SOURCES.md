@@ -39,3 +39,12 @@ hyphens, bracketed original page numbers, OCR spacing before punctuation, and
 - George Copway (Kahgegagahbowh), *The Traditional History and Characteristic Sketches of the Ojibway Nation* (Boston, 1851) — https://archive.org/details/traditionalhisto00copw
 - Peter Jones (Kahkewaquonaby), *History of the Ojebway Indians* (London, 1861) — https://archive.org/details/historyofojebway00jonerich
 - Two witnesses quoted within Belshaw (Las Casas, Díaz), cited to the paragraph.
+
+## OpenStax World History, Volume 2: from 1400 (world layer, in progress)
+
+Ann Kordas, Ryan J. Lynch, Brooke Nelson, Julie Tatlock et al., OpenStax, 2023.
+CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/). Source:
+CNXML from https://github.com/openstax/osbooks-world-history (collection
+world-history-volume-2, 80 modules, retrieved 19 September 2026), in
+`sources/openstax-wh2/`; extracted to `corpus/wh2.json` (15 chapters, 75
+sections, 2,455 paragraphs). Links go to openstax.org's pages.

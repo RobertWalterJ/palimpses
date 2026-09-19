@@ -177,3 +177,58 @@ for (const src of ARTICLES) {
   console.log(`\n${src.title} (${src.year}): ${sections.length} sections, ${paras.length} paragraphs, `
     + `${paras.reduce((t, p) => t + p.text.split(' ').length, 0).toLocaleString()} words`);
 }
+
+// ── OpenStax World History, Volume 2 (CNXML from the openstax GitHub repo) ─
+// CC BY-NC-SA 4.0. Units hold chapters; each chapter's first module is its
+// introduction, the rest are numbered sections, and openstax.org's page slugs
+// follow that numbering ("3-4-exchange-in-east-asia"). Learning objectives,
+// figures and review exercises are apparatus, not history, and are skipped.
+{
+  const src = {
+    id: 'wh2', title: 'World History, Volume 2: from 1400', author: 'Ann Kordas, Ryan J. Lynch, Brooke Nelson, Julie Tatlock et al.',
+    publisher: 'OpenStax', year: 2023, licence: 'CC BY-NC-SA 4.0',
+    web: 'https://openstax.org/books/world-history-volume-2/pages/',
+    got: 'https://github.com/openstax/osbooks-world-history',
+  };
+  const DIR = join(ROOT, 'sources', 'openstax-wh2');
+  const col = cheerio.load(readFileSync(join(DIR, 'collection.xml'), 'utf8'), { xmlMode: true });
+  const slugify = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  // Namespaced tags ("col:subcollection") trip CSS selectors, so walk by name.
+  const kids = (el, name) => col(el).children().toArray().filter((c) => c.tagName === name);
+  const top = col.root().children().toArray().find((c) => c.tagName === 'col:collection');
+  const units = kids(kids(top, 'col:content')[0], 'col:subcollection');
+  const chapterEls = units.flatMap((u) => kids(kids(u, 'col:content')[0], 'col:subcollection'));
+  const chapters = [];
+  let chN = 0;
+  chapterEls.forEach((chEl) => {
+    const chTitle = clean(col(kids(chEl, 'md:title')[0]).text());
+    chN++;
+    const chapter = { n: chN, title: chTitle, sections: [] };
+    kids(kids(chEl, 'col:content')[0], 'col:module').forEach((modEl, i) => {
+      const m = col(modEl).attr('document');
+      const $ = cheerio.load(readFileSync(join(DIR, 'modules', m + '.cnxml'), 'utf8'), { xmlMode: true });
+      const title = clean($('document > title').first().text());
+      const num = i === 0 ? null : `${chN}.${i}`;
+      const slug = i === 0 ? `${chN}-introduction` : `${chN}-${i}-${slugify(title)}`;
+      const section = { id: `wh2-${num || chN + '.0'}`, num: num || `${chN}.0`, title, url: src.web + slug, paras: [] };
+      $('section.learning-objectives, figure, exercise, footnote, media').remove();
+      let k = 0;
+      $('para').each((__, p) => {
+        const $p = $(p);
+        if ($p.parents('list, table').length) return;
+        const text = clean($p.text());
+        if (text.length < 25) return;
+        const sec = $p.parents('section').first().children('title').first().text();
+        const note = $p.parents('note').first().children('title').first().text();
+        section.paras.push({ id: `${section.id}-p${++k}`, under: clean(note || sec) || null, key: false, text });
+      });
+      if (section.paras.length) chapter.sections.push(section);
+    });
+    chapters.push(chapter);
+  });
+  writeFileSync(join(ROOT, 'corpus', 'wh2.json'), JSON.stringify({ source: src, chapters }, null, 1));
+  const paras = chapters.flatMap((c) => c.sections.flatMap((s) => s.paras));
+  console.log(`\n${src.title}: ${chapters.length} chapters, ${chapters.reduce((t, c) => t + c.sections.length, 0)} sections, ${paras.length} paragraphs, `
+    + `${paras.reduce((t, p) => t + p.text.split(' ').length, 0).toLocaleString()} words`);
+  for (const c of chapters) console.log(`  ${String(c.n).padStart(2)}. ${c.title}  (${c.sections.length} sections)`);
+}
