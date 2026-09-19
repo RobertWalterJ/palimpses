@@ -239,7 +239,8 @@ for (const src of ARTICLES) {
 // verbatim. Gutenberg's own header and licence are cut at its START/END lines.
 const PLAIN = [
   {
-    id: 'prince1831', file: 'sources/voices/thehistoryofmary17851gut.txt',
+    // Gutenberg's file is Latin-1, not UTF-8: read as UTF-8, "£100" lost its £.
+    id: 'prince1831', file: 'sources/voices/thehistoryofmary17851gut.txt', encoding: 'latin1',
     title: 'The History of Mary Prince, a West Indian Slave. Related by Herself', author: 'Mary Prince (taken down from her own words; ed. Thomas Pringle)',
     publisher: 'F. Westley and A. H. Davis, London', year: 1831, licence: 'Public domain',
     web: 'https://www.gutenberg.org/ebooks/17851',
@@ -252,7 +253,7 @@ const PLAIN = [
   },
 ];
 for (const src of PLAIN) {
-  let raw = readFileSync(join(ROOT, src.file), 'utf8').replace(/\r\n/g, '\n');
+  let raw = readFileSync(join(ROOT, src.file), src.encoding || 'utf8').replace(/\r\n/g, '\n');
   const a = raw.indexOf('*** START OF'), b = raw.indexOf('*** END OF');
   if (a >= 0) raw = raw.slice(raw.indexOf('\n', a) + 1, b >= 0 ? b : undefined);
   const paras = raw.split(/\n\s*\n/)
@@ -263,6 +264,9 @@ for (const src of PLAIN) {
     .filter((t) => t.length >= 60)
     .map((text, i) => ({ id: `${src.id}-p${i + 1}`, under: null, key: false, text }));
   const section = { id: `${src.id}-1`, num: '1', title: src.title, url: src.web, paras };
-  writeFileSync(join(ROOT, 'corpus', src.id + '.json'), JSON.stringify({ source: { ...src, file: undefined }, chapters: [{ n: 1, title: src.title, sections: [section] }] }, null, 1));
+  // A replacement character means the text was decoded with the wrong
+  // encoding; refuse rather than ship broken letters.
+  if (JSON.stringify(paras).includes('�')) throw new Error(`${src.id}: replacement characters — wrong encoding?`);
+  writeFileSync(join(ROOT, 'corpus', src.id + '.json'), JSON.stringify({ source: { ...src, file: undefined, encoding: undefined }, chapters: [{ n: 1, title: src.title, sections: [section] }] }, null, 1));
   console.log(`\n${src.title} (${src.year}): ${paras.length} paragraphs`);
 }
