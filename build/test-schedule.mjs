@@ -72,7 +72,11 @@ const metBy = log.find((l) => l.met === ids.length)?.day;
 // The pace has to scale with the pack: a fixed deadline was right for 61
 // questions and wrong for 87. The invariant is that new material never
 // starves — at least one new question a day on average, one round a day.
-if (!metBy || metBy > ids.length) fails.push(`all ${ids.length} not met until day ${metBy || '>' + DAYS} — slower than one new a day`);
+// With a pack larger than the simulation (317 questions after the world
+// chapters), "all met" can't happen inside 120 days; the rule is the pace:
+// at least one new question a day on average, over the whole run.
+const metAtEnd = log[DAYS - 1].met;
+if (metBy ? metBy > ids.length : metAtEnd < Math.min(ids.length, DAYS)) fails.push(`only ${metAtEnd} of ${ids.length} met in ${DAYS} days — slower than one new a day`);
 for (let d = 7; d < log.length; d++) {
   if (log[d].met < ids.length && log[d].met === log[d - 7].met) { fails.push(`nothing new introduced from day ${d - 6} to day ${d + 1}`); break; }
 }
@@ -81,7 +85,7 @@ for (const d of [1, 7, 30, 60, 90, 120]) {
   console.log(`day ${String(d).padStart(2)}: asked ${String(l.asked).padStart(2)} (${l.fresh} new), right ${l.right}, met ${l.met}/${ids.length}, known ${l.known}`);
 }
 const idle = log.filter((l) => l.asked === 0).length;
-console.log(`all met by day ${metBy}`);
+console.log(metBy ? `all met by day ${metBy}` : `${log[DAYS - 1].met} of ${ids.length} met in ${DAYS} days (${(log[DAYS - 1].met / DAYS).toFixed(1)} new a day)`);
 console.log(`days with nothing to do: ${idle} of ${DAYS} — the spacing working, not a gap in content`);
 if (fails.length) { console.error('\nFAILED:\n  ' + fails.join('\n  ')); process.exit(1); }
 console.log('the learning loop converges.');

@@ -1,0 +1,201 @@
+<col:collection xmlns:col="http://cnx.rice.edu/collxml" xmlns:md="http://cnx.rice.edu/mdml" xmlns="http://cnx.rice.edu/collxml">
+  <col:metadata>
+    <md:title>World History Volume 1, to 1500</md:title>
+    <md:slug>world-history-volume-1</md:slug>
+    <md:language>en</md:language>
+    <md:uuid>685e3163-1032-4529-bb3a-f97a54407214</md:uuid>
+    <md:license url="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International</md:license>
+  </col:metadata>
+  <col:content>
+    <col:module document="m00086"/>
+    <col:subcollection>
+      <md:title>Early Human Societies</md:title>
+      <col:content>
+        <col:subcollection>
+          <md:title>Understanding the Past</md:title>
+          <col:content>
+            <col:module document="m00053"/>
+            <col:module document="m00054"/>
+            <col:module document="m00055"/>
+            <col:module document="m00056"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>Early Humans</md:title>
+          <col:content>
+            <col:module document="m00087"/>
+            <col:module document="m00088"/>
+            <col:module document="m00089"/>
+            <col:module document="m00090"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>Early Civilizations and Urban Societies</md:title>
+          <col:content>
+            <col:module document="m00103"/>
+            <col:module document="m00104"/>
+            <col:module document="m00105"/>
+            <col:module document="m00106"/>
+            <col:module document="m00107"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>The Near East</md:title>
+          <col:content>
+            <col:module document="m00108"/>
+            <col:module document="m00109"/>
+            <col:module document="m00110"/>
+            <col:module document="m00111"/>
+            <col:module document="m00112"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>Asia in Ancient Times</md:title>
+          <col:content>
+            <col:module document="m00126"/>
+            <col:module document="m00127"/>
+            <col:module document="m00128"/>
+            <col:module document="m00129"/>
+            <col:module document="m00130"/>
+          </col:content>
+        </col:subcollection>
+      </col:content>
+    </col:subcollection>
+    <col:subcollection>
+      <md:title>States and Empires, 1000 BCE–500 CE</md:title>
+      <col:content>
+        <col:subcollection>
+          <md:title>Mediterranean Peoples</md:title>
+          <col:content>
+            <col:module document="m00131"/>
+            <col:module document="m00132"/>
+            <col:module document="m00133"/>
+            <col:module document="m00134"/>
+            <col:module document="m00135"/>
+            <col:module document="m00136"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>Experiencing the Roman Empire</md:title>
+          <col:content>
+            <col:module document="m00137"/>
+            <col:module document="m00138"/>
+            <col:module document="m00139"/>
+            <col:module document="m00140"/>
+            <col:module document="m00141"/>
+            <col:module document="m00142"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>The Americas in Ancient Times</md:title>
+          <col:content>
+            <col:module document="m00113"/>
+            <col:module document="m00114"/>
+            <col:module document="m00115"/>
+            <col:module document="m00116"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>Africa in Ancient Times</md:title>
+          <col:content>
+            <col:module document="m00084"/>
+            <col:module document="m00085"/>
+            <col:module document="m00095"/>
+            <col:module document="m00096"/>
+            <col:module document="m00097"/>
+          </col:content>
+        </col:subcollection>
+      </col:content>
+    </col:subcollection>
+    <col:subcollection>
+      <md:title>An Age of Religion, 500–1200 CE</md:title>
+      <col:content>
+        <col:subcollection>
+          <md:title>Empires of Faith</md:title>
+          <col:content>
+            <col:module document="m00098"/>
+            <col:module document="m00099"/>
+            <col:module document="m00100"/>
+            <col:module document="m00101"/>
+            <col:module document="m00102"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>The Rise of Islam and the Caliphates</md:title>
+          <col:content>
+            <col:module document="m00091"/>
+            <col:module document="m00092"/>
+            <col:module document="m00093"/>
+            <col:module document="m00094"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>India, the Indian Ocean Basin, and East Asia</md:title>
+          <col:content>
+            <col:module document="m00152"/>
+            <col:module document="m00153"/>
+            <col:module document="m00154"/>
+            <col:module document="m00155"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>The Post-Roman West and the Crusading Movement</md:title>
+          <col:content>
+            <col:module document="m00117"/>
+            <col:module document="m00118"/>
+            <col:module document="m00119"/>
+            <col:module document="m00120"/>
+            <col:module document="m00121"/>
+          </col:content>
+        </col:subcollection>
+      </col:content>
+    </col:subcollection>
+    <col:subcollection>
+      <md:title>A Global Middle Ages, 1200–1500 CE</md:title>
+      <col:content>
+        <col:subcollection>
+          <md:title>Pax Mongolica: The Steppe Empire of the Mongols</md:title>
+          <col:content>
+            <col:module document="m00143"/>
+            <col:module document="m00144"/>
+            <col:module document="m00145"/>
+            <col:module document="m00146"/>
+            <col:module document="m00147"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>States and Societies in Sub-Saharan Africa</md:title>
+          <col:content>
+            <col:module document="m00148"/>
+            <col:module document="m00149"/>
+            <col:module document="m00150"/>
+            <col:module document="m00151"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>Climate Change and Plague in the Fourteenth Century</md:title>
+          <col:content>
+            <col:module document="m00156"/>
+            <col:module document="m00157"/>
+            <col:module document="m00158"/>
+            <col:module document="m00159"/>
+            <col:module document="m00160"/>
+          </col:content>
+        </col:subcollection>
+        <col:subcollection>
+          <md:title>The Ottomans, the Mamluks, and the Ming</md:title>
+          <col:content>
+            <col:module document="m00122"/>
+            <col:module document="m00123"/>
+            <col:module document="m00124"/>
+            <col:module document="m00125"/>
+          </col:content>
+        </col:subcollection>
+      </col:content>
+    </col:subcollection>
+    <col:module document="m00162"/>
+    <col:module document="m00161"/>
+    <col:module document="m00074"/>
+    <col:module document="m00057"/>
+  </col:content>
+</col:collection>

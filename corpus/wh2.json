@@ -181,8 +181,20 @@
       {
        "id": "wh2-1.1-p23",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Knowing the past, the human story, has long been considered a mark of civilization, and its study has never been more important. The study of world history provides the skills necessary to meet global workforce needs while at the same time developing a sense of self and place in our global community. You will gain critical-thinking and analysis skills that will help you fulfill the role of a global citizen in our interconnected world. This text will help you approach history with an open mind, and it will engage you in meaningful ways, often highlighting content that remains relevant in today’s society."
+      },
+      {
+       "id": "wh2-1.1-g24",
+       "under": "Key Terms",
+       "key": false,
+       "text": "chronological approach: an approach to history that follows a timeline from ancient to modern"
+      },
+      {
+       "id": "wh2-1.1-g25",
+       "under": "Key Terms",
+       "key": false,
+       "text": "global citizen: a person who sees themselves as responsible to a world community rather than only a national one"
       }
      ]
     },
@@ -459,8 +471,38 @@
       {
        "id": "wh2-1.2-p45",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Primary sources are the first-hand evidence with which historians form a foundation of knowledge of the past. Interpreting them requires attention to four key areas: the author, the audience, the intent, and the context. Secondary sources offer valuable starting points for inquiry and context, but students must be aware of any bias they contain. Despite the efforts of generations of historians, there are still people and regions we do not know much about. We must hope that new generations of historians will continue to hone our interpretation of the past."
+      },
+      {
+       "id": "wh2-1.2-g46",
+       "under": "Key Terms",
+       "key": false,
+       "text": "historiography: the study of how historians have already interpreted the past"
+      },
+      {
+       "id": "wh2-1.2-g47",
+       "under": "Key Terms",
+       "key": false,
+       "text": "iconography: the use of images and symbols in art"
+      },
+      {
+       "id": "wh2-1.2-g48",
+       "under": "Key Terms",
+       "key": false,
+       "text": "primary source: a document, object, or other source material from the time period under study"
+      },
+      {
+       "id": "wh2-1.2-g49",
+       "under": "Key Terms",
+       "key": false,
+       "text": "rhetoric: the way words are used and put together in speaking or writing"
+      },
+      {
+       "id": "wh2-1.2-g50",
+       "under": "Key Terms",
+       "key": false,
+       "text": "secondary source: a document, object, or other source material written or created after the time period under study"
       }
      ]
     },
@@ -629,8 +671,56 @@
       {
        "id": "wh2-1.3-p27",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The historian’s main job is to discover why history happened as it did. What caused the events that have shaped our shared human past? To answer this question, historians apply rigorous interpretative methodology rooted in the search for causation. They study events for both immediate causation and contributing factors, while avoiding judgment and remaining open to revision. You now have the tools you need to fully engage with the material in this text and begin your journey into the human past."
+      },
+      {
+       "id": "wh2-1.3-g28",
+       "under": "Key Terms",
+       "key": false,
+       "text": "great man theory: the view that it is enough to study the deeds and impact of important leaders to paint an accurate picture of the past"
+      },
+      {
+       "id": "wh2-1.3-g29",
+       "under": "Key Terms",
+       "key": false,
+       "text": "historical empathy: the ability to see the past on its own terms, without judgment or the imposition of our own modern-day attitudes"
+      },
+      {
+       "id": "wh2-1.3-g30",
+       "under": "Key Terms",
+       "key": false,
+       "text": "intellectual history: the history of ideas, which looks at the philosophies that drive people to make certain choices"
+      },
+      {
+       "id": "wh2-1.3-g31",
+       "under": "Key Terms",
+       "key": false,
+       "text": "primary cause: the most immediate reason an event occurred"
+      },
+      {
+       "id": "wh2-1.3-g32",
+       "under": "Key Terms",
+       "key": false,
+       "text": "progressive history: a school of thought that views history as a straight line to a specific and more democratic destination"
+      },
+      {
+       "id": "wh2-1.3-g33",
+       "under": "Key Terms",
+       "key": false,
+       "text": "revisionism: the process of altering our interpretation of historical events by adding new elements and perspectives"
+      },
+      {
+       "id": "wh2-1.3-g34",
+       "under": "Key Terms",
+       "key": false,
+       "text": "social constructs: ideas such as class and gender created and accepted by the people in a society that influence the way they think and behave"
+      },
+      {
+       "id": "wh2-1.3-g35",
+       "under": "Key Terms",
+       "key": false,
+       "text": "social history: a field of history that looks at all classes and categories of people, not just elites"
       }
      ]
     }
@@ -1005,14 +1095,50 @@
       {
        "id": "wh2-2.1-p58",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Although Zahir al-Din Muhammad Babur, a Muslim who founded the Mughal Empire, made little effort to assimilate to Indian culture, his grandson Akbar forged a culture that incorporated Indian and Persian, Hindu and Muslim elements. Under him, the Mughal Empire grew to encompass most of northern and much of central India, including the Sultanate of Gujarat, the heart of a rich Indian Ocean trade. Under Aurangzeb, who attempted an Islamic revival and was largely intolerant of the Hindu population, the empire weakened as it battled the Maratha Empire for dominance over the states of seventeenth-century India."
       },
       {
        "id": "wh2-2.1-p59",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Europeans sought to control India’s wealth. First the Portuguese attempted to establish trading posts in India while forcing out Arab and other merchants. Indian rulers and the Mamluk sultan tried to force them from India, but unsuccessfully. The Portuguese were assisted by alliances with some Indian rulers but soon found themselves competing with the English and French, who also formed alliances with Indian rulers and took advantage of their disputes with one another. As the Mughals and Marathas battled each other and the invading Afghan forces, states in northern India broke free of their rule and allied themselves instead with the British, allowing Britain to gradually consolidate its power in India."
+      },
+      {
+       "id": "wh2-2.1-g60",
+       "under": "Key Terms",
+       "key": false,
+       "text": "caravel: a fifteenth-century Portuguese sailing ship"
+      },
+      {
+       "id": "wh2-2.1-g61",
+       "under": "Key Terms",
+       "key": false,
+       "text": "factory: in the context of the sixteenth and seventeenth centuries, a trading post with offices and warehouses"
+      },
+      {
+       "id": "wh2-2.1-g62",
+       "under": "Key Terms",
+       "key": false,
+       "text": "joint stock company: a company in which numerous merchants pooled their money to fund a business venture like a trading voyage and shared both risk and profit"
+      },
+      {
+       "id": "wh2-2.1-g63",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Sikhism: a monotheistic faith that combines elements of Hinduism and Islam, established in the Punjab region of northwestern India in the fifteenth century"
+      },
+      {
+       "id": "wh2-2.1-g64",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Sufi: an Islamic mystic; practitioner of Sufism, the mystical expression of Islamic faith"
+      },
+      {
+       "id": "wh2-2.1-g65",
+       "under": "Key Terms",
+       "key": false,
+       "text": "trade diaspora community: society established by merchants who initially traveled to a foreign country to do business and then settled there"
       }
      ]
     },
@@ -1175,14 +1301,20 @@
       {
        "id": "wh2-2.2-p26",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The Malaccan Sultanate was established around 1400 by Parameswara, the last king of Singapura. The city’s location on both sides of the Malaccan Straits destined it for success, because the straits were the route taken by trading ships between the Indian Ocean and the Pacific. The city grew wealthy and attracted a diverse population of merchants from many countries, and the sultanate thrived under the leadership of Mansur Shah, who expanded its territory. Its prosperity was also aided by its support for Islam and the formulation of a legal code to regulate the conduct of foreign sailors."
       },
       {
        "id": "wh2-2.2-p27",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In 1511, the Portuguese attacked Malacca and took over the city, but their insistence on converting the people to Christianity resulted in their being expelled from both Malacca and the Sultanate of Ternate in Indonesia. In the end, the Spanish took control of the Philippines, and the Dutch, who had no interest in spreading Roman Catholicism, became the main European power in Indonesia."
+      },
+      {
+       "id": "wh2-2.2-g28",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Undang-Undang Laut Melaka: a Malaccan maritime law code, part of the Undang-Undang Melaka, governing the conduct of sailors and traveling merchants"
       }
      ]
     },
@@ -1561,20 +1693,32 @@
       {
        "id": "wh2-2.3-p62",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "East Asia was drawn into the network of global maritime trade in the sixteenth and seventeenth centuries. The Portuguese and Spanish arrived in Japan when powerful daimyos were each fighting to unify the country and bring it under their rule. Guns brought by Europeans began to play an important role in Japanese warfare. Many Japanese also began to convert to Christianity. In 1603, Tokugawa Ieyasu became the shogun of a united Japan, and wishing to control the samurai and fearing Christian subjects would not be loyal, he prohibited Christianity, banned the entry of the Portuguese and Spanish, and prohibited Japanese from leaving the country except on government missions."
       },
       {
        "id": "wh2-2.3-p63",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Following the expulsion of the Mongols, China also turned inward. The first Ming emperor, Hongwu, forbade foreign trade. Needing money, however, the government permitted trade with Europeans in the second half of the sixteenth century. Trade brought prosperity for Chinese farmers, artisans, and merchants, though changes in their lifestyle alarmed conservatives. However, famines, floods, and the inability of the Ming government to solve China’s problems led to the dynasty’s overthrow in 1644. The Manchu Qing dynasty attempted to reassert traditional Confucian values while still trading with Europe."
       },
       {
        "id": "wh2-2.3-p64",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Korea’s Joseon dynasty, a vassal of China, also tried to structure its society on a Confucian model. The seventeenth-century Silhak movement in Korea advocated the study of science and technology in order to solve social problems."
+      },
+      {
+       "id": "wh2-2.3-g65",
+       "under": "Key Terms",
+       "key": false,
+       "text": "hangul: the Korean alphabet, introduced by King Sejong in 1446"
+      },
+      {
+       "id": "wh2-2.3-g66",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Silhak: a late seventeenth-century Korean reform movement that promoted the study of the physical sciences and technology in order to solve practical problems"
       }
      ]
     }
@@ -1763,8 +1907,14 @@
       {
        "id": "wh2-3.1-p27",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Until the sixteenth century, caravans routinely plied the sands of the Sahara, moving goods, especially gold, from distant West Africa to centers of trade in North Africa and Egypt. Towns in West Africa became cosmopolitan stopping points, and as merchants, rulers, and caravan leaders converted to Islam for both spiritual and financial reasons, Islam flourished alongside the caravan business. In the thirteenth century, Sundiata Keita gained dominance over the Malinke and Soninke people, establishing the Malian Empire. Mali’s control of the Bure goldfields enabled it to prosper, and cities such as Timbuktu and Djenné became centers of Islamic scholarship. The empire grew weaker following the death of Mansa Musa. It was unable to withstand raids by the Mossi and Tuareg nomads or revolts by some of its subject cities. Although the rulers of Mali were able to negotiate peace terms with Portuguese slave traders in the mid-fifteenth century, they were unable to retain such vital trade centers as Gao, Timbuktu, and Djenné."
+      },
+      {
+       "id": "wh2-3.1-g28",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Sudanic: a term describing the region of West Africa south of the Sahara Desert"
       }
      ]
     },
@@ -1957,8 +2107,14 @@
       {
        "id": "wh2-3.2-p31",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The basis of the Songhai Empire’s wealth was much the same as for the kingdoms that preceded it: salt, cloth, and gold. Sunni Ali’s program of annexation greatly expanded Songhai. Growth continued under his successors, especially Askia the Great, who used Islam to further his control and brought Songhai into its golden age. Not only did its rulers consolidate state control over trans-Saharan trade, but they also made the empire an unparalleled center of Islamic learning and study in West Africa. The great cities of Timbuktu and Djenné drew merchants and traders engaged in the caravan trade from across Africa, while their grand mosques and schools made them magnets for pilgrims and scholars from across the Islamic world. Askia the Great’s successors could not maintain control of the empire, however, and in the sixteenth century, Songhai was defeated by Saadi forces from Morocco seeking to gain control of the trans-Saharan caravan routes."
+      },
+      {
+       "id": "wh2-3.2-g32",
+       "under": "Key Terms",
+       "key": false,
+       "text": "caliph: an Islamic title designating a spiritual and secular leader"
       }
      ]
     },
@@ -2085,14 +2241,32 @@
       {
        "id": "wh2-3.3-p20",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "City-states on the east coast of Africa grew in size and prosperity as they took advantage of wind patterns to participate in Indian Ocean trade. Their people were united by a shared religion, Islam, and a shared language, Swahili. Products from the interior of the African continent were sold by the Swahili traders to merchants from Arabia, Persia, and India. In exchange, they purchased goods from India, Southeast Asia, and China. Enslaved Africans were also sold in the Swahili city-states."
       },
       {
        "id": "wh2-3.3-p21",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The most powerful of the states was Kilwa, which had grown wealthy through its control of the gold-rich city of Sofala. When the Portuguese arrived in the late fifteenth century, they attempted to leverage the cities’ discontent with Kilwa’s dominance to gain control of the region’s trade, but a Somali-Ottoman alliance and the Omani Sultanate ultimately drove them from all the city-states except Mozambique."
+      },
+      {
+       "id": "wh2-3.3-g22",
+       "under": "Key Terms",
+       "key": false,
+       "text": "dhow: a ship made of coconut-wood planks sewn together with coconut fiber and equipped with lateen sails"
+      },
+      {
+       "id": "wh2-3.3-g23",
+       "under": "Key Terms",
+       "key": false,
+       "text": "lateen sail: a triangular-shaped sail that allows a boat to sail both with and into the wind"
+      },
+      {
+       "id": "wh2-3.3-g24",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Swahili: a language that combines the grammar of African Bantu languages with a Bantu and Arabic vocabulary and is spoken in East Africa"
       }
      ]
     },
@@ -2279,14 +2453,20 @@
       {
        "id": "wh2-3.4-p30",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Kanem-Bornu, which dominated Central Sudan and maintained an active caravan trade with the states of North Africa in the thirteenth century, was destabilized by revolts and rebellions in the fourteenth century. Although it regained preeminence in the sixteenth century, by the end of that century, its power was at an end. The collapse of both Songhai and Kanem-Bornu allowed emergent polities like Dahomey, Oyo, and Segou to flourish, but tensions soon arose among them as competition for trade escalated. As warfare became commonplace, trans-Saharan trade was severely disrupted."
       },
       {
        "id": "wh2-3.4-p31",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "At the same time, European powers such as Portugal began making steady inroads into African trade, establishing trading posts along the coasts in regions like Whydah. By the eighteenth century, the European demand for enslaved captives and the desire of African chiefs to exploit opportunities for financial gain reoriented trans-Saharan trade away from traditional markets, such as those along the Mediterranean coast, to coastal West Africa, with new emphasis on the acquisition and transport of captives. Many of the coastal states became little more than arteries through which passed the caravans of captives destined for the markets of European slavers."
+      },
+      {
+       "id": "wh2-3.4-g32",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Slave Coast: a section of African coast along the Bight of Benin, centered on the port city of Whydah and a major source of African people sold into slavery"
       }
      ]
     }
@@ -2529,14 +2709,56 @@
       {
        "id": "wh2-4.1-p35",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "By the sixteenth century, the religion of Islam had spread far beyond its point of origin in Southwest Asia. Islamic communities, large empires, and a number of Islamic kingdoms thrived in West and East Africa, southeastern Europe, India, and Southeast Asia. But although no single powerful caliphate held all these areas together, the religion of Islam allowed for a degree of cohesiveness and unity, despite theological disagreements. As a result, trade in all types of goods unified the wider Islamic world, flowing along numerous trade routes and through markets overseen by Muslim market inspectors. Local states encouraged trade through their territories because it brought them economic benefits and access to new ideas and technologies. This trade often occurred with the cooperation of the many non-Muslim communities that lived in the Islamic world, such as Jewish people and Christians."
       },
       {
        "id": "wh2-4.1-p36",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In addition to goods and people, trade routes also carried ideas, knowledge, and technologies that also served as a cohesive force. Some led to improvements in mapmaking and navigation. Others had military applications, such as new firearms and artillery. These weapons provided advantages to some of the large Islamic empires of the era, like the Ottomans, Safavids, and Mughals."
+      },
+      {
+       "id": "wh2-4.1-g37",
+       "under": "Key Terms",
+       "key": false,
+       "text": "caliphate: an area under the control of a Muslim ruler called a caliph"
+      },
+      {
+       "id": "wh2-4.1-g38",
+       "under": "Key Terms",
+       "key": false,
+       "text": "caravansary: an inn funded by the state or wealthy individuals where travelers could spend the night and store their goods securely"
+      },
+      {
+       "id": "wh2-4.1-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "dhimmi: a non-Muslim living under Muslim rule"
+      },
+      {
+       "id": "wh2-4.1-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "hajj: the Islamic pilgrimage to Mecca"
+      },
+      {
+       "id": "wh2-4.1-g41",
+       "under": "Key Terms",
+       "key": false,
+       "text": "sharia: Islamic religious law"
+      },
+      {
+       "id": "wh2-4.1-g42",
+       "under": "Key Terms",
+       "key": false,
+       "text": "ulama: a class of religious clerics and scholars who act as the primary interpreters of Islamic law"
+      },
+      {
+       "id": "wh2-4.1-g43",
+       "under": "Key Terms",
+       "key": false,
+       "text": "ummah: the community of Muslims"
       }
      ]
     },
@@ -2849,14 +3071,32 @@
       {
        "id": "wh2-4.2-p51",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The Ottoman Empire was one of the most diverse political entities of its time. Sultans such as Suleiman I encouraged people of all ethnicities to settle there, and under the millet system, each religious community had its own leader, regulated its own affairs, and educated its own children. This diversity is reflected in the languages spoken in the empire. Turkish was for interacting with the government, Arabic for scholarship and in religious settings, and Persian for literature."
       },
       {
        "id": "wh2-4.2-p52",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The empire reached its greatest heights under Suleiman I, known in the West as “the Magnificent” and among Ottomans as “the lawgiver” for his creation of a legal code that applied throughout the realm. Under Suleiman and his successors, science flourished, and important advances were made in fields such as astronomy and medicine. The Ottoman Empire began to decline in power following the defeat of its forces by European navies at the Battle of Lepanto in 1571. In the seventeenth century, the Ottomans found their power being eclipsed by that of Russia in the Black Sea region."
+      },
+      {
+       "id": "wh2-4.2-g53",
+       "under": "Key Terms",
+       "key": false,
+       "text": "devshirme: the system of recruiting Christian boys from the Balkans to be enslaved, converted to Islam, and trained to serve the Ottoman sultan"
+      },
+      {
+       "id": "wh2-4.2-g54",
+       "under": "Key Terms",
+       "key": false,
+       "text": "millet system: the system through which non-Muslim religious communities were allowed to regulate their internal affairs according to their own religious laws"
+      },
+      {
+       "id": "wh2-4.2-g55",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Sultanate of Women: the period between the tenure of Hurrem Sultan in the mid-fifteenth century and the late seventeenth century, during which wives and mothers of the sultan were able to exert political power and influence at court"
       }
      ]
     },
@@ -3091,14 +3331,20 @@
       {
        "id": "wh2-4.3-p38",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The establishment of the Safavid state under Shah Ismail I in 1501 was followed by rapid territorial expansion, but conflict between factions of the Qizilbash military corps allowed the Ottoman and Uzbek empires to take advantage and capture territory. Shahs Tahmasp and Abbas I created a corps of enslaved people from the Caucasus to serve as their new elite military force and eventually replace the Qizilbash."
       },
       {
        "id": "wh2-4.3-p39",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The Safavid shahs were committed to Shi‘ite Islam and forcibly converted the Sunni Muslims in their territories. They were generally more tolerant of non-Muslims, particularly those who did not live in the Caucasus or along the border with the Ottoman Empire. But the Safavids’ militance and their intolerance of Sunnis heightened tensions between Sunnis and Shia throughout the Muslim world, a rift still apparent today. The stability of the Safavids’ political system allowed for a flourishing of art, however, as exemplified in miniature painting, ceramics, and royal architecture. After Abbas, the growing power of Russia and other neighboring kingdoms led to a weakened Safavid state, which came to an end when Nader Shah of the Afsharid dynasty crowned himself shah in 1736."
+      },
+      {
+       "id": "wh2-4.3-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Twelvers: members of a large Shia sect who believe the twelfth imam, Muhammad al-Mahdi, will return, along with Jesus, to defeat evil on earth"
       }
      ]
     }
@@ -3371,14 +3617,26 @@
       {
        "id": "wh2-5.1-p41",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In the sixteenth century, many European Christians were critical of practices within the Catholic Church. Some scholars in northern Europe had turned to Christian humanism as a means of making people more pious and thus achieving religious reform. Martin Luther, a German monk, began the Protestant Reformation when he publicly objected to the church’s sale of indulgences. Luther was excommunicated, but the printing press enabled his ideas to spread throughout Europe. Luther taught that faith alone was needed for salvation and that scripture was the only source of Christian authority."
       },
       {
        "id": "wh2-5.1-p42",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Luther’s ideas became popular among many, including Ulrich Zwingli and John Calvin in Switzerland. Followers of John Calvin, called Calvinists, spread his teachings to the Netherlands, Scotland, France, and England. A variety of Anabaptist churches were also established that rejected infant baptism. In England, Henry VIII rejected the pope’s authority after the pope refused to grant him an annulment. As Protestantism gained adherents, religious wars erupted throughout Europe. The Council of Trent, called by the Roman Catholic Church in 1545, reaffirmed some aspects of church doctrine while also passing reforms that attempted to eliminate some of the problems that led to the Reformation. Wars over religion continued for many years."
+      },
+      {
+       "id": "wh2-5.1-g43",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Christian humanism: a movement, also known as northern Renaissance humanism, that stressed the study of the works of Greece and Rome and the early Christian fathers to awaken individual piety"
+      },
+      {
+       "id": "wh2-5.1-g44",
+       "under": "Key Terms",
+       "key": false,
+       "text": "indulgences: a way to reduce or cancel the time after death during which people needed to suffer in purgatory to atone for their sins before reaching heaven"
       }
      ]
     },
@@ -3745,20 +4003,56 @@
       {
        "id": "wh2-5.2-p60",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "With the fall of Constantinople to the Ottomans in 1453, Europeans found themselves forced to deal with Muslim middlemen to access the prized goods of South and East Asia. European countries thus began seeking an all-water route to the eastern lands they called the Indies, aided by navigational technologies from the Middle East and motivated by religious zeal and desire for profit. The Portuguese were the first to explore the Atlantic, claiming islands off the coast of Africa and voyaging down its western shore. In 1488, the Portuguese explorer Bartolomeu Dias rounded the Cape of Good Hope at the southern tip of Africa."
       },
       {
        "id": "wh2-5.2-p61",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The Spanish monarchs Isabella I of Castille and Ferdinand II of Aragon financed the voyages of Christopher Columbus, who landed in the Caribbean in 1492 believing it was part of the Indies. He did not find great wealth there, but Spanish exploration continued. Hernán Cortés conquered the wealthy Aztec Empire in Mexico and Francisco Pizarro the silver-rich Inca Empire in Peru."
       },
       {
        "id": "wh2-5.2-p62",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "To protect their respective interests, in 1494 Spain and Portugal negotiated the Treaty of Tordesillas, which drew a line through the Atlantic awarding the Americas, with the exception of Brazil, to Spain. Animals, foods, and other resources flowed in both directions along the Columbian Exchange, forever altering the culture and economies of North and South America, Europe, Asia, and Africa. Diseases also traveled west with the Europeans and wiped out as much as 95 percent of the Indigenous peoples in the Western Hemisphere. Both Europeans and Indigenous peoples had developed rich, diverse, and vastly different cultures, societies, and religions prior to contact."
+      },
+      {
+       "id": "wh2-5.2-g63",
+       "under": "Key Terms",
+       "key": false,
+       "text": "astrolabe: a device for navigation that used constellations as a guide and enabled mariners to find their north–south position on the earth’s surface"
+      },
+      {
+       "id": "wh2-5.2-g64",
+       "under": "Key Terms",
+       "key": false,
+       "text": "colonialism: a practice in which one group of people attempts to establish control over another group, usually for purposes of economic exploitation"
+      },
+      {
+       "id": "wh2-5.2-g65",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Columbian Exchange: the flow of plants, animals, and diseases between the Eastern and Western Hemispheres"
+      },
+      {
+       "id": "wh2-5.2-g66",
+       "under": "Key Terms",
+       "key": false,
+       "text": "conquistadors: Spanish explorers in the Americas during the Age of Exploration"
+      },
+      {
+       "id": "wh2-5.2-g67",
+       "under": "Key Terms",
+       "key": false,
+       "text": "encomienda: a system of coerced labor based on a grant by the Spanish Crown that entitled conquistadors to the labor of specified numbers of Indigenous people"
+      },
+      {
+       "id": "wh2-5.2-g68",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Treaty of Tordesillas: a 1494 agreement awarding land to Portugal and Spain by dividing the Atlantic Ocean along a line one hundred leagues west of the Cape Verde Islands off the coast of Africa"
       }
      ]
     },
@@ -3945,8 +4239,20 @@
       {
        "id": "wh2-5.3-p30",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "According to mercantilist theory, to achieve power, nations must maximize their store of precious metals by importing as few goods as possible while profitably exporting products to other countries. In embracing the theory, European governments imposed tariffs, granted monopolies, and subsidized industries. They also sought to acquire colonies to supply natural resources and serve as markets for domestically manufactured goods. England, France, and the Netherlands thus joined Spain and Portugal in establishing colonies in the Americas in the sixteenth and seventeenth centuries. From these, they extracted goods such as furs, hides, tobacco, and most profitably sugar. Critics like David Hume and Adam Smith charged that mercantilism led to inflation and harmed consumers. Smith argued that wealth was not finite, that all nations could prosper, and that the economy should be regulated naturally by competition among producers rather than being managed by governments."
+      },
+      {
+       "id": "wh2-5.3-g31",
+       "under": "Key Terms",
+       "key": false,
+       "text": "indentured servants: people bound by a contract to work for someone for an agreed-upon number of years"
+      },
+      {
+       "id": "wh2-5.3-g32",
+       "under": "Key Terms",
+       "key": false,
+       "text": "mercantilism: an economic theory in which a nation’s power depended on the wealth it gained by exporting goods of greater value than it imported, and in which a gain for one nation was a loss for another"
       }
      ]
     },
@@ -4175,14 +4481,32 @@
       {
        "id": "wh2-5.4-p37",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "To extract wealth from their colonies, over the course of the late fifteenth through the early nineteenth centuries, European nations shipped approximately twelve million enslaved African people across the Atlantic Ocean on the Middle Passage. Some ten million arrived alive to satisfy the labor needs of European planters, who grew cash crops like sugar, rice, and tobacco. These agricultural goods were shipped to Europe, and finished products made from them were shipped to Africa to purchase more captives from other Africans. This three-legged exchange made up the triangular trade. The slave trade brought some areas of Africa damaging population losses, and the importation of European goods also harmed African industries."
       },
       {
        "id": "wh2-5.4-p38",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The majority of enslaved people labored in the Caribbean and Brazil growing sugar. The work was hard and dangerous, and many died. Nevertheless, enslaved people established ties with one another and found ways to maintain their human dignity and aspects of their culture. Europeans profited immensely from their labor, and many industries were enriched by either the slave trade or the sugar production that depended on it."
+      },
+      {
+       "id": "wh2-5.4-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "chattel slavery: a form of slavery in which one person is owned by another as a piece of property"
+      },
+      {
+       "id": "wh2-5.4-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Middle Passage: the middle (or second) leg of the three-legged triangular trade that carried enslaved Africans across the Atlantic Ocean to the Americas"
+      },
+      {
+       "id": "wh2-5.4-g41",
+       "under": "Key Terms",
+       "key": false,
+       "text": "triangular trade: the trade in goods and enslaved people that took place between the Americas, Europe, and West Africa from the late fifteenth through the early nineteenth centuries"
       }
      ]
     }
@@ -4479,8 +4803,26 @@
       {
        "id": "wh2-6.1-p45",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "European settlers in North America were a diverse group with a wide array of motives. Many Spaniards came as part of a broader search for “God, Gold, and Glory.” French settlers also hoped to find wealth, although they were more likely than other Europeans to cooperate with rather than exploit Indigenous peoples, whom they saw as economic allies. The Virginia Company of England founded Jamestown in an effort to gain wealth, while English Puritans founded communities they hoped would earn profits while also promoting their religious ideology. Native peoples responded to European colonization in a variety of ways. In Mexico, the Aztecs fought the Spanish and were destroyed, while the Tlaxcalans, who collaborated with the Spanish against the Aztecs, enjoyed greater status and economic opportunities in the Spanish Empire as a result."
+      },
+      {
+       "id": "wh2-6.1-g46",
+       "under": "Key Terms",
+       "key": false,
+       "text": "black legend: the myth, mostly promoted by English writers, that the Spanish treated Native Americans far more harshly than other European colonizers"
+      },
+      {
+       "id": "wh2-6.1-g47",
+       "under": "Key Terms",
+       "key": false,
+       "text": "charter: an official authorization to conduct a major economic activity such as the creation of a colony"
+      },
+      {
+       "id": "wh2-6.1-g48",
+       "under": "Key Terms",
+       "key": false,
+       "text": "cultural accommodation: the practice of integrating a culture into the dominant society without forcing it to fully integrate and adopt all the dominant culture’s components"
       }
      ]
     },
@@ -4859,20 +5201,56 @@
       {
        "id": "wh2-6.2-p62",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The Seven Years’ War (1754–1763) established a new balance of power in Europe in which Britain emerged as the dominant empire. The French surrendered their imperial possessions in North America and India to Britain, while the Spanish surrendered Florida and the French gave control of the Louisiana Territory to Spain. The Peace of Hubertusburg guaranteed Prussian control of Silesia and confirmed Prussia’s status as a major force in Europe."
       },
       {
        "id": "wh2-6.2-p63",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The British East India Company provided the British with a strong basis of military and economic power in south Asia; it and Britain both benefited economically from their colonial control of India. In China, the Qing dynasty’s leaders completed new trade treaties with foreign nations, including the Treaty of Kyakhta (1727) with Russia, and improved trading relationships with Japan, the nations of Southeast Asia, and the Philippines. Under the Canton system, China increased its trade with Europe and improved its economy, while rejecting most European trade goods and insisting on payment in silver, acquiring a very favorable balance of trade."
       },
       {
        "id": "wh2-6.2-p64",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "European colonialism did not go unopposed. In Africa, the Ndongo battled the Portuguese, the Khoisan and Xhosa fought the Dutch, and the Asante opposed British expansion. In both India and China, people took up arms against Britain. Ironically, some of the strongest opposition to the role of Great Britain came from its own colonies in North America, where economic dissatisfaction led to a declaration of independence."
+      },
+      {
+       "id": "wh2-6.2-g65",
+       "under": "Key Terms",
+       "key": false,
+       "text": "balance of power: a situation in which competing nations have approximately equal military power"
+      },
+      {
+       "id": "wh2-6.2-g66",
+       "under": "Key Terms",
+       "key": false,
+       "text": "British Raj: the period from 1858 to 1947 when the British government directly ruled India through the Viceroy of India"
+      },
+      {
+       "id": "wh2-6.2-g67",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Canton system: a system that allowed Europeans to trade with China only if they worked through the Chinese guilds that enjoyed monopoly rights to the tea and silk trades"
+      },
+      {
+       "id": "wh2-6.2-g68",
+       "under": "Key Terms",
+       "key": false,
+       "text": "economic imperialism: the practice of dominating a foreign country economically"
+      },
+      {
+       "id": "wh2-6.2-g69",
+       "under": "Key Terms",
+       "key": false,
+       "text": "indirect rule: a system in which colonial powers cooperated with Indigenous elites and allowed local leaders to exercise some authority"
+      },
+      {
+       "id": "wh2-6.2-g70",
+       "under": "Key Terms",
+       "key": false,
+       "text": "sepoys: Indian soldiers who served the British in India"
       }
      ]
     },
@@ -5131,14 +5509,68 @@
       {
        "id": "wh2-6.3-p42",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Mechanization and industrialization, motivated and enabled by capitalism, created tremendous wealth for eighteenth- and nineteenth-century business owners and middle-class professionals, but their profits often came at a high cost to workers. The production of goods shifted from the handiwork of highly skilled middle-class artisans to mechanized production done by low-paid unskilled laborers. Workers did enjoy access to new consumer goods made cheaper by industrialization, but to afford those goods they had to work long hours, in difficult and often dangerous conditions. Perhaps most importantly, workers lost control over their working conditions."
       },
       {
        "id": "wh2-6.3-p43",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Karl Marx and his followers responded to the worst excesses of capitalism by proposing a new theory that became known as Marxism. Marx argued that the bourgeoisie, members of a social class that owned the means of production, were primarily motivated by the desire to exploit labor and keep the excess value wage earners produced in order to buy political influence. Eventually the capitalist system would collapse and workers reclaim control of society. Marx argued that the struggle between classes was the root of all historical conflicts. He predicted that society would eventually replace current economic systems with socialism, a system in which the public, not private companies or individuals, owns the means of production."
+      },
+      {
+       "id": "wh2-6.3-g44",
+       "under": "Key Terms",
+       "key": false,
+       "text": "bourgeoisie: the social class whose members owned the means of production and whose main goal was the preservation of capital"
+      },
+      {
+       "id": "wh2-6.3-g45",
+       "under": "Key Terms",
+       "key": false,
+       "text": "capitalism: an economic system in which private individuals and companies own the means of production, and free (unregulated) markets set the value of most goods and services based on supply and demand"
+      },
+      {
+       "id": "wh2-6.3-g46",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Industrial Revolution: the period during which societies transitioned away from a focus on agriculture and handicraft production to manufacturing, primarily with machines"
+      },
+      {
+       "id": "wh2-6.3-g47",
+       "under": "Key Terms",
+       "key": false,
+       "text": "laissez-faire economics: the theory that market forces alone should drive the economy and that governments should refrain from direct intervention in or moderation of the economic system"
+      },
+      {
+       "id": "wh2-6.3-g48",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Luddites: British workers in the early nineteenth century who resisted industrialization"
+      },
+      {
+       "id": "wh2-6.3-g49",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Marxism: the idea, espoused by Karl Marx, that recognizing class struggle is central to understanding societies"
+      },
+      {
+       "id": "wh2-6.3-g50",
+       "under": "Key Terms",
+       "key": false,
+       "text": "mechanization: the use of machines to replace the labor of animals and humans"
+      },
+      {
+       "id": "wh2-6.3-g51",
+       "under": "Key Terms",
+       "key": false,
+       "text": "proletariat: the landless working class"
+      },
+      {
+       "id": "wh2-6.3-g52",
+       "under": "Key Terms",
+       "key": false,
+       "text": "socialism: an economic system in which the public owns the means of production"
       }
      ]
     }
@@ -5351,14 +5783,62 @@
       {
        "id": "wh2-7.1-p30",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The eighteenth century marked the beginning of a new spirit of intellectual exchange in Europe known as the Enlightenment. Inspired by the Scientific Revolution’s spirit of critical thinking, the ideas of the Italian Renaissance, and the legacy of Muslim, Greek, and Indian scientific foundations, the Enlightenment centered on the role of reason and generated a newfound optimism in philosophical principles such as liberty, rights, and the rejection of tyranny. Such ideals inspired many members of the upper and middle classes in western Europe to question the legitimacy of traditional laws, political systems, and religious teachings."
       },
       {
        "id": "wh2-7.1-p31",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Although the Enlightenment established important foundations for the defense of human rights, its reach was limited to a relatively small elite. Despite its emphasis on ideals of freedom and liberty, it coexisted with the oppressive institutions of slavery and colonialism."
+      },
+      {
+       "id": "wh2-7.1-g32",
+       "under": "Key Terms",
+       "key": false,
+       "text": "deductive reasoning: a form of logical reasoning that begins with a general statement and applies it to specific conclusions"
+      },
+      {
+       "id": "wh2-7.1-g33",
+       "under": "Key Terms",
+       "key": false,
+       "text": "empiricism: a philosophical concept based on the belief that all knowledge derives from sensory experience"
+      },
+      {
+       "id": "wh2-7.1-g34",
+       "under": "Key Terms",
+       "key": false,
+       "text": "enlightened despot: an absolutist ruler influenced by the principles of the Enlightenment"
+      },
+      {
+       "id": "wh2-7.1-g35",
+       "under": "Key Terms",
+       "key": false,
+       "text": "general will: a concept in political philosophy by which the state can be legitimate only if it is guided by the will of the people as a whole"
+      },
+      {
+       "id": "wh2-7.1-g36",
+       "under": "Key Terms",
+       "key": false,
+       "text": "inductive reasoning: a form of logical reasoning that gathers specific examples and observations to arrive at a broad generalization"
+      },
+      {
+       "id": "wh2-7.1-g37",
+       "under": "Key Terms",
+       "key": false,
+       "text": "natural rights: universal and inalienable rights that cannot be revoked or rescinded by human laws"
+      },
+      {
+       "id": "wh2-7.1-g38",
+       "under": "Key Terms",
+       "key": false,
+       "text": "popular sovereignty: the idea that government should exist only by the consent of the governed"
+      },
+      {
+       "id": "wh2-7.1-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "the social contract: an implicit agreement among members of a society to surrender their natural rights to the state, which is then charged with maintaining and protecting those rights"
       }
      ]
     },
@@ -5485,8 +5965,20 @@
       {
        "id": "wh2-7.2-p20",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Over the course of the seventeenth and eighteenth centuries, the public sphere became an increasingly important component in the spread and development of Enlightenment ideas. As networks of informal socialization and intellectual exchange, coffeehouses provided a setting in which people from all social backgrounds who had the luxury of leisure could share ideas and opinions without fear of punishment from the state or church. Salons likewise served as important centers of philosophical discussion. They also enabled the small number of women from the upper and middle classes who hosted them to play leadership roles in the Enlightenment, though guests from less privileged backgrounds were generally excluded. Along with the emergence of academies, print shops and a flourishing long-distance community of writers, salons and coffeehouses ensured the development of a public sphere that stimulated the free and open exchange of Enlightenment ideas."
+      },
+      {
+       "id": "wh2-7.2-g21",
+       "under": "Key Terms",
+       "key": false,
+       "text": "public sphere: shared spaces that enabled the exchange of ideas and information outside the control of state and church, like coffeehouses and salons"
+      },
+      {
+       "id": "wh2-7.2-g22",
+       "under": "Key Terms",
+       "key": false,
+       "text": "salon: informal gathering in the homes of wealthy aristocrats, generally hosted by women, that served as a site for the discussion of Enlightenment ideas and philosophies"
       }
      ]
     },
@@ -5775,20 +6267,98 @@
       {
        "id": "wh2-7.3-p47",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Over the course of the eighteenth century, a series of famines and economic crises deepened wealth inequality and narrowed access to political power on both sides of the Atlantic. As the growing influence of the public sphere and Enlightenment ideas of equality and liberty shaped opposition to colonial and monarchical privilege, the century concluded with a series of revolutionary movements and the adoption of novel democratic systems."
       },
       {
        "id": "wh2-7.3-p48",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The American Revolution, which initiated the revolutionary era, launched the foundation of the newly formed United States of America but established a paradoxical model of political liberty that coexisted with the institution of slavery. Inspired by the colonists’ victory over the British monarchy, those who led the French Revolution established a political model based on principles of democratic rights and equality, but they faced significant challenges due to political factionalism and ongoing economic crises. The Haitian Revolution resulted in the most radical break from the past by toppling the French colonial government, successfully challenging the institution of slavery, and creating the new nation of Haiti. However, Haiti faced long-term economic challenges after France imposed an independence debt on the fledgling nation in 1825."
       },
       {
        "id": "wh2-7.3-p49",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Although these revolutions reflected a variety of political aims and consequences, each radically reshaped the political landscape of the Atlantic world by challenging traditional models of monarchical privilege and calling into question long-standing disparities in wealth and access to political power."
+      },
+      {
+       "id": "wh2-7.3-g50",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Committee of Public Safety: the provisional government of revolutionary France from 1793 to 1794"
+      },
+      {
+       "id": "wh2-7.3-g51",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Continental Congresses: two assemblies of elected colonial representatives that met in Philadelphia in 1774 and 1775, the second time to adopt the powers of government and approve the Declaration of Independence from Britain"
+      },
+      {
+       "id": "wh2-7.3-g52",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Directory: an executive council of five men established by the Convention in France to replace the Committee of Public Safety after the decline of the Reign of Terror"
+      },
+      {
+       "id": "wh2-7.3-g53",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Estates General: a legislative assembly of the three estates, or orders, of French society: the clergy, the nobility, and commoners"
+      },
+      {
+       "id": "wh2-7.3-g54",
+       "under": "Key Terms",
+       "key": false,
+       "text": "gens de couleur libres: a French term that referred to free people of color in the French colony of Saint-Domingue, now Haiti"
+      },
+      {
+       "id": "wh2-7.3-g55",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Girondins: a moderate faction of the Jacobin political club in revolutionary France"
+      },
+      {
+       "id": "wh2-7.3-g56",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Jacobins: a radical political club in revolutionary France that supported overthrowing the monarchy"
+      },
+      {
+       "id": "wh2-7.3-g57",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Mountain: a radical faction of the Jacobin club in revolutionary France that supported executing the king"
+      },
+      {
+       "id": "wh2-7.3-g58",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Proclamation Line: the boundary of westward settlement that Britain marked out in its thirteen North American colonies"
+      },
+      {
+       "id": "wh2-7.3-g59",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Reign of Terror: a period of the French Revolution during which the revolutionary government adopted repressive measures to prevent dissent"
+      },
+      {
+       "id": "wh2-7.3-g60",
+       "under": "Key Terms",
+       "key": false,
+       "text": "sans-culottes: a French term that referred to radicals from the lower and working classes during the French Revolution"
+      },
+      {
+       "id": "wh2-7.3-g61",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Stamp Act: an act of the British Parliament that imposed taxes on legal documents and other printed materials in its North American colonies in 1765"
+      },
+      {
+       "id": "wh2-7.3-g62",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Vodou: a mix of Roman Catholic and indigenous West African religious practices popular in Haiti"
       }
      ]
     },
@@ -5981,8 +6551,44 @@
       {
        "id": "wh2-7.4-p31",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "As the revolutionary fervor of the eighteenth century faded, a desire to restore order and stability permeated the political and intellectual atmosphere of Europe. In particular, the ideologies of conservatism, nationalism, and liberalism represented different approaches to protecting the revolutionary gains of the eighteenth century and temporarily quieting the turbulence of the revolutionary era. These gains were relatively short-lived, however, as political upheaval once again irrevocably transformed Europe by the middle of the nineteenth century. In the case of Italy and Germany, the desire for unification prevailed over the desire for freedom, resulting in the birth of new states. Although the forces of nationalism and conservatism reversed some democratic gains rooted in notions of the social contract and individual liberty, liberal principles such as religious toleration and equality before the law continued to exert a powerful influence on the rise of the modern nation-state."
+      },
+      {
+       "id": "wh2-7.4-g32",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Congress of Vienna: an 1814–1815 meeting of Britain, Russia, Prussia, and Austria to restore the balance of power and assert principles of conservatism"
+      },
+      {
+       "id": "wh2-7.4-g33",
+       "under": "Key Terms",
+       "key": false,
+       "text": "conservatism: a political ideology that emerged in reaction to the freedoms associated with the revolutions of the eighteenth century and advocated submitting to government authority and giving religious doctrine a central role in maintaining social order and stability"
+      },
+      {
+       "id": "wh2-7.4-g34",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Germanic Confederation: an alliance of thirty-nine mostly German-speaking states developed to replace the Holy Roman Empire in 1815"
+      },
+      {
+       "id": "wh2-7.4-g35",
+       "under": "Key Terms",
+       "key": false,
+       "text": "liberalism: a political ideology that promotes freedom of expression, popular sovereignty, the protection of civil rights and private property, and representative government"
+      },
+      {
+       "id": "wh2-7.4-g36",
+       "under": "Key Terms",
+       "key": false,
+       "text": "nationalism: a political ideology that promotes the interests of the nation over international concerns and advocates the uniqueness and inherent superiority of the individual’s own country over others"
+      },
+      {
+       "id": "wh2-7.4-g37",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Risorgimento: an Italian term that refers to the unification of Italy"
       }
      ]
     }
@@ -6219,8 +6825,44 @@
       {
        "id": "wh2-8.1-p35",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The revolutionary examples of the United States and France encouraged creole elites in the Spanish American colonies to dream of independence. These educated people of European ancestry had been born in the Americas and resented both the political power held by the peninsulares and Spain’s economic restrictions. The overthrow of the Spanish monarchy by the French gave creoles the opportunity to participate in local self-governing bodies called juntas, and some were delegates to meetings of the Spanish Cortes, a national parliament that produced a short-lived constitution. This not only reawakened their desire for independence and self-government, but it also showed them that it was possible."
+      },
+      {
+       "id": "wh2-8.1-g36",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Cádiz Cortes: the central Spanish junta established in the city of Cádiz that coordinated Spanish resistance to the French occupation"
+      },
+      {
+       "id": "wh2-8.1-g37",
+       "under": "Key Terms",
+       "key": false,
+       "text": "creoles: in Spanish colonies, American-born White people of European descent"
+      },
+      {
+       "id": "wh2-8.1-g38",
+       "under": "Key Terms",
+       "key": false,
+       "text": "intendancy system: the centralizing administrative system in Spanish America whereby local governments were run by governors"
+      },
+      {
+       "id": "wh2-8.1-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "juntas: deliberative or administrative councils in Spain and Spanish America"
+      },
+      {
+       "id": "wh2-8.1-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "peninsulares: in Spanish colonies, European-born White people from Spain"
+      },
+      {
+       "id": "wh2-8.1-g41",
+       "under": "Key Terms",
+       "key": false,
+       "text": "viceroyalty: an administrative subdivision of the Spanish Empire, ruled by a direct representative of the king"
       }
      ]
     },
@@ -6425,14 +7067,32 @@
       {
        "id": "wh2-8.2-p33",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In the first few decades of the nineteenth century, two waves of revolutionary fervor swept New Spain. In 1816, Miguel Hidalgo proclaimed Mexico’s independence from Spain with the Grito de Dolores and led a largely Indigenous and mestizo army to overthrow the colony’s government. However, Hidalgo’s call for widespread social reforms and the violence of his followers led creoles to desert both his movement and the calls of his successor José Maria Morelos for social equality."
       },
       {
        "id": "wh2-8.2-p34",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The second wave was more successful. Following the adoption of liberal reforms by the Spanish government, Mexican creoles sought independence in order to retain the privileges their status granted them. In 1821, Agustín de Iturbide proclaimed the Plan de Iguala, which declared Mexico’s independence and transformed the country into a constitutional monarchy with protections for the Catholic Church and guarantees of social equality. Iturbide allied himself with Vicente Guerrero, the leader of Indigenous and mixed-race rebels, to form the victorious Army of the Three Guarantees. Iturbide became Mexico’s first emperor in 1822, but in 1823 he abdicated, and Mexico became a republic."
+      },
+      {
+       "id": "wh2-8.2-g35",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Grito de Dolores: the “cry” of Dolores, Miguel Hidalgo’s declaration of rebellion made in the town of Dolores on September 16, 1810"
+      },
+      {
+       "id": "wh2-8.2-g36",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Plan de Iguala: Agustín de Iturbide’s proclamation of independence creating a constitutional monarchy and protecting both the Catholic Church and Europeans living in Mexico"
+      },
+      {
+       "id": "wh2-8.2-g37",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Virgin of Guadalupe: the apparition of the Virgin Mary who is said to have appeared to the Aztec peasant Juan Diego and later became the national symbol and patron saint of Mexico"
       }
      ]
     },
@@ -6697,14 +7357,26 @@
       {
        "id": "wh2-8.3-p43",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Venezuela’s junta declared its independence from Spain in 1811. In 1812, however, resistant conservative White Venezuelans were aided by mixed-race people who resented liberal creole privileges and remained loyal to the Spanish Crown. Following Fernando VII’s return to the Spanish throne, Spanish troops joined local royalist forces to fight the Venezuelan patriots being led by Simón Bolívar. By promising to abolish slavery, Bolívar won the help of Haiti’s president Alexandre Pétion. He also relied heavily on the mixed-race llaneros. Bolívar’s troops liberated the territories that became Gran Colombia (Venezuela, Colombia, Ecuador). The Congress of Cúcuta that formed to govern Gran Colombia provided for the gradual abolition of slavery and granted voting rights to property-owning men."
       },
       {
        "id": "wh2-8.3-p44",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In the south, the Viceroyalty of Río de la Plata (modern Argentina, Uruguay, Paraguay) proclaimed independence from Spain in 1816. The Argentine general José de San Martín then led troops through the Andes to assist Bernardo O’Higgins of Chile. Both San Martín and Bolívar led forces into Peru, the last royalist stronghold, where royalist troops were forced to accept amnesty."
+      },
+      {
+       "id": "wh2-8.3-g45",
+       "under": "Key Terms",
+       "key": false,
+       "text": "llaneros: cowboys of the Venezuelan plains"
+      },
+      {
+       "id": "wh2-8.3-g46",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Monroe Doctrine: a principle of U.S. foreign policy that warned European nations to refrain from interfering with independent countries in the Western Hemisphere"
       }
      ]
     },
@@ -6879,14 +7551,20 @@
       {
        "id": "wh2-8.4-p28",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In 1807, when French forces attempted to invade Portugal, the Portuguese royal family and their court fled to Brazil. João VI, the former prince regent, ruled from Rio de Janeiro as head of the government in exile. In 1821, he returned to Portugal, leaving his son Pedro I to rule Brazil. When the Portuguese Cortes ordered Pedro I to return to Europe, he refused, and on September 7, 1822, he declared Brazil independent of Portugal. With the assistance of Thomas Cochrane, he defeated Portugal’s military forces."
       },
       {
        "id": "wh2-8.4-p29",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Pedro I wrote a constitution for Brazil that while providing for independent legislative and judiciary branches, preserved the bulk of political power for the emperor in his role as “moderator” between the other branches of government. Following the July Revolution in France in 1830, Brazilians called for the autocratic Pedro I to abdicate his throne, which he did in favor of his son Pedro II in April 1831."
+      },
+      {
+       "id": "wh2-8.4-g30",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Grito do Ipiranga: the “cry” of Ipiranga, Pedro I’s declaration of Brazilian independence, made at the Ipiranga River in 1822"
       }
      ]
     }
@@ -7315,8 +7993,32 @@
       {
        "id": "wh2-9.1-p67",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In the second half of the nineteenth century, the world’s industrialized nations—Britain, France, Belgium, Germany, and the United States—entered the Second Industrial Revolution. They manufactured machines as well as other items to be used for industry, such as steel, rubber, and chemicals. The Second Industrial Revolution was indebted to new sources of power such as electricity and the internal combustion engine; new methods of travel and communication were also developed. As the industrialized nations grew wealthier and more powerful, other nations such as Canada, Italy, Russia, and Japan began to industrialize as well. Some areas that also possessed industrial potential did not, however. India, Egypt, the countries of Latin America, and China instead became export economies that provided raw materials and markets for the industrialized world."
+      },
+      {
+       "id": "wh2-9.1-g68",
+       "under": "Key Terms",
+       "key": false,
+       "text": "deindustrialization: a decline in a nation’s or region’s industrial activity"
+      },
+      {
+       "id": "wh2-9.1-g69",
+       "under": "Key Terms",
+       "key": false,
+       "text": "export economy: an economy that primarily provides raw materials for use by other nations"
+      },
+      {
+       "id": "wh2-9.1-g70",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Meiji Restoration: the period beginning in 1868 when, under Emperor Meiji, Japan began to industrialize"
+      },
+      {
+       "id": "wh2-9.1-g71",
+       "under": "Key Terms",
+       "key": false,
+       "text": "shogunate: a Japanese system in which a military leader, the shogun, and an aristocratic military elite, the samurai, ruled in place of the emperor"
       }
      ]
     },
@@ -7467,8 +8169,14 @@
       {
        "id": "wh2-9.2-p24",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The desire of industrialized nations for inexpensive raw materials led them to Africa, Asia, and the Pacific, where they took control of lands and established colonies that existed solely to provide resources, markets, and harbors for fleets of commercial steamships. Many tried to justify their overseas empires by claiming they benefited the people in conquered lands, despite clear evidence that harm was done. The quest for colonies was greatly aided by developments in medicine, transportation, and weapons technology."
+      },
+      {
+       "id": "wh2-9.2-g25",
+       "under": "Key Terms",
+       "key": false,
+       "text": "imperialism: the policy of gaining direct or indirect control over parts of the world with low-cost resources and no competing mass-produced goods"
       }
      ]
     },
@@ -7841,8 +8549,26 @@
       {
        "id": "wh2-9.3-p61",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In the second half of the nineteenth century and the beginning of the twentieth, the world’s industrialized nations claimed colonies in Africa, Asia, and the Pacific. The “Scramble for Africa” resulted in nearly the entire continent falling under European control. France built an empire in Indochina while Japan did so in Korea. At times, the contest for colonies led the industrial powers to fight one another, as Japan and Russia did, and Britain and Russia nearly came to blows over central Asia. These nations also claimed spheres of influence in China, as did the United States. The islands of the Pacific were also quickly seized as imperial possessions, and it was there that the United States acquired the bulk of its empire by taking possession of Hawaii, Guam, and the Philippines."
+      },
+      {
+       "id": "wh2-9.3-g62",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Congo Free State: a personal colony of Belgium’s King Leopold II where infamous abuse of African laborers took place"
+      },
+      {
+       "id": "wh2-9.3-g63",
+       "under": "Key Terms",
+       "key": false,
+       "text": "The Great Game: the contest between Britain and Russia to dominate central Asia in the late nineteenth and early twentieth centuries"
+      },
+      {
+       "id": "wh2-9.3-g64",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Scramble for Africa: the competition among European countries to establish colonies in Africa in the late nineteenth and early twentieth centuries"
       }
      ]
     },
@@ -8053,8 +8779,20 @@
       {
        "id": "wh2-9.4-p34",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Colonization had a devastating effect on residents of African, Asian, and Pacific lands seized by imperial powers. People were exploited for their labor, made to grow cash crops, collect rubber and ivory, and transport European goods through difficult terrain. They received low wages if any, and failure to meet quotas was met with harsh punishment. Colonizers brought infectious diseases with them, causing people and livestock to sicken and die. People in Africa, Asia, and the Pacific Islands fought back in ways that cost the lives of many. In India, resistance took the form of political organization."
+      },
+      {
+       "id": "wh2-9.4-g35",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Boxers: members of the Society of the Righteous and Harmonious Fists, an anti-foreign secret society in northern China"
+      },
+      {
+       "id": "wh2-9.4-g36",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Force Publique: a native army commanded by European officers to enforce brutal discipline in the Congo Free State"
       }
      ]
     }
@@ -8381,8 +9119,26 @@
       {
        "id": "wh2-10.1-p50",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "During the Second Industrial Revolution, life in industrialized nations changed dramatically. The electrified, mechanized workplace meant long hours and low wages for unskilled factory workers. Work was often dangerous and unemployment precarious. Nevertheless, industrialization did bring benefits. Mass-produced consumer goods were priced so that by the end of the nineteenth century, members of the working class could afford to purchase less-expensive versions of items that had once been available only to the middle and wealthy classes. The mechanization of agriculture and the development of refrigerated railroad cars made food more available and less expensive. Improved sanitation and medical advances reduced infant mortality and increased adults’ life expectancies. Important demographic changes took place at the same time. By the end of the nineteenth century, both middle-class and working-class families were having fewer children as laws restricting child labor and mandating education made it more difficult to employ children."
+      },
+      {
+       "id": "wh2-10.1-g51",
+       "under": "Key Terms",
+       "key": false,
+       "text": "demographic transition: a reduction in family size in the late 1800s caused by falling birth rates in industrialized nations"
+      },
+      {
+       "id": "wh2-10.1-g52",
+       "under": "Key Terms",
+       "key": false,
+       "text": "real wages: wages measured in terms of the amount of goods and services that can be purchased with them"
+      },
+      {
+       "id": "wh2-10.1-g53",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Taylorism: a system of management that sought to improve workers’ productivity by curbing wasteful movements"
       }
      ]
     },
@@ -8629,14 +9385,32 @@
       {
        "id": "wh2-10.2-p40",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "By the end of the nineteenth century, cities in industrialized nations were filled with people in search of work. These cities offered many benefits. For those who preferred high culture, plays, concerts, operas, and ballets were regularly staged. Music halls, arcades, and burlesque shows catered to the popular taste, as did amusement parks. Libraries and parks were open to everyone. Department stores gave people the opportunity to buy the latest fashions—or to dream about them through the window."
       },
       {
        "id": "wh2-10.2-p41",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "There were negative aspects to city life as well. Housing, especially for immigrants and the working class, was usually overcrowded, and rooms often lacked fresh air and sunlight. Both the water and the air in industrial cities were polluted, and infectious diseases such as cholera and tuberculosis were common. Poverty drove many to drink, and some women resorted to prostitution to survive. The literature and art produced by romantics, realists, and naturalists depicted all aspects of life in the industrial age."
+      },
+      {
+       "id": "wh2-10.2-g42",
+       "under": "Key Terms",
+       "key": false,
+       "text": "naturalism: a literary style that emphasized realistic, detached, impersonal depictions of characters whose actions were molded by their environment in ways they often had no ability to control"
+      },
+      {
+       "id": "wh2-10.2-g43",
+       "under": "Key Terms",
+       "key": false,
+       "text": "realism: a literary and artistic style that realistically depicted everyday life in the contemporary world"
+      },
+      {
+       "id": "wh2-10.2-g44",
+       "under": "Key Terms",
+       "key": false,
+       "text": "romanticism: an artistic movement formed in response to the Industrial Revolution that prized emotion and imagination and took as its subjects the themes of nature, the ordinary person, the exotic, the ancient, and the supernatural"
       }
      ]
     },
@@ -8751,8 +9525,26 @@
       {
        "id": "wh2-10.3-p18",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Although working-class people in industrialized nations had limited choices about the place and terms of their employment, many other workers did not have even this small degree of freedom. Slavery continued into the second half of the nineteenth century in the United States and Brazil, as did serfdom in Russia. In other forms of unfree labor, contract laborers and indentured servants performed agricultural and other work on every one of the six inhabited continents. Debt bondage also trapped many people, including African American sharecroppers in the United States and female textile workers in Japan. Prisoners were also often sentenced to perform labor as part of their punishment. These systems of coerced and semicoerced labor remained intact throughout the nineteenth century in various parts of the world."
+      },
+      {
+       "id": "wh2-10.3-g19",
+       "under": "Key Terms",
+       "key": false,
+       "text": "contract labor: a system in which people sign contracts promising to perform work in exchange for a fee"
+      },
+      {
+       "id": "wh2-10.3-g20",
+       "under": "Key Terms",
+       "key": false,
+       "text": "debt bondage: a system in which a person who owes money works (or provides someone else to work) for the creditor until the debt has been repaid"
+      },
+      {
+       "id": "wh2-10.3-g21",
+       "under": "Key Terms",
+       "key": false,
+       "text": "penal labor: forced labor assigned as punishment to those convicted of crimes"
       }
      ]
     },
@@ -8897,8 +9689,14 @@
       {
        "id": "wh2-10.4-p23",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Witnessed in the second half of the nineteenth century was the migration of large numbers of people fleeing poverty, violence, and natural disaster. Europeans emigrated to North and South America, Australia, New Zealand, and South Africa. Asians traveled to western Europe, the Americas, and Africa. Immigrants performed largely low-paid, physically demanding work on plantations and railroads and in factories. Non-European immigrants also faced racism in societies dominated by Europeans. Some countries attempted to restrict the immigration of particular groups. The United States, Canada, and Australia took steps to prohibit Asian migration. The United States also sought to limit immigration from southern and eastern Europe."
+      },
+      {
+       "id": "wh2-10.4-g24",
+       "under": "Key Terms",
+       "key": false,
+       "text": "pogroms: violent attacks on Jewish people in the Russian empire"
       }
      ]
     },
@@ -9133,8 +9931,32 @@
       {
        "id": "wh2-10.5-p38",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Attempts to solve the problems caused by industrialization and urbanization took a variety of forms. Some governments passed laws to abolish child labor, provide insurance for workers, ensure safe housing, prevent air and water pollution, and regulate prostitution. Middle-class reformers sought to improve society by altering personal behavior. They stressed the importance of morality and often attempted to restrict or prohibit the consumption of alcohol. Many also advocated for women’s rights. Members of the working class tried to better their lives by forming unions to force employers to reduce their hours, raise their wages, and provide safer working conditions. Many also turned to politics as a way to protect their interests. Influenced by the ideology of socialism, which theorized that the destruction of capitalism was the solution to social ills, they joined social democratic parties that organized unions and forced governments to pass legislation to protect workers. Other socialists advocated the violent overthrow of the ruling elites, as did some anarchists."
+      },
+      {
+       "id": "wh2-10.5-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "anarchism: an ideology advocating that government be abolished"
+      },
+      {
+       "id": "wh2-10.5-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "labor union: an association that organizes workers of all kinds, both skilled and unskilled"
+      },
+      {
+       "id": "wh2-10.5-g41",
+       "under": "Key Terms",
+       "key": false,
+       "text": "social democrat: people who favor the creation of a socialist society through democratic means"
+      },
+      {
+       "id": "wh2-10.5-g42",
+       "under": "Key Terms",
+       "key": false,
+       "text": "trade union: an association that organizes workers in a particular craft or industry"
       }
      ]
     }
@@ -9329,8 +10151,26 @@
       {
        "id": "wh2-11.1-p28",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "At the beginning of the twentieth century, Europe was controlled by a series of alliances that served to check any one power from becoming too large. These alliances had worked for a number of decades, and there had been little in the way of warfare on the continent. However, competition existed among the powers, especially in colonial development. In particular, Germany’s desire to have more colonies and a correspondingly larger navy put it in direct competition with the British Empire. Meanwhile, innovations in shipbuilding meant that early twentieth-century naval ships were both faster and possessed of more firepower than at any time in history."
+      },
+      {
+       "id": "wh2-11.1-g29",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Schlieffen Plan: a German war plan to sweep through Belgium and northern France before turning to Russia"
+      },
+      {
+       "id": "wh2-11.1-g30",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Triple Alliance: a treaty of alliance between Germany, Austria-Hungary, and Italy"
+      },
+      {
+       "id": "wh2-11.1-g31",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Triple Entente: a treaty of alliance between France, Russia, and Britain"
       }
      ]
     },
@@ -9631,14 +10471,32 @@
       {
        "id": "wh2-11.2-p49",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The Ottoman Empire was disintegrating due to military losses prior to the war and the push for nationalism within its borders. The same drive toward nationalism occurred in Austria-Hungary. People of different nationalities wanted to live in their own independent nations rather than being forced into an empire that did not serve their needs. When Archduke Franz Ferdinand was assassinated by a Bosnian Serb in June 1914, it caused Austria-Hungary to undertake a war against Serbia, which it blamed for his death. This war drew in Serbia’s ally Russia, and Austria-Hungary’s ally Germany. Treaty and alliance obligations then brought more countries into the conflict."
       },
       {
        "id": "wh2-11.2-p50",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In the first months of war, the invasion of Belgium painted Germany as the aggressor nation, and fierce fighting through Belgium and northern France forced civilians to evacuate. With the Battle of the Marne in September 1914, a system of trench warfare was established on the western front. On the eastern front, Russian troops were poorly equipped and poorly trained and therefore experienced heavy losses. The United States planned to maintain its isolationist foreign policy and continued trading with both sides in the conflict, but Britain’s naval blockade of German ports meant that U.S. trade with Germany was somewhat limited."
+      },
+      {
+       "id": "wh2-11.2-g51",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Allies: the nations that united to oppose Germany and Austria-Hungary, originally, Russia, France, and Britain"
+      },
+      {
+       "id": "wh2-11.2-g52",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Balkan League: an alliance created in 1912 by Greece, Montenegro, Bulgaria, and Serbia against the Ottoman Empire"
+      },
+      {
+       "id": "wh2-11.2-g53",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Central powers: a World War I coalition that included the Austro-Hungarian, German, and Ottoman Empires"
       }
      ]
     },
@@ -9993,8 +10851,32 @@
       {
        "id": "wh2-11.3-p58",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "World War I introduced many new technologies seen in warfare today—tanks, machine guns, long-range artillery, and airplanes. Most troops found themselves under constant threat of bombardment, injury, and death, and the casualties and destruction of total war were enormous. The large empires fighting in the conflict brought troops from their colonies and dominions to fight. Fighting also took place outside Europe, across other continents such as Asia and Africa. Despite the diversity of the forces engaged in the war and the common cause espoused by each side, numerous examples occurred of racial prejudice and discrimination in the decision-making and activities of the war."
+      },
+      {
+       "id": "wh2-11.3-g59",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Sykes-Picot Agreement: a secret agreement reached between France and Britain in 1916 to partition areas of the Middle East after the war"
+      },
+      {
+       "id": "wh2-11.3-g60",
+       "under": "Key Terms",
+       "key": false,
+       "text": "total war: a war fought using all available resources, with no restrictions on weapons or their targets"
+      },
+      {
+       "id": "wh2-11.3-g61",
+       "under": "Key Terms",
+       "key": false,
+       "text": "U-boats: German submarines equipped with torpedoes that sank thousands of pounds of cargo over the course of World War I"
+      },
+      {
+       "id": "wh2-11.3-g62",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Zimmermann Telegram: a 1917 telegram sent by Germany’s foreign minister offering an alliance with Mexico in return for Mexico causing disturbances along its U.S. border"
       }
      ]
     },
@@ -10211,8 +11093,38 @@
       {
        "id": "wh2-11.4-p35",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The war was so all-encompassing that governments had to find new ways to manage the supplies and support for the war, usually by taking tighter control of industrial output through new legislation. Women entered new types of work such as munitions manufacture to fill the gaps left by male workers now fighting in the military. Those on the home front found themselves confronting food shortages and sometimes civil unrest as people began questioning their government’s competence to fight the war. Such questioning was often met with harsh penalties. Other political challenges also arose, such as the Irish Nationalists striking out against British rule in the 1916 Easter Rising."
+      },
+      {
+       "id": "wh2-11.4-g36",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Easter Rising: the 1916 rebellion of Irish Nationalists against the British in Dublin"
+      },
+      {
+       "id": "wh2-11.4-g37",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Espionage Act: a 1917 act passed in the United States that made anti-war propaganda illegal"
+      },
+      {
+       "id": "wh2-11.4-g38",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Sedition Act: a 1918 act passed in the United States that forbade forms of speech considered disloyal to the war effort"
+      },
+      {
+       "id": "wh2-11.4-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "War Industries Board (WIB): a U.S. federal agency created in 1917 to control the economic and industrial output of factories in times of war"
+      },
+      {
+       "id": "wh2-11.4-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Women’s Land Army: a British program to help women ensure enough foodstuffs were produced on farms while men served in the military"
       }
      ]
     },
@@ -10441,14 +11353,26 @@
       {
        "id": "wh2-11.5-p37",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In 1905, the Russian people rose in rebellion after the government’s killing of peaceful protesters. Tsar Nicholas II allowed the creation of a legislature called the Duma, but he was still not ready to share power with the people. The tsarist government was unable to mount a successful war effort, however, and the tsar was forced to abdicate in 1917. The Bolshevik Revolution led by Vladimir Lenin the following year brought promises of peace, land, and bread to the Russian people."
       },
       {
        "id": "wh2-11.5-p38",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In 1918, with Russia exiting the war, Germany threw its armies into action in the west, but food shortages and general unrest in the Central powers meant that early victories could not be sustained. The arrival of U.S. troops in mass numbers in Europe helped propel Allied victories by the second half of 1918 and pushed Germany to the brink of collapse. The abdication of the Kaiser and an armistice with a new civilian government in Germany brought an end to the fighting in November."
+      },
+      {
+       "id": "wh2-11.5-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "armistice: a cease-fire agreement"
+      },
+      {
+       "id": "wh2-11.5-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Bolsheviks: a radical majority faction of Russia’s Social Democratic Party led by Vladimir Lenin"
       }
      ]
     }
@@ -10733,8 +11657,38 @@
       {
        "id": "wh2-12.1-p43",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "A period of significant change followed World War I. The 1919 Treaty of Versailles fully blamed Germany for the war and sought to punish it by assessing reparations of more than $33 billion and physically shrinking the country. New countries emerged through the redrawing of Europe’s maps. Massive physical rebuilding was necessary in former combat areas in Europe, while the United States emerged as a major player in world politics and a creditor nation on the brink of prosperity. The economic repercussions of the treaty proved devastating in Germany, where economic instability and mistrust of the new government opened the door for the rise of the Nazi Party. In Asia, Japan was growing in both political and military power, positioning itself as a force throughout the Pacific. Yet in the 1920s and 1930s, hope still prevailed that no such conflict would ever occur again, underscored by international efforts to both prevent war and intervene in aggression before it rose to the status of war."
+      },
+      {
+       "id": "wh2-12.1-g44",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Beer Hall Putsch: a 1923 attempt by Adolf Hitler and his followers to take over the city of Munich"
+      },
+      {
+       "id": "wh2-12.1-g45",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Kellogg-Briand Pact: a 1928 treaty signed by more than sixty countries to renounce war as a foreign policy tool"
+      },
+      {
+       "id": "wh2-12.1-g46",
+       "under": "Key Terms",
+       "key": false,
+       "text": "League of Nations: a multinational organization created by the 1919 Treaty of Versailles to promote the goal of collective security"
+      },
+      {
+       "id": "wh2-12.1-g47",
+       "under": "Key Terms",
+       "key": false,
+       "text": "reparations: monetary payments to be made to the Allied nations by Germany to compensate for destruction they suffered in the war"
+      },
+      {
+       "id": "wh2-12.1-g48",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Treaty of Versailles: a 1919 treaty that formally ended World War I, redrew the map of Europe, and created the League of Nations"
       }
      ]
     },
@@ -10957,8 +11911,26 @@
       {
        "id": "wh2-12.2-p36",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The Bolsheviks’ effort to wrest control of Russia did not go unchallenged, as evidenced by the civil war that unfolded after World War I. Though ultimately successful in consolidating power, throughout the 1920s the Bolsheviks continued to disagree among themselves about the proper application of communist principles. The power vacuum left after Vladimir Lenin’s death allowed Joseph Stalin to emerge as the leader of the new Soviet Union. Stalin’s Five-Year Plans brought not only more centralized economic control but a more authoritarian government that compelled obedience, no matter the resistance or the impact, including death and famine. Life in the Soviet Union became more structured and rigid as the government asserted control over all aspects of civilian life. Anyone even remotely suspected of disloyalty faced imprisonment or death."
+      },
+      {
+       "id": "wh2-12.2-g37",
+       "under": "Key Terms",
+       "key": false,
+       "text": "collectivization: the taking over of agriculture by a national government"
+      },
+      {
+       "id": "wh2-12.2-g38",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Five-Year Plans: domestic plans adopted by the Soviet Union in the 1930s to target industrial and agricultural output goals that were usually unrealistic"
+      },
+      {
+       "id": "wh2-12.2-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "New Economic Policy (NEP): Lenin’s policy that introduced some aspects of capitalism in response to hardships and growing discontent among the Russian people"
       }
      ]
     },
@@ -11193,8 +12165,50 @@
       {
        "id": "wh2-12.3-p38",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The Great Depression of the 1930s was an economic downturn unparalleled in modern history. The interconnectedness of the world’s economies became clear as countries around the globe suffered the effects. While no single event caused the Great Depression, few people were left unscathed. Nations tried innovative ways to provide for their people, enacting work-relief programs, food programs, and new economic policies to bring their economies back under control. While many programs helped mitigate the pain of the Depression, none fully solved it, and some people embraced new political parties that offered different solutions. In the case of Italy and Germany, these new parties and politicians exploited the decade’s economic instability for their own ends in a grab for greater power."
+      },
+      {
+       "id": "wh2-12.3-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "fascism: a political movement focused on transforming citizens into committed nationalists striving for unity and racial purity to remedy a perceived national decline"
+      },
+      {
+       "id": "wh2-12.3-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "gold standard: a monetary system in which the value of a country’s currency is tied directly to the value of gold"
+      },
+      {
+       "id": "wh2-12.3-g41",
+       "under": "Key Terms",
+       "key": false,
+       "text": "gross domestic product (GDP): the value of all the goods and services a country produces in one year"
+      },
+      {
+       "id": "wh2-12.3-g42",
+       "under": "Key Terms",
+       "key": false,
+       "text": "New Deal: a U.S. program of economic reform under Franklin Roosevelt that created work-relief programs"
+      },
+      {
+       "id": "wh2-12.3-g43",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Schutzstaffel (SS): German Nazi paramilitary organization designed for security and intimidation"
+      },
+      {
+       "id": "wh2-12.3-g44",
+       "under": "Key Terms",
+       "key": false,
+       "text": "socialist realism: an artistic movement in the Soviet Union that took the worker as a subject and was about patriotism as much as art"
+      },
+      {
+       "id": "wh2-12.3-g45",
+       "under": "Key Terms",
+       "key": false,
+       "text": "totalitarianism: a form of government in which the state controls all aspects of a person’s life"
       }
      ]
     },
@@ -11423,8 +12437,32 @@
       {
        "id": "wh2-12.4-p37",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The Treaty of Versailles created new countries and new governments and encouraged many groups’ desire for independence. However, independence did not come without struggle. European powers hoped to retain their hold over resource-rich regions around the world through the colonial or mandate system. Still, many Jewish people celebrated the promise of a Jewish homeland, while rising nationalism in Africa began to reshape the politics and geography of that continent. The struggle for independence in India took both violent and nonviolent forms as leaders chafed against British rule."
+      },
+      {
+       "id": "wh2-12.4-g38",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Balfour Declaration: a 1917 statement by British foreign secretary Alfred Balfour publicly supporting the creation of a Jewish homeland in Palestine"
+      },
+      {
+       "id": "wh2-12.4-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "mandate system: a system in which control of an area was transferred from one government to another under the oversight of the League of Nations"
+      },
+      {
+       "id": "wh2-12.4-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Pan-African movement: a movement based on the idea that all people in Africa could work together to achieve greater independence"
+      },
+      {
+       "id": "wh2-12.4-g41",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Salt March: a two-hundred-mile march led by Mohandas (Mahatma) Gandhi in India in 1930 to protest the British prohibition on collecting salt and the heavy taxes on its purchase"
       }
      ]
     },
@@ -11707,8 +12745,50 @@
       {
        "id": "wh2-12.5-p46",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The years following World War I left many democratic yearnings unfulfilled around the globe. African Americans in the United States were able to seize new job opportunities and greater mobility, but they still faced marked racism and limitations. Efforts toward self-rule in Ireland made substantial progress but were also tainted by violence. The promise of greater democracy in China was subsumed by civil war. In Latin America, the hope of greater equality among social classes was frustrated by political instability and the first appearance of more authoritarian leaders. Many aspects of Western society wound their way around the globe via the new technologies of mass media. Peoples around the world clearly wanted change, but implementing it sometimes proved exceedingly difficult."
+      },
+      {
+       "id": "wh2-12.5-g47",
+       "under": "Key Terms",
+       "key": false,
+       "text": "flapper: woman of the 1920s who embraced an independent lifestyle while wearing shorter skirts and hairstyles"
+      },
+      {
+       "id": "wh2-12.5-g48",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Guomindang: the Chinese Nationalist Party founded by Sun Yat-sen and later led by Chiang Kai-shek"
+      },
+      {
+       "id": "wh2-12.5-g49",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Irish Free State: a state formed by the twenty-six southern counties in Ireland and later called Ireland"
+      },
+      {
+       "id": "wh2-12.5-g50",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Long March: a northward march of communist supporters led by Mao Zedong that saved them from extermination by the Guomindang"
+      },
+      {
+       "id": "wh2-12.5-g51",
+       "under": "Key Terms",
+       "key": false,
+       "text": "New Negro movement: a movement that developed in the 1920s as African Americans agitated for increased civil rights"
+      },
+      {
+       "id": "wh2-12.5-g52",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Sinn Féin: a political party organized in 1905 that argued for greater sovereignty for Ireland"
+      },
+      {
+       "id": "wh2-12.5-g53",
+       "under": "Key Terms",
+       "key": false,
+       "text": "suffragist: a person who protested in favor of women’s right to vote"
       }
      ]
     }
@@ -12023,14 +13103,50 @@
       {
        "id": "wh2-13.1-p48",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "As the 1930s unfolded, it became clear that peace would not last for long. Japan’s advances through China and its violent attack on Nanjing showed that its military-dominated government would continue to press aggressively for more territory."
       },
       {
        "id": "wh2-13.1-p49",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The rise of fascism in Italy and Germany continued unchecked. The Nazis were able to manipulate the situation to their diplomatic advantage and gain British and French acquiescence to the takeover of Austria and the Sudetenland (in Czechoslovakia) before any war began. The outbreak of World War II unveiled the Nazi military juggernaut, with several European countries quickly falling to Nazi control and Britain becoming an embattled country that sought new support and assurances from the United States. The Japanese attack on the U.S. naval base at Pearl Harbor in the Pacific in 1941 made the United States a full participant in the global war."
+      },
+      {
+       "id": "wh2-13.1-g50",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Atlantic Charter: a statement of British and U.S. goals and objectives for the world after World War II; negotiated by British prime minister Winston Churchill and U.S. president Franklin Roosevelt"
+      },
+      {
+       "id": "wh2-13.1-g51",
+       "under": "Key Terms",
+       "key": false,
+       "text": "German-Soviet Nonaggression Pact: a 1939 agreement between Germany and the USSR in which the two nations agreed not to attack one another or to assist other nations in attacking the other and to divide portions of eastern Europe between them"
+      },
+      {
+       "id": "wh2-13.1-g52",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Lebensraum: a German term meaning “living room” and referring to lands seized from countries in eastern Europe in which Adolf Hitler envisioned settling German families to supplant the native Slavic populations"
+      },
+      {
+       "id": "wh2-13.1-g53",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Lend-Lease Act: U.S. legislation enacted to provide military assistance to nations important to its defense"
+      },
+      {
+       "id": "wh2-13.1-g54",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Munich Pact: an agreement reached in 1938 in which Czechoslovakia granted territorial concessions to Germany, Poland, and Hungary in the hopes that Adolf Hitler would cease his aggressions"
+      },
+      {
+       "id": "wh2-13.1-g55",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Nuremberg Laws: a series of laws promulgated in Germany in 1935, institutionalizing Nazi racial theories and discrimination against Jewish people"
       }
      ]
     },
@@ -12373,14 +13489,26 @@
       {
        "id": "wh2-13.2-p56",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The United States and Great Britain engaged Hitler in actions in North Africa throughout 1942. The Allied successes there and in Italy helped destabilize Mussolini’s fascist government in Rome, and he was removed from power in 1943. On the eastern front, the Soviet Union fought protracted battles against the Nazis, with significant losses of civilian and military lives."
       },
       {
        "id": "wh2-13.2-p57",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The United States continued to move against Japan’s holdings throughout the Pacific and was able to retake numerous islands from the Japanese. These losses, especially at the Battle of Midway, called into question the military control of the Japanese government. New concerns arose in areas like India, where anti-British sentiment was growing. For some time, the Nazi government had been working toward the extermination of the Jewish people and of others it deemed undesirable. The Holocaust claimed the lives of millions of people in Europe."
+      },
+      {
+       "id": "wh2-13.2-g58",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Final Solution: the Nazi plan to eliminate the Jewish population of Europe; developed by senior bureaucrats at the Wannsee Conference"
+      },
+      {
+       "id": "wh2-13.2-g59",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Holocaust: the Nazi genocide that resulted in the murder of more than six million Jewish people and at least three million members of other, non-Jewish minority groups"
       }
      ]
     },
@@ -12609,8 +13737,32 @@
       {
        "id": "wh2-13.3-p37",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The war had massive effects for those on the home front, whose lives changed drastically as rationing and shortages became commonplace. Many nations had to mobilize their efforts to keep industry running and materials reaching the troops on the front lines, which brought women into offices and factories in new numbers. The focus on science and technology brought innovations such as radar, early computers, and medical advancements into military applications. Not least was the Manhattan Project’s work on atomic energy, which led to the construction of the first nuclear weapons."
+      },
+      {
+       "id": "wh2-13.3-g38",
+       "under": "Key Terms",
+       "key": false,
+       "text": "ENIAC: the first programmable electronic digital computer, built by the United States during World War II"
+      },
+      {
+       "id": "wh2-13.3-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Executive Order 9066: a presidential order that led to relocation and internment of more than 100,000 Japanese Americans during the war"
+      },
+      {
+       "id": "wh2-13.3-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Manhattan Project: the U.S. project to build an atomic bomb"
+      },
+      {
+       "id": "wh2-13.3-g41",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Trinity Test: the first successful U.S. test of an atomic bomb"
       }
      ]
     },
@@ -12935,8 +14087,20 @@
       {
        "id": "wh2-13.4-p53",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Even before the end of the war, the Allied powers were confident that victory would come. In a series of meetings, Allied leaders arranged the postwar world they envisioned, including by deciding how Germany would be divided. In the Pacific theater of war, the showdown between the United States and Japan concluded with the dropping of the first nuclear bombs, first at Hiroshima and then at Nagasaki. In the aftermath of the conflict, it was clear just how much had been lost. Tens of millions of people had died. Nazi and Japanese war criminals were put on trial. The governments of several countries were in shambles. But rebuilding did begin, in Japan starting with a new constitution and a new focus on demilitarization and human rights."
+      },
+      {
+       "id": "wh2-13.4-g54",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Nuremberg Trials: the formal postwar prosecution of German war crimes"
+      },
+      {
+       "id": "wh2-13.4-g55",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Percentages Agreement: the agreement between Winston Churchill and Joseph Stalin about how to divide political influence in Eastern Europe after the war"
       }
      ]
     }
@@ -13191,8 +14355,68 @@
       {
        "id": "wh2-14.1-p38",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Following World War II, the two remaining superpowers—the United States and the Soviet Union—entered the Cold War, an ideological contest in which each side competed for supremacy through the use of economic aid, military assistance, technology, and propaganda. U.S. foreign policy was focused on containment, preventing the influence of the Soviet Union and the ideology of communism from spreading beyond Eastern Europe. A major test of each nation’s resolve to defeat the other came with the Soviet Union’s blockade of West Berlin in 1948–1949. The United States emerged victorious and with its Western Bloc allies formed the mutual defense organization known as NATO. The Soviet Union responded by forming the Warsaw Pact with the Eastern Bloc countries of Eastern Europe."
+      },
+      {
+       "id": "wh2-14.1-g39",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Berlin Airlift: an operation carried out by Great Britain and the United States to supply West Berlin from the air during the Soviet Union’s blockade of West Berlin"
+      },
+      {
+       "id": "wh2-14.1-g40",
+       "under": "Key Terms",
+       "key": false,
+       "text": "bloc: a group of countries united for a common purpose"
+      },
+      {
+       "id": "wh2-14.1-g41",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Cold War: a contest for ideological, social, economic, technological, and military supremacy between the United States and the Soviet Union"
+      },
+      {
+       "id": "wh2-14.1-g42",
+       "under": "Key Terms",
+       "key": false,
+       "text": "containment: the West’s Cold War policy goal of confining communism to the Soviet Union and the nations of Eastern Europe"
+      },
+      {
+       "id": "wh2-14.1-g43",
+       "under": "Key Terms",
+       "key": false,
+       "text": "domino theory: the belief that the neighbors of a communist country were likely to become communist themselves"
+      },
+      {
+       "id": "wh2-14.1-g44",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Marshall Plan: a plan extending financial assistance to European nations to help them rebuild after World War II"
+      },
+      {
+       "id": "wh2-14.1-g45",
+       "under": "Key Terms",
+       "key": false,
+       "text": "North Atlantic Treaty Organization (NATO): a military alliance among the United States, Canada, and the countries of Western Europe"
+      },
+      {
+       "id": "wh2-14.1-g46",
+       "under": "Key Terms",
+       "key": false,
+       "text": "satellite state: a country controlled by another nation"
+      },
+      {
+       "id": "wh2-14.1-g47",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Truman Doctrine: the promise of U.S. assistance to any country in danger of being overthrown by communism"
+      },
+      {
+       "id": "wh2-14.1-g48",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Warsaw Pact: a military and political alliance among the communist nations of Eastern Europe"
       }
      ]
     },
@@ -13475,8 +14699,14 @@
       {
        "id": "wh2-14.2-p46",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In 1949, the Chinese Communist Party (CCP) led by Mao Zedong defeated the Guomindang (GMD, the Nationalists) led by Chiang Kai-shek (Jiang Jieshi) and founded the People’s Republic of China, which the United States refused to recognize. Communism spread elsewhere in Asia as well. In 1950, the communist leader of North Korea invaded South Korea and called on the Chinese to help him defeat South Korean and UN forces led by the United States. Communists also assumed power in North Vietnam after Vietnam was divided following a war of independence with France. The United States, in an effort to stop the further spread of communism, supported South Vietnam as it had South Korea, while China and the Soviet Union gave aid to North Vietnam. Within China itself, people struggled to industrialize the nation under Mao. Many died in the resulting famine and in the Cultural Revolution that followed."
+      },
+      {
+       "id": "wh2-14.2-g47",
+       "under": "Key Terms",
+       "key": false,
+       "text": "proxy wars: wars fought by allies of the Soviet Union and the United States to avoid risking a direct conflict between the two superpowers during the Cold War"
       }
      ]
     },
@@ -13699,8 +14929,14 @@
       {
        "id": "wh2-14.3-p36",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Not all nations chose to align themselves with the United States or the Soviet Union during the Cold War. In Europe, Yugoslavia chose to remain outside the Soviet orbit even though it was a communist country. Many former European colonies became members of the Non-Aligned Movement, which sought to find a path to development that did not require becoming a satellite of either of the superpowers. Among the leaders of this movement were Indonesia, India, and Egypt, which still all found themselves accepting aid from the United States, the USSR, or both. Egypt, however, was drawn closer to the Soviet Union because of Western support for Israel and the belief that Western powers were thwarting its plans to become the leader of the Arab world."
+      },
+      {
+       "id": "wh2-14.3-g37",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Non-Aligned Movement: a movement of nations that sought to remain outside the sphere of influence of both the United States and the Soviet Union during the Cold War"
       }
      ]
     },
@@ -14157,8 +15393,32 @@
       {
        "id": "wh2-14.4-p75",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "The Cold War was marked by global tensions. In Europe in the 1950s and 1960s, Soviet satellite states in the Eastern Bloc tested Moscow’s resolve to maintain control as their citizens pushed for greater freedoms and an end to Soviet domination. Rebellions in Poland, Hungary, and Czechoslovakia were quickly crushed by the USSR. The United States attempted to stem the tide of communist expansion in both Latin America and Asia as it intervened in Guatemala, Cuba, and Vietnam. At times, as in Berlin in 1961 and Cuba in 1962, the United States came perilously close to military conflict with the Soviet Union. By the late 1960s, however, a split between the USSR and China gave the United States greater opportunities to maneuver on the world stage. As the Western and Eastern Blocs faced off against one another in Europe, Asia, and Latin America, in Africa the inhabitants of British, French, Belgian, and Portuguese colonies were fighting for their independence."
+      },
+      {
+       "id": "wh2-14.4-g76",
+       "under": "Key Terms",
+       "key": false,
+       "text": "apartheid: a South African policy of racial segregation that ended in 1991"
+      },
+      {
+       "id": "wh2-14.4-g77",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Cuban Missile Crisis: the 1962 confrontation between the United States and the Soviet Union over the presence of Soviet missiles in Cuba"
+      },
+      {
+       "id": "wh2-14.4-g78",
+       "under": "Key Terms",
+       "key": false,
+       "text": "détente: the relaxation of tensions between the United States and the Soviet Union in the 1970s"
+      },
+      {
+       "id": "wh2-14.4-g79",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Gulf of Tonkin Resolution: the 1964 resolution that gave President Lyndon Johnson permission to retaliate against North Vietnamese attacks and to act first to defend U.S. lives"
       }
      ]
     },
@@ -14351,8 +15611,20 @@
       {
        "id": "wh2-14.5-p31",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In the 1980s, communism began to loosen its grip on parts of the world in which it had once been dominant. The Soviet Union found itself divided by the need to provide for its citizens at home, maintain control over its satellite states in Eastern Europe, fight a war in Afghanistan, and respond to the buildup of nuclear and conventional weapons that took place during the administrations of U.S. presidents Ronald Reagan and George H.W. Bush. Mikhail Gorbachev’s efforts to strengthen the Soviet Union through perestroika and glasnost proved unsuccessful. When the Warsaw Pact nations sought independence in the late 1980s, the Soviet Union was unable to respond as it once had, and faced with liberation movements in its own republics, the USSR disbanded in 1991. Although China did not turn its back on communism, the death of Mao allowed Deng to institute reforms that introduced elements of capitalism to the Chinese economy."
+      },
+      {
+       "id": "wh2-14.5-g32",
+       "under": "Key Terms",
+       "key": false,
+       "text": "glasnost: a Soviet policy encouraging openness, which allowed those who were angry to be critical of the government"
+      },
+      {
+       "id": "wh2-14.5-g33",
+       "under": "Key Terms",
+       "key": false,
+       "text": "perestroika: the restructuring of the Soviet state and economy under Mikhail Gorbachev"
       }
      ]
     }
@@ -14727,14 +15999,56 @@
       {
        "id": "wh2-15.1-p58",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In the aftermath of World War II, countries began to open trade and communications around the world. In Europe, the EEC or Common Market eventually grew into the EU. In Asia, countries worked together to create their own trading blocs like ASEAN and APEC. Canada, Mexico, and the United States signed the NAFTA treaty, later replaced by USMCA. All these trading blocs and organizations have made it easier for MNCs to operate around the world, leading to a rise in the standard of living for many developing countries."
       },
       {
        "id": "wh2-15.1-p59",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "But MNCs are often criticized for their profit-driven approach, which can create lasting problems in developing countries, sometimes made worse by efforts to encourage these nations to privatize their public utilities. The poorest groups are also most commonly exploited by MNCs that contract with large factories or sweatshops in developing countries. Wealthy corporations like Apple and Nike have frequently been criticized for profiting from the labor of poorly paid workers in unsafe environments in places like China and Bangladesh."
+      },
+      {
+       "id": "wh2-15.1-g60",
+       "under": "Key Terms",
+       "key": false,
+       "text": "European Union (EU): a single-market zone created in 1993 to allow the free movement of goods, services, money, and people among European member states"
+      },
+      {
+       "id": "wh2-15.1-g61",
+       "under": "Key Terms",
+       "key": false,
+       "text": "General Agreement on Tariffs and Trade (GATT): a 1947 trade agreement among twenty-three countries to reinforce postwar economic recovery, later replaced by the World Trade Organization (WTO)"
+      },
+      {
+       "id": "wh2-15.1-g62",
+       "under": "Key Terms",
+       "key": false,
+       "text": "globalization: the interconnectedness of societies and economies throughout the world as a result of trade, technology, and adoption and sharing of various aspects of culture"
+      },
+      {
+       "id": "wh2-15.1-g63",
+       "under": "Key Terms",
+       "key": false,
+       "text": "multinational corporation: a corporate business entity that controls the production of goods and services in multiple countries"
+      },
+      {
+       "id": "wh2-15.1-g64",
+       "under": "Key Terms",
+       "key": false,
+       "text": "North American Free Trade Agreement (NAFTA): a 1992 trade agreement between the United States, Canada, and Mexico to reduce trade barriers and allow goods to flow freely"
+      },
+      {
+       "id": "wh2-15.1-g65",
+       "under": "Key Terms",
+       "key": false,
+       "text": "offshoring: the process of moving some of a company’s operations overseas to access cheaper labor markets"
+      },
+      {
+       "id": "wh2-15.1-g66",
+       "under": "Key Terms",
+       "key": false,
+       "text": "outsourcing: the process of hiring outside contractors, sometimes abroad, to perform tasks a company once performed internally"
       }
      ]
     },
@@ -14915,8 +16229,32 @@
       {
        "id": "wh2-15.2-p29",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "In the 1950s and 1960s, some in developed countries began responding openly to the environmental problems they saw around them, including those caused by the Green Revolution. Scientists like Rachel Carson, author of Silent Spring, gave legitimacy to these concerns, and many people became environmental activists working to promote change. They and the environmental groups they created spoke of the need to address global warming and climate change, the dangers of nuclear energy, deforestation, the ozone hole, and many other problems. These efforts were occasionally met with resistance, not just from those who survived by exploiting natural resources in their own developing countries, but also from workers, like loggers and others, in developed countries. By the 1980s, international groups like the United Nations were also calling for action. Specific measures like the Montreal Protocol were followed by the UN’s ambitious 2015 Paris Agreement to limit warming. But achieving international agreement about how best to handle the problem of climate change remains a struggle."
+      },
+      {
+       "id": "wh2-15.2-g30",
+       "under": "Key Terms",
+       "key": false,
+       "text": "climate change: broad changes in temperature, weather, storm activity, wind patterns, sea levels, and other influences on the planet"
+      },
+      {
+       "id": "wh2-15.2-g31",
+       "under": "Key Terms",
+       "key": false,
+       "text": "global warming: the general rise in Earth’s temperature that scientists have observed over approximately the past two hundred years"
+      },
+      {
+       "id": "wh2-15.2-g32",
+       "under": "Key Terms",
+       "key": false,
+       "text": "green parties: political parties organized around environmental concerns"
+      },
+      {
+       "id": "wh2-15.2-g33",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Paris Agreement: a 2015 treaty among members of the United Nations to limit global warming to less than 2°C (3.6°F) above levels from the time of industrialization"
       }
      ]
     },
@@ -15133,14 +16471,26 @@
       {
        "id": "wh2-15.3-p35",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "By the 1990s, computers had become commonplace in developed countries, though fears about their potential impact on privacy grew with the rise of the internet and social media. Easy access to social media over smartphones helped young protestors in Tunisia and Egypt organize to challenge their governments. The movement spread across the Middle East in the form of the Arab Spring. Some nations such as China have since blocked the use of many social media platforms."
       },
       {
        "id": "wh2-15.3-p36",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Medical scientists have made great strides in curing and preventing diseases. Vaccines eliminated smallpox around the world and came close to eliminating polio. But new illnesses arose, including Ebola virus and HIV/AIDS. Since it was identified in the 1980s, treatments have emerged to make it a manageable disease for many rather than a lethal one, though in the developing world, it is still a huge problem. The most recent challenge to world health, the COVID-19 pandemic that began in December 2019, demonstrates how both globalization and technological developments affect life in the twenty-first century."
+      },
+      {
+       "id": "wh2-15.3-g37",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Arab Spring: a popular movement calling for government reform and democracy that spread across the Arab world in 2011"
+      },
+      {
+       "id": "wh2-15.3-g38",
+       "under": "Key Terms",
+       "key": false,
+       "text": "bulletin board system (BBS): pre-internet computer networks that consisted of personal computers connected with each other via modems and phone lines"
       }
      ]
     },
@@ -15411,20 +16761,44 @@
       {
        "id": "wh2-15.4-p44",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "When the Soviet Union collapsed in the early 1990s, it seemed possible to many in the West that the United States would lead the world into a new era of universal liberal democracy. But in 2001, the September 11 attacks by the terrorist group al-Qaeda prompted the United States to begin wars in Afghanistan and then in Iraq. The mistakes made in Iraq damaged the reputation of the United States and weakened its ability to preserve stability in the world. Its intervention in Iraq also spurred the growth of the Islamic State, responsible for violent attacks in Iraq, Syria, and Africa."
       },
       {
        "id": "wh2-15.4-p45",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Violence, civil war, and persecution have led large numbers of refugees from the Middle East and Africa to cross the Mediterranean to Europe. Their arrival has provoked some resistance, and a number of ultranationalist groups have sprung up in the United States and Europe. The migrant crisis at the U.S.-Mexico border is partly the result of violence and instability in a number of Latin American countries, such as civil wars in El Salvador and Guatemala."
       },
       {
        "id": "wh2-15.4-p46",
        "under": "Section Summary",
-       "key": false,
+       "key": true,
        "text": "Violence and human rights abuses have plagued Sub-Saharan Africa for decades. Many occur in the Global South, and critics have connected the economic problems there to the region’s history of imperial exploitation by countries in the Global North. One of these problems is the resource curse, or the difficulty of responding to domestic needs faced by resource-rich countries."
+      },
+      {
+       "id": "wh2-15.4-g47",
+       "under": "Key Terms",
+       "key": false,
+       "text": "al-Qaeda: an Islamic terrorist organization financed and led by militant Saudi Arabian national Osama bin Laden and responsible for the September 11 attacks on the United States in 2001"
+      },
+      {
+       "id": "wh2-15.4-g48",
+       "under": "Key Terms",
+       "key": false,
+       "text": "Islamic State: a fundamentalist and militant Islamic group that grew in power and waged a war in Iraq and Syria following the U.S. invasion of Iraq in 2003"
+      },
+      {
+       "id": "wh2-15.4-g49",
+       "under": "Key Terms",
+       "key": false,
+       "text": "resource curse: the problem that makes resource-rich developing countries prone to authoritarianism, high rates of conflict, and low rates of economic growth"
+      },
+      {
+       "id": "wh2-15.4-g50",
+       "under": "Key Terms",
+       "key": false,
+       "text": "ultranationalist movements: organizations that support an extreme form of nationalism and often seek ethnically homogeneous homelands"
       }
      ]
     }

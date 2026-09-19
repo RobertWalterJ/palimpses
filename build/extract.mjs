@@ -183,14 +183,24 @@ for (const src of ARTICLES) {
 // introduction, the rest are numbered sections, and openstax.org's page slugs
 // follow that numbering ("3-4-exchange-in-east-asia"). Learning objectives,
 // figures and review exercises are apparatus, not history, and are skipped.
-{
+// Both volumes. Each section's "Section Summary" is the authors' own
+// synthesis, marked `key` like Belshaw's Key Points (the source of big
+// questions); each glossary definition is kept as a "Key Terms" entry
+// ("term: meaning"), as Belshaw's are. Reflection and review prompts are
+// questions for students, not history, and are left out — but still counted,
+// so paragraph ids never shift under questions that already cite them.
+const OPENSTAX = [
+  { id: 'wh1', vol: 'volume-1', title: 'World History, Volume 1: to 1500' },
+  { id: 'wh2', vol: 'volume-2', title: 'World History, Volume 2: from 1400' },
+];
+for (const book of OPENSTAX) {
   const src = {
-    id: 'wh2', title: 'World History, Volume 2: from 1400', author: 'Ann Kordas, Ryan J. Lynch, Brooke Nelson, Julie Tatlock et al.',
+    id: book.id, title: book.title, author: 'Ann Kordas, Ryan J. Lynch, Brooke Nelson, Julie Tatlock et al.',
     publisher: 'OpenStax', year: 2023, licence: 'CC BY-NC-SA 4.0',
-    web: 'https://openstax.org/books/world-history-volume-2/pages/',
+    web: `https://openstax.org/books/world-history-${book.vol}/pages/`,
     got: 'https://github.com/openstax/osbooks-world-history',
   };
-  const DIR = join(ROOT, 'sources', 'openstax-wh2');
+  const DIR = join(ROOT, 'sources', 'openstax-' + book.id);
   const col = cheerio.load(readFileSync(join(DIR, 'collection.xml'), 'utf8'), { xmlMode: true });
   const slugify = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   // Namespaced tags ("col:subcollection") trip CSS selectors, so walk by name.
@@ -210,7 +220,7 @@ for (const src of ARTICLES) {
       const title = clean($('document > title').first().text());
       const num = i === 0 ? null : `${chN}.${i}`;
       const slug = i === 0 ? `${chN}-introduction` : `${chN}-${i}-${slugify(title)}`;
-      const section = { id: `wh2-${num || chN + '.0'}`, num: num || `${chN}.0`, title, url: src.web + slug, paras: [] };
+      const section = { id: `${book.id}-${num || chN + '.0'}`, num: num || `${chN}.0`, title, url: src.web + slug, paras: [] };
       $('section.learning-objectives, figure, exercise, footnote, media').remove();
       let k = 0;
       $('para').each((__, p) => {
@@ -218,15 +228,23 @@ for (const src of ARTICLES) {
         if ($p.parents('list, table').length) return;
         const text = clean($p.text());
         if (text.length < 25) return;
+        const id = `${section.id}-p${++k}`;
+        if ($p.parents('section.reflection-questions, section.check-understanding, section.review-questions').length) return;
         const sec = $p.parents('section').first().children('title').first().text();
         const note = $p.parents('note').first().children('title').first().text();
-        section.paras.push({ id: `${section.id}-p${++k}`, under: clean(note || sec) || null, key: false, text });
+        const summary = $p.parents('section.section-summary').length > 0;
+        section.paras.push({ id, under: clean(note || sec) || null, key: summary, text });
+      });
+      $('glossary definition').each((__, d) => {
+        const term = clean($(d).find('term').first().text());
+        const meaning = clean($(d).find('meaning').first().text());
+        if (term && meaning) section.paras.push({ id: `${section.id}-g${++k}`, under: 'Key Terms', key: false, text: `${term}: ${meaning}` });
       });
       if (section.paras.length) chapter.sections.push(section);
     });
     chapters.push(chapter);
   });
-  writeFileSync(join(ROOT, 'corpus', 'wh2.json'), JSON.stringify({ source: src, chapters }, null, 1));
+  writeFileSync(join(ROOT, 'corpus', book.id + '.json'), JSON.stringify({ source: src, chapters }, null, 1));
   const paras = chapters.flatMap((c) => c.sections.flatMap((s) => s.paras));
   console.log(`\n${src.title}: ${chapters.length} chapters, ${chapters.reduce((t, c) => t + c.sections.length, 0)} sections, ${paras.length} paragraphs, `
     + `${paras.reduce((t, p) => t + p.text.split(' ').length, 0).toLocaleString()} words`);

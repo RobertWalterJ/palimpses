@@ -190,8 +190,8 @@ function listTitle(q) {
   return ask.length < 45 ? q.prompt : ask;
 }
 function chapterIds(chId) { return PACK.questions.filter((q) => q.ch === chId).map((q) => q.id); }
-function chapterStats(withThreads = false) {
-  return PACK.chapters.filter((ch) => withThreads || !ch.thread).map((ch) => {
+function chapterStats(withThreads = false, group = null) {
+  return PACK.chapters.filter((ch) => (withThreads || !ch.thread) && (!group || (ch.group || 'canada') === group)).map((ch) => {
     const ids = chapterIds(ch.id);
     const c = counts(ids);
     return { ch, ids, n: ids.length, ...c, due: State.dueIds(ids).length, fresh: ids.filter((id) => !State.card(id)).length };
@@ -353,7 +353,8 @@ function homeScreen() {
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(c.known)), h('span', {}, h('i', { style: 'background:var(--ink)' }), 'known')),
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(run)), h('span', {}, run === 1 ? 'day' : 'days running'))),
         h('p', { class: 't-small' }, growthLine(false)))) : null,
-    !first ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Chapters'), chapterRows(chapterStats())) : null,
+    !first ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Canada'), chapterRows(chapterStats(false, 'canada'))) : null,
+    !first && PACK.chapters.some((c) => c.group === 'world') ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Around the world'), chapterRows(chapterStats(false, 'world'))) : null,
     threadsCard(),
     !first ? mode('', 'practise', 'Recall test', 'Questions you’ve met, the ones you’re likeliest to have forgotten first. Won’t change your review dates.', () => play(true)) : null,
     h('nav', { class: 'tiles', 'aria-label': 'More' },
@@ -595,8 +596,7 @@ function orderScreen(q) {
         t.onclick = () => { box.hidden = !box.hidden; t.setAttribute('aria-expanded', String(!box.hidden)); };
         return h('section', { class: 'card stack' }, t, box);
       })(),
-      bigPicture(q),
-      lensChips(q));
+      ...[bigPicture(q), lensChips(q)].filter(Boolean));
     foot.replaceChildren(h('button', { class: 'btn primary wide', onclick: () => { S.advance(); nextQuestion(); } }, 'Next'));
     afterAnswer(reveal);
   }
@@ -679,7 +679,9 @@ function revealCard(q, ok) {
     h('p', { class: 'cite' }, `§${key.sec}`),
     toggle, more));
   out.push(bigPicture(q), meanwhile(q));
-  return out;
+  // Some parts are optional (no big question, nothing "meanwhile"): an empty
+  // one passed to replaceChildren would print the word "null".
+  return out.filter(Boolean);
 }
 
 // One paragraph, sentence-marked, with a compact player.

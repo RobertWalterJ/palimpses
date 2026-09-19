@@ -17,6 +17,9 @@ execFileSync(process.execPath, [join(ROOT, 'build', 'verify.mjs')], { stdio: 'in
 
 const PARA = new Map();
 const CHAPTER_OF = new Map();
+// Every glossary definition in the corpus ("term: meaning", under Key Terms),
+// with its section — the material for generated glossary questions.
+const TERMS = [];
 for (const f of readdirSync(join(ROOT, 'corpus'))) {
   const book = JSON.parse(readFileSync(join(ROOT, 'corpus', f), 'utf8'));
   const cite = `${book.source.author}, ${book.source.title} (${book.source.publisher}, ${book.source.year}), ${book.source.licence}`;
@@ -24,6 +27,10 @@ for (const f of readdirSync(join(ROOT, 'corpus'))) {
     // A section with its own author is credited to them, within the book.
     PARA.set(p.id, { text: p.text, sec: `${s.num} ${s.title}`, url: s.url, cite: s.author ? `${s.author}, in ${cite}` : cite });
     CHAPTER_OF.set(p.id, c);
+    if (p.under === 'Key Terms') {
+      const m = p.text.match(/^([^:]{1,60}):\s+(.+)$/);
+      if (m) TERMS.push({ id: p.id, term: m[1].trim(), meaning: m[2].trim().replace(/\.$/, ''), sec: s.id });
+    }
   }
 }
 
@@ -43,6 +50,12 @@ const CHAPTER_TITLE = {
   'ch04-new-france': 'New France, inside other worlds',
   'ch03-amazonia': 'Amazonia, a centre of its own',
   'th01-empire-trade': 'Trade, empire and abolition, 1488–1842',
+  'w01-africa': 'Africa',
+  'w02-atlantic': 'The Caribbean and the Atlantic',
+  'w03-east-asia': 'China and East Asia',
+  'w04-south-asia': 'South Asia and the Indian Ocean',
+  'w05-islamic-world': 'The Islamic world',
+  'w06-europe': 'Europe',
 };
 
 const evOut = (e) => {
@@ -60,18 +73,21 @@ for (const pack of PACKS) {
     const mod = await import(pathToFileURL(join(ROOT, pack.dir, f)).href);
     const qs = mod.default;
     if (qs.length && qs[0].lead) { entries = qs; continue; }   // the library, not questions
-    const firstP = qs[0].ev?.[0]?.p || qs[0].items?.[0]?.ev.p;
+    const firstP = qs[0]?.ev?.[0]?.p || qs[0]?.items?.[0]?.ev.p || mod.BIG?.[0]?.ev[0].p;
     const ch = CHAPTER_OF.get(firstP);
     const chId = f.replace(/\.mjs$/, '');
     chapters.push({ id: chId, title: CHAPTER_TITLE[chId] || (ch ? ch.title : chId), book: ch ? ch.title : null, n: ch?.n ?? null,
       big: (mod.BIG || []).map((b) => ({ id: b.id, q: b.q, ev: b.ev.map(evOut) })),
+      group: chId.startsWith('th') ? 'thread' : chId.startsWith('w') ? 'world' : 'canada',
       // A thread (file name th…) crosses chapters and regions, with a timeline
       // in lanes; it is listed apart from the chapters.
       ...(chId.startsWith('th') ? { thread: true, lanes: mod.LANES || [], timeline: (mod.TIMELINE || []).map((e) => ({ lane: e.lane, at: e.at, label: e.label, ev: evOut(e.ev) })).sort((a, b) => a.at - b.at) } : {}) });
     // Significant questions first, the details after: new questions are
     // introduced in this order, so a chapter opens on what matters most.
     const ordered = [...qs.filter((q) => q.depth !== 'detail'), ...qs.filter((q) => q.depth === 'detail')];
-    for (const q of ordered) {
+    const generated = glossaryQuestions(pack, chId, mod);
+    for (const q of [...ordered, ...generated]) {
+      if (q.gen) { questions.push(q); continue; }
       const base = { id: `${pack.id}/${q.id}`, ch: chId, kind: q.kind, prompt: q.prompt, lens: q.lens || [], big: q.big, ...(q.depth ? { depth: q.depth } : {}), ...(q.at != null ? { at: q.at } : {}) };
       if (q.kind === 'order') {
         questions.push({ ...base, items: q.items.map((it) => ({ label: it.label, at: it.at, when: it.when || null, ev: evOut(it.ev) })) });
@@ -94,8 +110,80 @@ for (const pack of PACKS) {
   const placement = (await import(pathToFileURL(join(ROOT, pack.dir, 'placement.mjs')).href)).default.map((a) => `${pack.id}/${a}`);
   const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions, placement, voices: await loadVoices(pack) };
   writeFileSync(join(ROOT, 'app', 'data', pack.id + '.json'), JSON.stringify(out));
-  console.log(`wrote app/data/${pack.id}.json — ${questions.length} questions in ${chapters.length} chapter(s)`);
+  console.log(`wrote app/data/${pack.id}.json — ${questions.length} questions in ${chapters.length} chapter(s), ${questions.filter((q) => q.gen).length} of them generated from glossaries`);
   writeLibrary(pack, entries);
+}
+
+// ── generated questions: the glossaries ─────────────────────────────────
+// "Which of these describes 'Kilwa'?" The right answer is the source's own
+// definition, verbatim (so the evidence holds by construction); the wrong
+// ones are other definitions from the same region, close in length, so the
+// answer can't be spotted by its size. Every generated question is checked
+// against the same rules as a written one, and the build stops if one fails.
+// Declared as functions so they exist before the chapter loop above runs.
+function seeded(str) { let h = 2166136261; for (const ch of str) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0) / 4294967296); }
+function words(s) { return s.split(/\s+/).length; }
+function cap(s) { return s[0].toUpperCase() + s.slice(1); }
+// The kind of thing a definition describes, from its head noun: "An Islamic
+// title…" → person-title; "A grassy plain…" → place. Crude, but enough to
+// keep a region's wrong options from being a different kind of thing.
+function kindOf(meaning) {
+  const KINDS = [
+    ['person', /\b(ruler|king|queen|emperor|leader|title|sultan|general|priest|merchant|scholar|founder|chief|person|people|group|dynasty|family|class|politicians)\b/],
+    ['place', /\b(region|city|kingdom|empire|state|island|river|plain|area|zone|belt|coast|capital|territory|port|land)\b/],
+    ['belief', /\b(religion|belief|faith|practice|ritual|doctrine|philosophy|school|movement|church|god|goddess|worship)\b/],
+    ['thing', /\b(tax|treaty|law|code|system|tool|weapon|structure|building|trade|currency|document|war|battle|policy|type|script|method)\b/],
+  ];
+  const head = meaning.toLowerCase().split(/\s+/).slice(0, 6).join(' ');
+  return KINDS.find(([, re]) => re.test(head))?.[0] || null;
+}
+function inPrefix(sec, prefixes) { return prefixes.some((pr) => sec === pr || sec.startsWith(pr + '.')); }
+function glossaryQuestions(pack, chId, mod) {
+  const from = mod.GLOSSARY_FROM || [];
+  if (!from.length) return [];
+  const seen = new Set();
+  const pool = TERMS.filter((t) => inPrefix(t.sec, from)).filter((t) => {
+    const k = t.term.toLowerCase();
+    const n = words(t.meaning);
+    // Usable: not a duplicate, not too long to read on a phone, and the
+    // definition doesn't contain the term (that would answer itself).
+    if (seen.has(k) || n < 3 || n > 18 || t.term.length > 40 || t.meaning.toLowerCase().includes(k)) return false;
+    seen.add(k);
+    return true;
+  });
+  const out = [];
+  for (const t of pool) {
+    const rnd = seeded(chId + t.term);
+    const n = words(t.meaning);
+    // Wrong options of the same KIND come first — a title against titles, a
+    // place against places — so the answer can't be picked by topic alone
+    // ("biome" beside "an Islamic title"); then closeness in length.
+    const kind = kindOf(t.meaning);
+    const cands = pool.filter((o) => o !== t && Math.abs(words(o.meaning) - n) <= Math.max(3, Math.round(n * 0.4)))
+      .map((o) => ({ o, r: (kind && kindOf(o.meaning) === kind ? 0 : 6) + Math.abs(words(o.meaning) - n) + rnd() * 3 })).sort((a, b) => a.r - b.r).map((x) => x.o);
+    const wrong = [];
+    for (const o of cands) if (wrong.length < 3 && !wrong.some((w) => w.meaning === o.meaning)) wrong.push(o);
+    if (wrong.length < 3) continue;
+    if (n - Math.max(...wrong.map((w) => words(w.meaning))) >= 3) continue;
+    const big = (mod.BIG || []).find((b) => inPrefix(t.sec, b.src || [])) || mod.BIG?.[0];
+    const slug = t.term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    out.push({
+      id: `${pack.id}/${chId}/g-${slug}`, ch: chId, kind: 'choice', gen: 'glossary', lens: ['record'], big: big.id, depth: 'detail', level: 3,
+      prompt: `Which of these describes “${t.term}”?`,
+      answer: cap(t.meaning), options: wrong.map((w) => cap(w.meaning)),
+      ev: [evOut({ p: t.id, q: t.meaning })],
+    });
+  }
+  // The same rules as verify.mjs, for questions verify never sees.
+  const ids = new Set();
+  for (const q of out) {
+    const opts = [q.answer, ...q.options].map((x) => x.toLowerCase());
+    if (new Set(opts).size !== 4) throw new Error(`generated ${q.id}: duplicate options`);
+    if (ids.has(q.id)) throw new Error(`generated ${q.id}: duplicate id`);
+    ids.add(q.id);
+    if (!PARA.get(q.ev[0].p).text.includes(q.ev[0].quote)) throw new Error(`generated ${q.id}: definition not verbatim`);
+  }
+  return out;
 }
 
 // ── voices ──────────────────────────────────────────────────────────────
@@ -123,7 +211,7 @@ function writeLibrary(pack, entries) {
   const glossary = [];
   // Ljungstedt's OCR is left out of the reader (a single quotation is used,
   // shown in full on its question); the others are readable in full.
-  for (const f of ['pre.json', 'post.json', 'prumers2022.json', 'wh2.json', 'prince1831.json']) {
+  for (const f of ['pre.json', 'post.json', 'prumers2022.json', 'wh1.json', 'wh2.json', 'prince1831.json']) {
     const book = JSON.parse(readFileSync(join(ROOT, 'corpus', f), 'utf8'));
     const src = book.source;
     books.push({

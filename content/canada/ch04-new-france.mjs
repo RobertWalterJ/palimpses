@@ -7,6 +7,9 @@
 // world". And one question keeps the correction honest in the other direction:
 // the Fox Wars "put the lie to the myth" of an always-benign French regime.
 
+// Belshaw's own Key Terms for these chapters become generated glossary questions.
+export const GLOSSARY_FROM = ['pre-3', 'pre-4'];
+
 export const BIG = [
   { id: 'first-visits', q: 'Why did Europeans cross the Atlantic, and what came of the first visits?',
     ev: [{ p: 'pre-3.6-p15', q: 'The Spanish and Portuguese conquests in the Americas resulted in rapid economic growth in northwestern Europe, thus enabling and encouraging competitive missions from England, France, and other countries.' },

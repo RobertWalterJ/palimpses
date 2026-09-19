@@ -10,6 +10,9 @@
 // 1630s: "half" in §5.3, "perhaps two-thirds" in §5.6), the question asks
 // about the disagreement instead of picking one.
 
+// Belshaw's own Key Terms for these chapters become generated glossary questions.
+export const GLOSSARY_FROM = ['pre-5'];
+
 export const BIG = [
   { id: 'terms', q: 'Who set the terms when the nations and Europeans met?',
     ev: [{ p: 'pre-5.4-p19', q: 'Aboriginal participants in trade saw important advantages to trade with the newcomers and acted accordingly.' },

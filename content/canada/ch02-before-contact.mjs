@@ -16,6 +16,9 @@
 //   record           how the past was kept: oral, written, landscape
 //   contested        the source itself says this is uncertain — asked as such
 
+// Belshaw's own Key Terms for these chapters become generated glossary questions.
+export const GLOSSARY_FROM = ['pre-2'];
+
 export const BIG = [
   { id: 'records', q: 'How do we know a past that kept no archives?',
     ev: [{ p: 'pre-2.2-p21', q: 'The dearth of a written record does not mean there is no record at all.' },

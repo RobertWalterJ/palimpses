@@ -53,3 +53,12 @@ sections, 2,455 paragraphs). Links go to openstax.org's pages.
 
 - Mary Prince, *The History of Mary Prince, a West Indian Slave. Related by Herself*, ed. Thomas Pringle (London, 1831). Project Gutenberg #17851, via the Internet Archive (thehistoryofmary17851gut); `corpus/prince1831.json`.
 - Anders Ljungstedt, *An Historical Sketch of the Portuguese Settlements in China* (Boston, 1836). Internet Archive anhistoricalske00unkngoog (OCR); `corpus/ljungstedt1836.json`. Its 1557 date for Macau differs from OpenStax's 1577; the app asks about the disagreement rather than choosing.
+
+## OpenStax World History, Volume 1: to 1500
+
+Same authors, publisher, licence (CC BY-NC-SA 4.0) and repository as Volume 2;
+collection world-history-volume-1, 85 modules retrieved 19 September 2026, in
+`sources/openstax-wh1/`; extracted to `corpus/wh1.json`. For both volumes each
+section's "Section Summary" is marked as the authors' key points and the
+glossary definitions are kept as Key Terms; reflection and review prompts are
+left out.
