@@ -137,7 +137,7 @@ function kbar(b) {
 function chapterRows(stats) {
   return h('div', { class: 'chapters' }, stats.map((s) => {
     const todo = s.due + s.fresh;
-    const note = todo ? (s.due ? `${s.due} to revisit` : `${s.fresh} new`) : s.unseen === 0 ? 'All met — practise it' : 'Up to date';
+    const note = todo ? (s.due ? `${s.due} to revisit` : `${s.fresh} new`) : s.unseen === 0 ? 'All met — take a recall test' : 'Up to date';
     return h('button', { class: 'chrow', type: 'button', onclick: () => { S.press(); play(!todo, s.ids); } },
       h('span', { class: 'chtop' }, h('b', {}, s.ch.title), h('span', { class: 't-small num' }, `${s.known + s.met} of ${s.n}`)),
       kbar(s),
@@ -274,7 +274,7 @@ function homeScreen() {
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(run)), h('span', {}, run === 1 ? 'day' : 'days running'))),
         h('p', { class: 't-small' }, growthLine(false)))) : null,
     !first ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Chapters'), chapterRows(chapterStats())) : null,
-    !first ? mode('', 'practise', 'Practise', 'Anything you’ve met, in any order. Won’t change your review dates.', () => play(true)) : null,
+    !first ? mode('', 'practise', 'Recall test', 'Questions you’ve met, the ones you’re likeliest to have forgotten first. Won’t change your review dates.', () => play(true)) : null,
     h('nav', { class: 'tiles', 'aria-label': 'More' },
       h('button', { class: 'tile', onclick: () => { S.press(); openLibrary(); } }, h('span', { html: ICON.library }), 'Library'),
       h('button', { class: 'tile', onclick: () => { S.press(); show('progress', progressScreen); } }, h('span', { html: ICON.progress }), 'Progress'),
@@ -301,8 +301,12 @@ let tally = null;
 // Everything asked since the app was opened: never asked again in the same
 // session, in any round or in practice.
 const sessionAsked = new Set();
+// Similar questions: the same big question, or evidence from the same
+// paragraph. Kept apart within a round.
+const GROUP_OF = (id) => { const q = Q.get(id); return q ? q.ch + ':' + q.big : null; };
+const PARAS_OF = (id) => { const q = Q.get(id); return q ? [...new Set(evOf(q).map((e) => e.p))] : []; };
 function play(practice, ids = IDS) {
-  round = new Round(ids, { practice, exclude: sessionAsked, pace: State.data.placement?.pace || null });
+  round = new Round(ids, { practice, exclude: sessionAsked, pace: State.data.placement?.pace || null, groupOf: GROUP_OF, parasOf: PARAS_OF });
   round.scope = ids;
   round.heldBefore = IDS.filter((id) => isHolding(State.card(id))).length;
   // Which chapters were still unfinished, to mark the ones this round finishes.
@@ -381,7 +385,7 @@ function topBar() {
     h('div', { class: 'meter', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(total), 'aria-valuenow': String(done) },
       h('i', { style: `width:${(done / total) * 100}%` })),
     h('span', { class: 't-small num' }, `${done + 1} of ${total}`),
-    round.practice ? h('span', { class: 'chip' }, 'practice') : round.placement ? h('span', { class: 'chip' }, 'where you start') : null);
+    round.practice ? h('span', { class: 'chip' }, 'recall test') : round.placement ? h('span', { class: 'chip' }, 'where you start') : null);
 }
 
 // "Setting. Question?" → the setting in a lighter line, the question on its
@@ -610,10 +614,12 @@ function finish() {
   if (finished.length && !(tally.n && tally.right === tally.n)) setTimeout(() => S.fanfare(), 400);
   show('done', () => [
     h('div', { class: 'topbar' }),
-    h('h1', { class: 't-title', style: 'font-size:1.8rem' }, practice ? 'Practice done' : 'Round done'),
+    h('h1', { class: 't-title', style: 'font-size:1.8rem' }, practice ? 'Recall test done' : 'Round done'),
     h('section', { class: 'card stack' },
       h('p', { class: 'answer' }, `${tally.right} of ${tally.n} right.`),
-      practice ? h('p', { class: 't-body' }, 'Practice doesn’t change your review dates.') : null,
+      practice && tally.n ? h('p', { class: 't-body' }, 'These were the questions you were likeliest to have forgotten.') : null,
+      practice && round.early ? h('p', { class: 't-small' }, `${round.early} came back sooner than usual: you’ve been through everything you’ve met in the last few hours. Learn brings new questions.`) : null,
+      practice ? h('p', { class: 't-body' }, 'Recall tests don’t change your review dates.') : null,
       !practice ? h('p', { class: 't-body' }, growthLine()) : null,
       turnedToday.length ? h('p', { class: 't-body' }, h('b', {}, `${turnedToday.length} turned around today`), ': missed the first time, right now.') : null,
       !practice && heldBefore != null && heldNow > heldBefore ? h('p', { class: 't-body' }, h('b', {}, `${heldNow - heldBefore} more holding`), ': right after a week or more away.') : null,
@@ -638,7 +644,7 @@ function finish() {
         h('div', {}, h('b', {}, listTitle(q)), h('span', {}, `§${e.sec}`)), h('span', { html: ICON.chev }));
     })) : null,
     h('div', { class: 'stack' },
-      practice ? h('button', { class: 'btn primary wide', onclick: () => play(true, scope) }, 'Practise again')
+      practice ? h('button', { class: 'btn primary wide', onclick: () => play(true, scope) }, 'Another recall test')
         : scoped && (sDue || sFresh) ? h('button', { class: 'btn primary wide', onclick: () => play(false, scope) }, 'Another round from this chapter')
           : due || fresh ? h('button', { class: 'btn primary wide', onclick: () => play(false) }, 'Another round') : null,
       h('button', { class: `btn wide${practice || due || fresh ? '' : ' primary'}`, onclick: () => show('home', homeScreen, { replace: true }) }, 'Home')),

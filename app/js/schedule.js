@@ -31,6 +31,12 @@ const MIN_NEW = 3;                   // new questions per round while some revie
 const ROUND = 10;
 const NEW_PER_DAY = 12;              // new questions per day, across all rounds
 const BACKLOG = 14;                  // due reviews above which a round takes just one new question
+// Robert plays in short bursts while waiting, several times a day. A question
+// answered in the last COOLDOWN hours is not asked again — not in another
+// round, not in practice, not after closing and reopening the app — so its
+// next appearance is a test of recall, not of what was on screen minutes ago.
+export const COOLDOWN = 4 * 3600e3;
+const PER_GROUP = 2;                 // at most this many from one big question in a round
 
 let clock = () => Date.now();
 export const now = () => clock();
@@ -86,6 +92,9 @@ export const State = {
 
   answer(id, right, { practice = false, repeat = false } = {}) {
     const day = this.data.days[dayKey()] || (this.data.days[dayKey()] = { n: 0, right: 0 });
+    // When it was last asked, in any mode — for the cool-down and the recall
+    // test. Kept apart from the card so practice still changes nothing else.
+    (this.data.seen || (this.data.seen = {}))[id] = now();
     // Practice changes nothing about the card — not its status, not its
     // streak, not its "last seen". A practice miss used to knock a known card
     // back to "met" (both audits). It is logged on its own.
@@ -150,6 +159,16 @@ export const State = {
   // What the player can answer: questions whose last (non-practice) answer
   // was right. Recorded once a day it's looked at, so Progress can draw it
   // rising — observed, not modelled.
+  seenAt(id) { return this.data.seen?.[id] || this.card(id)?.last || 0; },
+  // How likely the player still remembers it: exp(-time since last asked /
+  // the card's interval), lower after a miss. The recall test starts with the
+  // lowest — the questions most at risk of being forgotten.
+  recall(id, t = now()) {
+    const c = this.card(id);
+    if (!c) return 1;
+    const r = Math.exp(-(t - this.seenAt(id)) / (Math.max(1, c.iv || 0) * DAY));
+    return c.ok ? r : r * 0.6;
+  },
   canAnswer(ids) { return ids.filter((id) => { const c = this.card(id); return c && c.st !== 'new' && c.ok; }).length; },
   snapshot(ids) {
     const day = this.data.days[dayKey()];
@@ -186,16 +205,63 @@ export const State = {
 // story is told — the pack is authored as a narrative, so "new" follows it
 // rather than being shuffled; nothing new at all once reviews pile up.
 export class Round {
-  // `exclude`: questions already asked this session, never asked again in it.
-  // `pace`: { newPerRound, newPerDay } from the placement check; defaults otherwise.
-  constructor(ids, { practice = false, exclude = new Set(), pace = null } = {}) {
+  // `exclude`: questions already asked this session.
+  // `pace`: { newPerRound, newPerDay } from the placement check.
+  // `groupOf(id)`: the big question a question serves; `parasOf(id)`: the
+  // paragraphs its evidence quotes. Used to keep similar questions apart.
+  constructor(ids, { practice = false, exclude = new Set(), pace = null, groupOf = null, parasOf = null } = {}) {
     this.practice = practice;
     this.queue = [];
     this.asked = 0;
-    const pool = ids.filter((id) => !exclude.has(id));
+    const t = now();
+    const cooling = (id) => t - (State.data.seen?.[id] || 0) < COOLDOWN;
+    const pool = ids.filter((id) => !exclude.has(id) && !cooling(id));
+    // Picks from candidates in priority order, skipping one that would be a
+    // third from the same big question, or that quotes a paragraph another
+    // pick already quotes (one would give the other away). Skipped ones
+    // simply wait for a later round.
+    const picked = [];
+    const groups = new Map();
+    const paras = new Set();
+    const take = (cands, n) => {
+      const out = [];
+      for (const id of cands) {
+        if (out.length >= n) break;
+        const g = groupOf?.(id);
+        if (g && (groups.get(g) || 0) >= PER_GROUP) continue;
+        const ps = parasOf?.(id) || [];
+        if (ps.some((p) => paras.has(p))) continue;
+        out.push(id); picked.push(id);
+        if (g) groups.set(g, (groups.get(g) || 0) + 1);
+        for (const p of ps) paras.add(p);
+      }
+      return out;
+    };
+
     if (practice) {
-      const seen = pool.filter((id) => State.card(id));
-      this.queue = shuffle(seen).slice(0, ROUND);
+      // The recall test: questions met before, likeliest-forgotten first
+      // (ties shuffled), so each reappearance tests memory.
+      const seen = shuffle(pool.filter((id) => State.card(id)));
+      seen.sort((x, y) => State.recall(x, t) - State.recall(y, t));
+      take(seen, ROUND);
+      // The cool-down is a preference, never a wall (Robert: "I don't want to
+      // 100% exhaust questions"). If a long spell of play has used up what's
+      // cooled, fill from the cooling ones asked longest ago, then — only as
+      // a last resort — from this session; the similarity limits give way
+      // before the round comes up short.
+      const met = ids.filter((id) => State.card(id));
+      const byAge = (list) => list.sort((x, y) => State.seenAt(x) - State.seenAt(y));
+      const tiers = [
+        byAge(met.filter((id) => !exclude.has(id) && cooling(id))),
+        byAge(met.filter((id) => exclude.has(id))),
+      ];
+      for (const tier of tiers) if (picked.length < ROUND) take(tier.filter((id) => !picked.includes(id)), ROUND - picked.length);
+      if (picked.length < Math.min(ROUND, met.length)) {
+        const loose = byAge(met.filter((id) => !picked.includes(id)));
+        picked.push(...loose.slice(0, Math.min(ROUND, met.length) - picked.length));
+      }
+      this.early = picked.filter((id) => cooling(id) || exclude.has(id)).length;
+      this.queue = this.#spread(picked.slice(), groupOf);
       return;
     }
     const due = State.dueIds(pool);
@@ -205,26 +271,43 @@ export class Round {
     const newToday = State.data.days[dayKey()]?.newN || 0;
     const perRound = pace?.newPerRound ?? NEW_PER_ROUND;
     const newRoom = Math.max(0, (pace?.newPerDay ?? NEW_PER_DAY) - newToday);
-    // New questions scale with the reviews waiting. Forcing three new into
-    // every round (first try at this) let reviews pile up until they came
-    // back too late to stick: the persona study's general player fell from
-    // 88% to 49% on reviews. So: five new when little is due, three when some
-    // is, and ONE — never none — under a backlog, so every round still has
-    // something fresh in it.
+    // New questions scale with the reviews waiting: five when little is due,
+    // three when some is, and one — never none — under a backlog. (Forcing
+    // three into every round starved the reviews: persona study, 18 Sept.)
     const allowance = due.length > BACKLOG ? 1 : due.length > MIN_NEW + 2 ? Math.min(MIN_NEW, perRound) : perRound;
     const nNew = Math.min(allowance, fresh.length, newRoom);
-    // Reviews selected by due date, then SHUFFLED: cards learned together fall
-    // due together, and replaying them in the book's order turns order into a cue.
-    this.queue = shuffle(due.slice(0, ROUND - nNew));
-    // New questions in the pack's teaching order (anchors first), mixed in
-    // among the reviews rather than saved for the end.
-    const add = fresh.slice(0, nNew);
-    for (const id of add) this.queue.splice(Math.floor(Math.random() * (this.queue.length + 1)), 0, id);
-    // …except the very first question of a player's first round: it should be
-    // the pack's opening anchor, not a random one.
+    // Reviews by due date, then new questions in the pack's teaching order.
+    const reviews = take(due, ROUND - nNew);
+    const add = take(fresh, nNew);
+    this.queue = this.#spread(shuffle([...reviews, ...add]), groupOf);
+    // …except the very first question of a player's first round: the pack's
+    // opening anchor, not a random one.
     if (!Object.keys(State.data.cards).length && add.length) {
       this.queue = [add[0], ...this.queue.filter((x) => x !== add[0])];
     }
+  }
+  // Reorders so no two neighbours serve the same big question, where that's
+  // possible, keeping the order otherwise.
+  #spread(list, groupOf) {
+    if (!groupOf) return list;
+    // Each step places, from a group other than the last one placed, the group
+    // with most still waiting (first in list order among equals). Going
+    // strictly front to back could leave two of a kind for the last places.
+    const rest = list.slice();
+    const out = [];
+    while (rest.length) {
+      const prev = out.length ? groupOf(out[out.length - 1]) : null;
+      const left = new Map();
+      for (const id of rest) left.set(groupOf(id), (left.get(groupOf(id)) || 0) + 1);
+      let best = -1;
+      for (let i = 0; i < rest.length; i++) {
+        const g = groupOf(rest[i]);
+        if (g === prev) continue;
+        if (best < 0 || left.get(g) > left.get(groupOf(rest[best]))) best = i;
+      }
+      out.push(rest.splice(best < 0 ? 0 : best, 1)[0]);
+    }
+    return out;
   }
   get empty() { return this.queue.length === 0; }
   isRepeat() { return false; }
