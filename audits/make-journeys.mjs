@@ -18,7 +18,7 @@ const line = (rows, f) => rows.map((r, i) => `${i ? 'L' : 'M'}${x(r.day).toFixed
 const grid = [0, 25, 50, 75, 100].map((v) => `<line x1="${L}" x2="${W - Rm}" y1="${y(v)}" y2="${y(v)}" class="gl"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" class="ax">${v}%</text>`).join('');
 const ticks = [1, 30, 60, 90].map((d) => `<text x="${x(d)}" y="${H - 12}" text-anchor="middle" class="ax">day ${d}</text>`).join('');
 const end = (rows, f, cls, label) => { const r = rows[rows.length - 1]; return `<circle cx="${x(r.day)}" cy="${y(f(r))}" r="4" class="${cls}"/>`; };
-const chart = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Over 90 days the general player's cold-test score rises from ${g[0].cold}% to ${g[89].cold}% and the well-read player's from ${w[0].cold}% to ${w[89].cold}%, while the share the app calls known rises only to ${Math.round(g[89].known / TOTAL * 100)}% and ${Math.round(w[89].known / TOTAL * 100)}%, starting at day 44.">
+const chart = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Over 90 days the general player's cold-test score rises from ${g[0].cold}% to ${g[89].cold}% and the well-read player's from ${w[0].cold}% to ${w[89].cold}%, while the share the app calls known rises only to ${Math.round(g[89].known / TOTAL * 100)}% and ${Math.round(w[89].known / TOTAL * 100)}%, starting around day 46.">
   ${grid}${ticks}
   <path d="${line(w, (r) => r.cold)}" class="lw"/><path d="${line(g, (r) => r.cold)}" class="lg"/>
   <path d="${line(w, (r) => (r.known / TOTAL) * 100)}" class="lw dash"/><path d="${line(g, (r) => (r.known / TOTAL) * 100)}" class="lg dash"/>
@@ -105,9 +105,15 @@ td b { font-weight: 700; }
   <p class="lede">Can someone with general knowledge, or someone well read who has never met these sources, grow into real knowledge of this history, enjoy getting there, and see themselves improve? I tested it two ways: I played the opening rounds on a phone-sized screen, and I simulated 90 days for each person using the app’s real scheduler.</p>
 </header>
 
+<section class="panel" style="border:2px solid var(--accent)">
+  <p class="eyebrow">Corrected, 18 September 2026</p>
+  <p>The first version of this page overstated how much players learn. Its memory model gave a right answer minutes after seeing a card the same boost as one recalled days later, which flattered the in-round repeats. The model now follows the spacing effect: a retrieval builds more memory the closer it came to being forgotten. The figures below are re-run on the version reviewed (1.2.2). The findings and recommendations stand. One changed: reviews were not too easy, they were a little too hard for the general player.</p>
+  <p class="muted"><b>Since then, version 1.3.0</b> has no repeats inside a session, puts familiar history first, and brings new questions every round. On the same model, at day 90 the general player scores 61% cold (was 57%) and has met 71 questions (was 56); the well-read player scores 83% (was 81%) and has met 94 (was 84). The cost is that “known” first appears later, around day 60, which is why showing growth is next.</p>
+</section>
+
 <section class="panel verdict">
   <p class="eyebrow">The answer</p>
-  <p><b>The learning works. The first hour and the feedback don’t, yet.</b> In the simulation the general player goes from ${g[0].cold}% to ${g[89].cold}% on a cold test of every question in three months, and the well-read player from ${w[0].cold}% to ${w[89].cold}%. That growth is real but invisible: nothing in the app measures it, the word “known” first appears on day 44, and the first round opens on four abstract questions at about one right in two.</p>
+  <p><b>The learning works. The first hour and the feedback don’t, yet.</b> In the simulation the general player goes from ${g[0].cold}% to ${g[89].cold}% on a cold test of every question in three months, and the well-read player from ${w[0].cold}% to ${w[89].cold}%. That growth is real but invisible: nothing in the app measures it, the word “known” first appears around day 46, and the first round opened on four abstract questions.</p>
   <p>Two changes matter most: <b>start from what people know</b>, and <b>show them how much they’ve learned</b>. Nearly everything below serves one of those.</p>
 </section>
 
@@ -120,18 +126,17 @@ td b { font-weight: 700; }
     <span><i style="border-color:var(--well)"></i>Well read: cold-test score</span>
     <span><i class="dsh" style="border-color:var(--well)"></i>Well read: share called “known”</span>
   </div>
-  <p class="muted">The solid lines are what each person would score if tested cold on all ${TOTAL} questions that day. The dotted lines are the only long-term measure the app shows: flat at zero for six weeks, then small. The gap between the lines is progress the player never sees.</p>
+  <p class="muted">The solid lines are what each person would score if tested cold on all ${TOTAL} questions that day. The dotted lines are the only long-term measure the app shows: flat at zero for about six weeks, then small. The gap between the lines is progress the player never sees.</p>
 </section>
 
 <section class="panel">
   <h2>What the test found</h2>
   <div class="tbl"><table>
     <tr><th></th><th>General knowledge</th><th>Well read</th></tr>
-    <tr><td>New questions right on first sight, first round</td><td><b>48%</b></td><td><b>60%</b></td></tr>
-    <tr><td>… with anchors moved first (reorder only)</td><td>52%</td><td>64%</td></tr>
-    <tr><td>First sight right, by subject: known · school · specialist</td><td>65 · 46 · 37%</td><td>89 · 62 · 44%</td></tr>
-    <tr><td>Reviews right on first try after week 2 (target 80–85%)</td><td>88%</td><td>91%, too easy</td></tr>
-    <tr><td>Day the first “known” appears</td><td>44</td><td>45</td></tr>
+    <tr><td>New questions right on first sight, first rounds</td><td><b>54%</b></td><td><b>75%</b></td></tr>
+    <tr><td>First sight right, by subject: known · school · specialist</td><td>57 · 41 · 32%</td><td>—</td></tr>
+    <tr><td>Reviews right on first try after week 2 (target 80–85%)</td><td>70%, a little hard</td><td>80%</td></tr>
+    <tr><td>Day the first “known” appears</td><td>47</td><td>45</td></tr>
     <tr><td>Questions met by day 90</td><td>${g[89].met} of ${TOTAL}</td><td>${w[89].met} of ${TOTAL}</td></tr>
     <tr><td>Cold-test score, day 1 → 30 → 90</td><td>${g[0].cold} → ${g[29].cold} → ${g[89].cold}%</td><td>${w[0].cold} → ${w[29].cold} → ${w[89].cold}%</td></tr>
   </table></div>
@@ -151,7 +156,7 @@ td b { font-weight: 700; }
       <p class="now">“Holding” appears, but nothing says “you now know more than you did”.</p>
       <p class="next">A monthly check-in re-asks a sample, including questions you missed on first sight, and shows <em>then vs now</em>: “You got this wrong on 19 Sept. Right today.” A line of your cold-test score, the solid line above, goes on Progress.</p></div></div>
     <div class="stage"><p class="when">Month three</p><div>
-      <p class="now">Reviews are too easy for the well-read player, and the pace is the same for both.</p>
+      <p class="now">Reviews run below target for the general player, and the pace is the same for both players.</p>
       <p class="next">The pace adapts: above 90% on reviews, more new questions arrive and reviews switch to harder forms (fill the quote, which came first). Below 75%, fewer new ones arrive. Chapters earn levels, from Informed to Expert, by big questions answered at every rung.</p></div></div>
   </div>
 </section>
@@ -164,7 +169,7 @@ td b { font-weight: 700; }
     <li><span class="tag">Questions</span><b>No free marks for sounding enlightened</b><span>Every rethink has a wrong option that also sounds revisionist, so players learn the history, not the pattern. Some myths are partly true, and should be asked that way.</span></li>
     <li><span class="tag">Questions</span><b>New question types, lighter to read</b><span><em>Myth or record?</em> (two options). <em>Which came first?</em> (two events, across regions). <em>Who said it?</em> (the voices). <em>Fill the quote</em> (for reviews). These vary the rhythm and cut reading.</span></li>
     <li><span class="tag">Flow</span><b>Start where the player is</b><span>A two-minute placement sets the starting rung and pace. Rounds are five to seven questions, and the count shown is the real count.</span></li>
-    <li><span class="tag">Flow</span><b>Pace that adapts</b><span>Keep first-try reviews at 80–85%: more and harder when it’s easy, fewer when it’s hard. The well-read player gets through the pack in weeks, not months.</span></li>
+    <li><span class="tag">Flow</span><b>Pace that adapts</b><span>Keep first-try reviews at 80–85%: more and harder when it’s easy, fewer new and more review when it’s hard. The well-read player moves faster, and the general player isn’t buried.</span></li>
     <li><span class="tag">Answer card</span><b>A shorter answer card</b><span>Verdict, the one key sentence and read-aloud; the full passage and the bigger picture a tap away. The bigger picture shows once per big question per round, when it has something new to say. Target: under 60 words.</span></li>
     <li><span class="tag">Progress</span><b>Show the growth</b><span>A cold-test line on Progress; a monthly check-in with <em>then vs now</em>; a big-questions map per chapter; and “holding” counted as progress from week one instead of waiting 44 days for “known”.</span></li>
     <li><span class="tag">Picture</span><b>Fit it together</b><span>Later: the “meanwhile, elsewhere” layer from an open world history, a parallel-lanes timeline, and <em>which came first</em> across regions. It builds the map of when things happened across the world.</span></li>
