@@ -1,6 +1,10 @@
 // World · China and East Asia. OpenStax World History (wh1 ch. 5, 12, 14, 17;
 // wh2 ch. 2). Hand-written questions to come; glossary terms generated.
 export const GLOSSARY_FROM = ['wh1-5.1', 'wh1-5.2', 'wh1-5.3', 'wh1-12.2', 'wh1-12.3', 'wh1-14', 'wh1-17.2', 'wh2-2.3'];
+// Shown above every question in this chapter, so nobody has to guess whose
+// history is being asked about.
+export const ERA = 'China and East Asia, ancient times to the 1800s';
+
 export const BIG = [
   { id: 'song', q: 'What did Song China build — long before Europe’s industrial age?', src: ['wh1-14.1', 'wh1-5.1'],
     ev: [{ p: 'wh1-14.1-p45', q: 'The Song dynasty revived and strengthened Confucian civilization in the areas it ruled.' }] },

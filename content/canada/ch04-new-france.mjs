@@ -10,6 +10,10 @@
 // Belshaw's own Key Terms for these chapters become generated glossary questions.
 export const GLOSSARY_FROM = ['pre-3', 'pre-4'];
 
+// Shown above every question in this chapter, so nobody has to guess whose
+// history is being asked about.
+export const ERA = 'New France, 1530s–1760s';
+
 export const BIG = [
   { id: 'first-visits', q: 'Why did Europeans cross the Atlantic, and what came of the first visits?',
     ev: [{ p: 'pre-3.6-p15', q: 'The Spanish and Portuguese conquests in the Americas resulted in rapid economic growth in northwestern Europe, thus enabling and encouraging competitive missions from England, France, and other countries.' },

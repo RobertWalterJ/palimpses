@@ -43,6 +43,10 @@ export const TIMELINE = [
   { lane: 'asia', at: 1842, label: 'The Treaty of Nanjing', ev: { p: 'wh2-6.2-p52', q: 'In 1842, Great Britain and China signed the Treaty of Nanjing' } },
 ];
 
+// Shown above every question in this chapter, so nobody has to guess whose
+// history is being asked about.
+export const ERA = 'Four regions, 1488–1842';
+
 export const BIG = [
   { id: 'terms', q: 'Who set the terms of trade between Europe and China?',
     ev: [{ p: 'wh2-6.2-p63', q: 'Under the Canton system, China increased its trade with Europe and improved its economy, while rejecting most European trade goods and insisting on payment in silver, acquiring a very favorable balance of trade.' }] },

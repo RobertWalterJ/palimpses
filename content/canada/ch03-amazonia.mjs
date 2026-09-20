@@ -8,6 +8,10 @@
 // Llanos de Mojos. The paper's own claims are strong ones — where the authors
 // PROPOSE rather than find, the question is tagged contested.
 
+// Shown above every question in this chapter, so nobody has to guess whose
+// history is being asked about.
+export const ERA = 'The Bolivian Amazon, about 500–1400 CE';
+
 export const BIG = [
   { id: 'amazon', q: 'Was the Amazon a wilderness before 1492?',
     ev: [{ p: 'prumers2022-conclusions-p1', q: 'Our results put to rest arguments that western Amazonia was sparsely populated in pre-Hispanic times.' },
@@ -25,7 +29,7 @@ export default [
   },
   {
     id: 'casarabe-when', kind: 'choice', big: 'amazon', depth: 'detail', lens: ['own-terms'],
-    prompt: 'When did the Casarabe culture flourish in the Llanos de Mojos?',
+    prompt: 'The Casarabe culture built mound towns in the Llanos de Mojos, in what is now the Bolivian Amazon. When did it flourish?',
     answer: 'About 500 to 1400 CE',
     options: ['About 5000 to 4000 BCE', 'About 1600 to 1800 CE', 'About 100 to 300 CE'],
     must: ['between around ad 500 and ad 1400'],
@@ -33,7 +37,7 @@ export default [
   },
   {
     id: 'casarabe-lived-in', kind: 'choice', big: 'amazon', lens: ['own-terms', 'against-progress'],
-    prompt: 'Were the big Casarabe mound sites empty ceremonial centres?',
+    prompt: 'The Casarabe of the Bolivian Amazon raised great mounds. Were those big sites empty ceremonial centres?',
     answer: 'No — farmers lived there all year round',
     options: ['Yes — used only for yearly festivals', 'Yes — they were burial grounds alone', 'No — they were forts for soldiers only'],
     must: ['not unoccupied ceremonial centres but inhabited throughout the year by agriculturalists'],
@@ -41,7 +45,7 @@ export default [
   },
   {
     id: 'casarabe-pyramids', kind: 'choice', big: 'amazon', depth: 'detail', lens: ['own-terms'],
-    prompt: 'The Casarabe centres had conical pyramids. How tall?',
+    prompt: 'The Casarabe centres in the Bolivian Amazon had conical pyramids. How tall?',
     answer: 'Up to 22 metres',
     options: ['About 3 metres', 'About 60 metres', 'About 150 metres'],
     must: ['up to 22 m tall'],
@@ -49,7 +53,7 @@ export default [
   },
   {
     id: 'casarabe-causeways', kind: 'choice', big: 'amazon', lens: ['own-terms'],
-    prompt: 'How were the two large Casarabe centres linked to smaller sites?',
+    prompt: 'How were the two large Casarabe centres of the Llanos de Mojos linked to the smaller sites around them?',
     answer: 'By straight, raised causeways kilometres long',
     options: ['By paved Inca-style mountain roads', 'By rivers alone, with no built routes', 'By forest footpaths, left unmarked'],
     must: ['straight, raised causeways that stretch over several kilometres'],
@@ -57,7 +61,7 @@ export default [
   },
   {
     id: 'cotoca-tiwanaku', kind: 'choice', big: 'amazon', lens: ['own-terms'],
-    prompt: 'Compare the earth moved to build Cotoca’s core with the largest structure at Tiwanaku, in the Andes.',
+    prompt: 'Cotoca was a Casarabe centre in the Bolivian Amazon. Compare the earth moved to build its core with the largest structure at Tiwanaku, in the Andes.',
     answer: 'Cotoca took about ten times as much',
     options: ['Cotoca took about a tenth as much', 'The two took about the same amount', 'No one has measured either of them'],
     must: ['ten times the amount of earth moved for the construction of the Akapana'],
@@ -65,7 +69,7 @@ export default [
   },
   {
     id: 'casarabe-canal', kind: 'choice', big: 'amazon', lens: ['own-terms', 'economy'],
-    prompt: 'A 7-km canal brought water from a lake to the Casarabe town of Cotoca. What does it show?',
+    prompt: 'A 7-km canal brought water from a lake to Cotoca, a Casarabe town in the Bolivian Amazon. What does it show?',
     answer: 'The scale of landscape management and labour',
     options: ['That Cotoca was built by Andean settlers', 'That the site flooded and was abandoned', 'That canals were dug only for defence'],
     must: ['indicating the scale of landscape management and labour mobilization'],
@@ -81,7 +85,7 @@ export default [
   },
   {
     id: 'casarabe-urbanism', kind: 'choice', big: 'amazon', lens: ['contested', 'own-terms'],
-    prompt: 'Towns, causeways, canals and farms spread across the Llanos de Mojos. What kind of settlement was it?',
+    prompt: 'Towns, causeways, canals and farms spread across the Llanos de Mojos, in today’s Bolivian Amazon. What kind of settlement was it?',
     answer: 'Low-density urbanism, the first known in lowland South America',
     options: ['Scattered camps of mobile foragers', 'An outpost of the Inca Empire', 'A copy of an Andean capital city'],
     must: ['We propose', 'tropical agrarian low-density urbanism', 'the first known case'],

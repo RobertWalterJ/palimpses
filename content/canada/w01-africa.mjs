@@ -6,6 +6,10 @@
 
 export const GLOSSARY_FROM = ['wh1-9', 'wh1-15', 'wh2-3', 'wh1-10.3'];
 
+// Shown above every question in this chapter, so nobody has to guess whose
+// history is being asked about.
+export const ERA = 'Africa, ancient times to the 1800s';
+
 export const BIG = [
   { id: 'land', q: 'How did Africa’s land shape the ways its peoples lived?', src: ['wh1-9'],
     ev: [{ p: 'wh1-9.1-p32', q: 'Geography played a critical role in the development of early human civilization in Africa.' }] },

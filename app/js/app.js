@@ -501,10 +501,25 @@ function splitPrompt(p) {
   if (parts.length < 2) return { setup: null, ask: p };
   return { setup: parts.slice(0, -1).join('').trim(), ask: parts[parts.length - 1].trim() };
 }
-function questionHead(prompt) {
+// Whose history, and when: the chapter or region, and the question's own year
+// where it has one. Without it, "Were the big Casarabe mound sites empty
+// ceremonial centres?" leaves the player guessing (Robert, 20 Sept 2026).
+function yearLabel(at) { return at < 0 ? `${-at} BCE` : String(at); }
+function contextLine(q) {
+  const ch = PACK.chapters.find((c) => c.id === q.ch);
+  if (!ch) return null;
+  const when = q.at != null ? yearLabel(q.at) : ch.era;
+  // "Africa · Africa, ancient times…" reads badly: where the era already
+  // names the place, it stands on its own.
+  if (when && when.toLowerCase().startsWith(ch.title.toLowerCase())) return when;
+  return [ch.title, when].filter(Boolean).join(' · ');
+}
+function questionHead(q, prompt = q.prompt) {
   const { setup, ask } = splitPrompt(prompt);
+  const where = contextLine(q);
   return h('div', { class: 'q-head' },
-    h('div', {}, setup ? h('p', { class: 'setup' }, setup) : null, h('h2', { class: 'ask' }, ask)),
+    h('div', {}, where ? h('p', { class: 'where' }, where) : null,
+      setup ? h('p', { class: 'setup' }, setup) : null, h('h2', { class: 'ask' }, ask)),
     sayBtn(prompt, 'Read the question aloud'));
 }
 
@@ -543,7 +558,7 @@ function choiceScreen(q) {
   }
 
   if (State.data.settings.readAloud === 'auto') setTimeout(() => say(q.prompt), 250);
-  return [topBar(), questionHead(q.prompt), h('div', { class: 'opts' }, rows.map((r) => r.row)), reveal, foot];
+  return [topBar(), questionHead(q), h('div', { class: 'opts' }, rows.map((r) => r.row)), reveal, foot];
 }
 
 function orderScreen(q) {
@@ -600,7 +615,7 @@ function orderScreen(q) {
     foot.replaceChildren(h('button', { class: 'btn primary wide', onclick: () => { S.advance(); nextQuestion(); } }, 'Next'));
     afterAnswer(reveal);
   }
-  return [topBar(), questionHead('Put these in order, oldest first.'),
+  return [topBar(), questionHead(q, 'Put these in order, oldest first.'),
     h('p', { class: 't-small' }, 'Tap them in order. Tap one again to take it back.'),
     h('div', { class: 'opts' }, rows.map((r) => r.row)), reveal, foot];
 }

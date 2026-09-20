@@ -79,6 +79,7 @@ for (const pack of PACKS) {
     chapters.push({ id: chId, title: CHAPTER_TITLE[chId] || (ch ? ch.title : chId), book: ch ? ch.title : null, n: ch?.n ?? null,
       big: (mod.BIG || []).map((b) => ({ id: b.id, q: b.q, ev: b.ev.map(evOut) })),
       group: chId.startsWith('th') ? 'thread' : chId.startsWith('w') ? 'world' : 'canada',
+      era: mod.ERA || null,
       // A thread (file name th…) crosses chapters and regions, with a timeline
       // in lanes; it is listed apart from the chapters.
       ...(chId.startsWith('th') ? { thread: true, lanes: mod.LANES || [], timeline: (mod.TIMELINE || []).map((e) => ({ lane: e.lane, at: e.at, label: e.label, ev: evOut(e.ev) })).sort((a, b) => a.at - b.at) } : {}) });

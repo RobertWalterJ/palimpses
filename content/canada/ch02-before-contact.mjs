@@ -19,6 +19,10 @@
 // Belshaw's own Key Terms for these chapters become generated glossary questions.
 export const GLOSSARY_FROM = ['pre-2'];
 
+// Shown above every question in this chapter, so nobody has to guess whose
+// history is being asked about.
+export const ERA = 'Turtle Island, to about 1450';
+
 export const BIG = [
   { id: 'records', q: 'How do we know a past that kept no archives?',
     ev: [{ p: 'pre-2.2-p21', q: 'The dearth of a written record does not mean there is no record at all.' },
