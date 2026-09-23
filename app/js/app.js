@@ -16,7 +16,7 @@ import { State, Round, cardState, isHolding, nextDueSentence, shuffle, now, DAY,
 import { initSpeech, unlock, say, setRate, onSpeaking } from './speech.js';
 import { Reader, sentences } from './reader.js';
 import * as S from './sound.js';
-import { h, esc, ICON, iconBtn, sayBtn, sheet, closeSheet, show, back, route, setLeaveGuard, applyReading, READ_DEFAULTS } from './ui.js';
+import { h, esc, ICON, iconBtn, sayBtn, sheet, closeSheet, show, back, route, setLeaveGuard, applyReading, READ_DEFAULTS, setQuiet, isQuiet } from './ui.js';
 import { loadLibrary, openLibrary, openReader, openEntry, readingSheet, sectionOf } from './library.js';
 
 let PACK = null;
@@ -40,7 +40,7 @@ async function boot() {
   applySettings();
   initSpeech();
   onSpeaking(S.setSpeaking);
-  document.addEventListener('pointerdown', () => { unlock(); S.primeSound(); if (s.sound && s.ambience) S.setAmbience(true); }, { once: true });
+  document.addEventListener('pointerdown', () => { unlock(); S.primeSound(); if (s.sound && s.ambience && !s.quiet) S.setAmbience(true); }, { once: true });
   PACK = window.__PALIMPSEST_DATA?.canada || await (await fetch('data/canada.json')).json();
   for (const q of PACK.questions) Q.set(q.id, q);
   IDS = PACK.questions.map((q) => q.id);
@@ -51,7 +51,10 @@ async function boot() {
 
 function applySettings() {
   const s = State.data.settings;
-  S.setSound(s.sound);
+  // In public: sound off, room tone off, and no read-aloud offered anywhere.
+  setQuiet(!!s.quiet);
+  S.setSound(s.sound && !s.quiet);
+  if (s.quiet) S.setAmbience(false);
   setRate(s.rate);
   if (s.theme === 'system') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme', s.theme);
@@ -361,6 +364,11 @@ function homeScreen() {
       h('button', { class: 'tile', onclick: () => { S.press(); openLibrary(); } }, h('span', { html: ICON.library }), 'Library'),
       h('button', { class: 'tile', onclick: () => { S.press(); show('progress', progressScreen); } }, h('span', { html: ICON.progress }), 'Progress'),
       h('button', { class: 'tile', onclick: () => { S.press(); show('settings', settingsScreen); } }, h('span', { html: ICON.settings }), 'Settings')),
+    (State.data.settings.quiet || State.data.settings.sound || State.data.settings.readAloud === 'auto')
+      ? h('button', { class: 'disclose quietrow', type: 'button', 'aria-pressed': String(!!State.data.settings.quiet),
+        onclick: () => { const st = State.data.settings; st.quiet = !st.quiet; State.save(); applySettings(); show('home', homeScreen, { replace: true }); } },
+        State.data.settings.quiet ? 'In public: quiet. Tap to turn sound back on.' : 'I’m in public — go quiet')
+      : null,
     h('nav', { class: 'foot-links', 'aria-label': 'Browse and about' },
       PACK.voices?.length ? h('button', { class: 'disclose', type: 'button', onclick: () => show('voices', voicesScreen) }, 'All the voices') : null,
       h('button', { class: 'disclose', type: 'button', onclick: () => show('about', aboutScreen) }, 'About, sources and licences'),
@@ -554,10 +562,10 @@ function choiceScreen(q) {
       : revealCard(q, ok)));
     foot.replaceChildren(h('button', { class: 'btn primary wide', onclick: () => { S.advance(); nextQuestion(); } }, 'Next'));
     afterAnswer(reveal);
-    if (State.data.settings.readAloud === 'auto') say((ok ? 'Right. ' : `Not quite. The answer is: ${q.answer}. `) + q.ev[0].quote);
+    if (State.data.settings.readAloud === 'auto' && !isQuiet()) say((ok ? 'Right. ' : `Not quite. The answer is: ${q.answer}. `) + q.ev[0].quote);
   }
 
-  if (State.data.settings.readAloud === 'auto') setTimeout(() => say(q.prompt), 250);
+  if (State.data.settings.readAloud === 'auto' && !isQuiet()) setTimeout(() => say(q.prompt), 250);
   return [topBar(), questionHead(q), h('div', { class: 'opts' }, rows.map((r) => r.row)), reveal, foot];
 }
 
@@ -707,6 +715,7 @@ function paragraphWithPlayer(text, quotes) {
     for (const q of quotes) { const eq = esc(q); if (inner.includes(eq)) inner = inner.replace(eq, `<span class="quoted">${eq}</span>`); }
     return `<span class="sn" data-s="${i}">${inner}</span>`;
   }).join(' ') + '</p>';
+  if (isQuiet()) return passage;            // in public: the text, no player
   let r = null;
   const btn = iconBtn('play', 'Read the paragraph aloud', () => r.toggle());
   r = new Reader(passage, { onChange: (x) => { btn.innerHTML = x.playing ? ICON.pause : ICON.play; btn.setAttribute('aria-label', x.playing ? 'Pause' : 'Read the paragraph aloud'); } });
@@ -897,17 +906,26 @@ function settingsScreen() {
   const out = h('output', {}, `${s.rate.toFixed(2)}×`);
   const rate = h('input', { type: 'range', id: 'set-rate', min: '0.6', max: '1.3', step: '0.05', value: String(s.rate),
     oninput: (e) => { s.rate = +e.target.value; setRate(s.rate); out.textContent = `${s.rate.toFixed(2)}×`; State.save(); } });
+  const quiet = !!s.quiet;
   return [
     h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'Settings')),
     h('section', { class: 'card' },
+      seg('quiet', 'I’m in public', [[true, 'Quiet'], [false, 'Normal']], () => show('settings', settingsScreen, { replace: true })),
+      h('p', { class: 't-small' }, quiet
+        ? 'Quiet: no sound, and read-aloud isn’t offered. Everything else works as usual.'
+        : 'One switch for a bus or a café: turns off sound and takes the read-aloud buttons away.')),
+    // Everything that can make a noise, and only that, goes away in quiet mode.
+    h('section', { class: 'card', hidden: quiet },
       seg('readAloud', 'Read questions aloud', [['manual', 'When I tap'], ['auto', 'Automatically']]),
       h('div', { class: 'setting' }, h('label', { class: 'lbl', for: 'set-rate' }, 'Reading speed', out), rate,
         h('button', { class: 'btn', onclick: () => { unlock(); say('This is how fast I will read to you.'); } }, 'Try it')),
+      seg('sound', 'Sound effects', [[true, 'On'], [false, 'Off']], (v) => { if (!v) S.setAmbience(false); }),
+      seg('ambience', 'Room tone while you read', [[true, 'On'], [false, 'Off']], (v) => S.setAmbience(v && s.sound))),
+    // How the app looks and reads is yours in public as much as anywhere.
+    h('section', { class: 'card' },
       h('div', { class: 'setting' }, h('div', { class: 'lbl' }, 'Reading text'),
         h('p', { class: 't-small' }, 'Size, spacing, line length, typeface and page tint.'),
         h('button', { class: 'btn', onclick: () => readingSheet() }, 'Adjust reading')),
-      seg('sound', 'Sound effects', [[true, 'On'], [false, 'Off']], (v) => { if (!v) S.setAmbience(false); }),
-      seg('ambience', 'Room tone while you read', [[true, 'On'], [false, 'Off']], (v) => S.setAmbience(v && s.sound)),
       seg('theme', 'Theme', [['system', 'Phone'], ['light', 'Light'], ['dark', 'Dark']])),
     h('button', { class: 'item', onclick: () => show('about', aboutScreen) },
       h('div', {}, h('b', {}, 'About, sources and licences'), h('span', {}, versionText())), h('span', { html: ICON.chev })),

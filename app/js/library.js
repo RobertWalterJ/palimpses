@@ -9,7 +9,7 @@
 // sentence boundaries; a sentence-by-sentence read-aloud bar; an optional
 // one-paragraph focus; glossary terms marked and defined on tap.
 
-import { h, esc, ICON, iconBtn, sayBtn, sheet, closeSheet, show, back, route, applyReading } from './ui.js';
+import { h, esc, ICON, iconBtn, sayBtn, sheet, closeSheet, show, back, route, applyReading, isQuiet } from './ui.js';
 import { Reader, sentences } from './reader.js';
 import { setRate, getRate } from './speech.js';
 import { State } from './schedule.js';
@@ -229,7 +229,7 @@ function readerScreen({ sectionId, paraId, quotes = [] }) {
       prev ? h('button', { class: 'btn', onclick: () => show('reader', readerScreen, { arg: { sectionId: prev }, replace: true }) }, '← Previous') : null,
       h('span', { class: 'spacer' }),
       next ? h('button', { class: 'btn', onclick: () => show('reader', readerScreen, { arg: { sectionId: next }, replace: true }) }, 'Next section →') : null),
-    player,
+    isQuiet() ? null : player,
   ];
 }
 

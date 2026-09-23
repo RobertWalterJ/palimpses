@@ -40,7 +40,16 @@ export const ICON = {
 export const iconBtn = (icon, label, onclick, cls = 'icon') =>
   h('button', { class: cls, type: 'button', 'aria-label': label, title: label, html: ICON[icon], onclick });
 
-export const sayBtn = (text, label = 'Read aloud') => (speechAvailable()
+// Quiet mode: "I'm in public." Nothing is offered that could make a sound.
+// app.js turns sound.js off at the same moment; this side hides the buttons.
+let quiet = false;
+export const isQuiet = () => quiet;
+export function setQuiet(v) {
+  quiet = !!v;
+  if (quiet) { stopSpeech(); stopAllReading(); }
+}
+
+export const sayBtn = (text, label = 'Read aloud') => (speechAvailable() && !quiet
   ? h('button', { class: 'icon', type: 'button', 'aria-label': label, title: label, html: ICON.speak,
     onclick: (e) => { e.stopPropagation(); unlock(); stopAllReading(); say(typeof text === 'function' ? text() : text); } })
   : null);

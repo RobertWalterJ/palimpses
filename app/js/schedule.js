@@ -29,7 +29,7 @@ export const DAY = 864e5;
 const NEW_PER_ROUND = 5;
 const MIN_NEW = 3;                   // new questions per round while some reviews are due
 const ROUND = 10;
-const NEW_PER_DAY = 12;              // new questions per day, across all rounds
+const NEW_PER_DAY = 16;              // new questions per day, across all rounds
 const BACKLOG = 14;                  // due reviews above which a round takes just one new question
 // Robert plays in short bursts while waiting, several times a day. A question
 // answered in the last COOLDOWN hours is not asked again — not in another
@@ -65,12 +65,17 @@ export function cardState(c) {
 // weeks are not a flat line.
 export const isHolding = (c) => !!c && c.st === 'review' && c.ok && c.iv >= 7 && cardState(c) === 'met';
 
-const tomorrow = () => { const d = new Date(now()); return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1, 4, 0).getTime(); };
+// A question's next look, n days from today, early in the morning.
+const inDays = (n) => { const d = new Date(now()); return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n, 4, 0).getTime(); };
+// The shortest gap between two sightings of the same question. One day meant
+// the same questions every morning; two days is still well inside what memory
+// needs, and doubles how much of the pack a day can show.
+const MIN_GAP = 2;
 
 function blank() {
   return {
     v: 1, cards: {}, days: {},
-    settings: { sound: true, readAloud: 'manual', rate: 0.97, theme: 'system' },
+    settings: { sound: true, quiet: false, readAloud: 'manual', rate: 0.97, theme: 'system' },
   };
 }
 
@@ -127,10 +132,13 @@ export const State = {
       if (c.st === 'new' || c.st === 'learning') {
         c.st = 'learning';
         c.step++;
-        // Right on two separate days graduates it; the next look is three
+        // Right on two separate days graduates it, and the next look is four
         // days out. (Right twice in one sitting was recognition, not memory.)
-        if (c.step > 1) { c.st = 'review'; c.iv = 3; c.due = now() + 3 * DAY; c.step = 0; }
-        else c.due = tomorrow();
+        if (c.step > 1) { c.st = 'review'; c.iv = 5; c.due = inDays(5); c.step = 0; }
+        // Right first time: you clearly have it, so wait three days. Wrong
+        // first time: two. (A flat "tomorrow" showed the same questions every
+        // morning.)
+        else c.due = inDays(c.first === 1 ? 3 : MIN_GAP);
       } else if (c.st === 'relearning') {
         c.iv = Math.max(1, Math.round((c.ivBefore || c.iv || 1) * 0.35));
         c.st = 'review';
@@ -149,8 +157,13 @@ export const State = {
         c.st = 'learning';
         c.step = 0;
       }
-      c.due = tomorrow();
+      // A miss used to mean "tomorrow", every time, so a question you kept
+      // getting wrong arrived every single morning. Each miss now waits a
+      // little longer: two days, then three, then four, up to five.
+      c.misses = (c.misses || 0) + 1;
+      c.due = inDays(Math.min(5, MIN_GAP + c.misses - 1));
     }
+    if (right) c.misses = 0;
     this.data.cards[id] = c;
     this.save();
     return c;
@@ -282,10 +295,11 @@ export class Round {
     const newToday = State.data.days[dayKey()]?.newN || 0;
     const perRound = pace?.newPerRound ?? NEW_PER_ROUND;
     const newRoom = beyondDaily ? Infinity : Math.max(0, (pace?.newPerDay ?? NEW_PER_DAY) - newToday);
-    // New questions scale with the reviews waiting: five when little is due,
-    // three when some is, and one — never none — under a backlog. (Forcing
-    // three into every round starved the reviews: persona study, 18 Sept.)
-    const allowance = due.length > BACKLOG ? 1 : due.length > MIN_NEW + 2 ? Math.min(MIN_NEW, perRound) : perRound;
+    // New questions keep their share of the round. Under a backlog this was
+    // one new question a round, so days filled up with the same reviews and
+    // the pack never opened up (Robert, 23 Sept: "the same questions keep
+    // coming back over and over"). The floor is now MIN_NEW while any remain.
+    const allowance = due.length > BACKLOG ? Math.min(MIN_NEW, perRound) : perRound;
     const nNew = Math.min(allowance, fresh.length, newRoom);
     // Reviews by due date, then new questions in the pack's teaching order.
     const reviews = take(due, ROUND - nNew);

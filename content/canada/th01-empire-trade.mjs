@@ -72,7 +72,7 @@ export default [
   },
   {
     id: 'macau-permission', kind: 'choice', big: 'terms', at: 1577, lens: ['own-terms', 'against-progress'],
-    prompt: 'Was Macau a conquest?',
+    prompt: 'Was Macau — Macao, as the sources spell it — a conquest?',
     answer: 'No — China granted permission',
     options: ['Yes — Portuguese soldiers took it', 'Yes — the English captured it', 'No — it was bought outright'],
     must: ['given permission to establish a factory at Macao'],

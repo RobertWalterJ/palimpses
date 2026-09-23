@@ -61,7 +61,7 @@ export default [
   },
   {
     id: 'cotoca-tiwanaku', kind: 'choice', big: 'amazon', lens: ['own-terms'],
-    prompt: 'Cotoca was a Casarabe centre in the Bolivian Amazon. Compare the earth moved to build its core with the largest structure at Tiwanaku, in the Andes.',
+    prompt: 'Cotoca was a Casarabe centre in the Bolivian Amazon. Compare the earth moved to build its core with the largest structure at the Andean site of Tiwanaku.',
     answer: 'Cotoca took about ten times as much',
     options: ['Cotoca took about a tenth as much', 'The two took about the same amount', 'No one has measured either of them'],
     must: ['ten times the amount of earth moved for the construction of the Akapana'],

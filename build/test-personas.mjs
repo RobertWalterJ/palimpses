@@ -33,7 +33,10 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const pack = JSON.parse(readFileSync(join(ROOT, 'app', 'data', 'canada.json'), 'utf8'));
 const RATINGS = (await import(pathToFileURL(join(ROOT, 'audits', '2026-09-19-questions.mjs')).href)).default;
 const R = new Map(RATINGS.map(([id, fam, role, issues]) => [id, { fam, role, issues }]));
-const QS = pack.questions.map((q) => ({ id: q.id, short: q.id.split('/')[1], big: q.ch + ':' + q.big, order: q.kind === 'order', ...R.get(q.id.split('/')[1]) }));
+// Questions written after the audit (the world chapters, the thread, and the
+// generated glossary ones) carry their own level from the pack.
+const rating = (q) => R.get(q.id.split('/')[1]) || { fam: q.level || 2, role: q.gen ? 'F' : 'D', issues: [] };
+const QS = pack.questions.map((q) => ({ id: q.id, short: q.id.split('/')[1], big: q.ch + ':' + q.big, order: q.kind === 'order', ...rating(q) }));
 
 const PERSONAS = {
   general: { name: 'General knowledge', p0: { 1: 0.55, 2: 0.30, 3: 0.25 }, guessBonus: 0.10, playsPerWeek: 4 },
