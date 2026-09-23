@@ -93,7 +93,8 @@ for (const file of files) {
       }
       for (const m of text.matchAll(/\b(\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?\s?(?:million|thousand|per cent|%|km|metres|cubic metres))\b/gi)) {
         // Questions write units out; the sources abbreviate them ("22 m tall").
-        const units = (x) => x.toLowerCase().replace(/\s*metres\b/g, ' m').replace(/\s*kilometres\b/g, ' km').replace(/\s+/g, ' ');
+        // The app writes British, the sources American: "per cent" is percent.
+        const units = (x) => x.toLowerCase().replace(/\s*metres\b/g, ' m').replace(/\s*kilometres\b/g, ' km').replace(/\bper cent\b/g, 'percent').replace(/\s+/g, ' ');
         if (!units(said).includes(units(m[0]))) flag('number', m[0]);
       }
     }

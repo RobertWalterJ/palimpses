@@ -128,7 +128,7 @@ function threadsCard() {
     ...ts.map((t) => {
       const ids = chapterIds(t.id);
       const c = counts(ids);
-      return h('button', { class: 'chrow', type: 'button', onclick: () => { S.press(); show('thread', () => threadScreen(t.id)); } },
+      return h('button', { class: 'chrow', type: 'button', onclick: () => { S.press(); show('thread', threadScreen, { arg: t.id }); } },
         h('span', { class: 'chtop' }, h('b', {}, t.title), h('span', { class: 't-small num' }, `${c.known + c.met} of ${ids.length}`)),
         h('span', { class: 't-small' }, `${t.timeline.length} dated events in ${t.lanes.length} regions · ${ids.length} questions`));
     }));
@@ -158,13 +158,14 @@ function threadScreen(id) {
   return [
     h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'Thread')),
     h('h2', { class: 'thread-title' }, t.title),
-    h('p', { class: 't-body' }, 'The same years, seen from China, Europe, North America and the Caribbean. Every date is quoted from its source.'),
+    readable('This thread', h('section', { class: 'card stack' },
+      h('p', { class: 't-body' }, 'The same years, seen from China, Europe, North America and the Caribbean. Every date is quoted from its source.'))),
     h('button', { class: 'btn primary wide', onclick: () => play(!(due || fresh), ids) }, due || fresh ? `Play this thread · ${fresh} new${due ? `, ${due} to revisit` : ''}` : 'Recall test on this thread'),
     h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'The big questions'), h('ul', { class: 'bigs' }, t.big.map((b) => h('li', {}, b.q)))),
     h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Timeline'), chips, list),
   ];
 }
-route('thread', homeScreen);
+route('thread', threadScreen);
 // "Meanwhile": events in other regions within fifteen years of a dated
 // question, from the thread timelines — the world at the same moment.
 function meanwhile(q) {
@@ -311,6 +312,17 @@ function ring(c, total) {
     <text class="sub" x="48" y="65" text-anchor="middle">met</text></svg>` });
 }
 
+// "I'm in public": shown to anyone for whom it changes something — sound on,
+// read-aloud automatic — and to anyone already in quiet mode who needs the way
+// back out.
+function quietRow() {
+  const s = State.data.settings;
+  if (!(s.quiet || s.sound || s.readAloud === 'auto')) return null;
+  return h('button', { class: 'disclose quietrow', type: 'button', 'aria-pressed': String(!!s.quiet),
+    onclick: () => { s.quiet = !s.quiet; State.save(); applySettings(); show('home', homeScreen, { replace: true }); } },
+    s.quiet ? 'In public: quiet. Tap to turn sound back on.' : 'I’m in public — go quiet');
+}
+
 function homeScreen() {
   const c = counts(IDS);
   const total = IDS.length;
@@ -344,7 +356,9 @@ function homeScreen() {
           h('button', { class: 'btn primary', style: 'flex:1', onclick: () => play(true) }, 'Recall test'),
           h('button', { class: 'btn', style: 'flex:1', onclick: () => play(false, IDS, { beyondDaily: true }) }, 'Learn more anyway')))
       : h('section', { class: 'card stack' }, h('p', { class: 't-title' }, 'You’re up to date.'), next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null),
-    voiceOfTheDay(),
+    // The switch you reach for suddenly belongs where you can reach it.
+    quietRow(),
+    !first ? mode('', 'practise', 'Recall test', 'Questions you’ve met, the ones you’re likeliest to have forgotten first. Won’t change your review dates.', () => play(true)) : null,
     first ? h('section', { class: 'card stack' },
       h('p', { class: 't-label' }, 'How it works'),
       h('p', { class: 't-body' }, 'Each question comes from an open source: John Douglas Belshaw’s textbooks on Canadian history, and new archaeology published openly. After you answer, you see the exact passage — and you can read the whole section, or have it read to you.'),
@@ -356,19 +370,15 @@ function homeScreen() {
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(c.known)), h('span', {}, h('i', { style: 'background:var(--ink)' }), 'known')),
           h('div', { class: 'stat' }, h('b', { class: 'num' }, String(run)), h('span', {}, run === 1 ? 'day' : 'days running'))),
         h('p', { class: 't-small' }, growthLine(false)))) : null,
-    !first ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Canada'), chapterRows(chapterStats(false, 'canada'))) : null,
-    !first && PACK.chapters.some((c) => c.group === 'world') ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Around the world'), chapterRows(chapterStats(false, 'world'))) : null,
-    threadsCard(),
-    !first ? mode('', 'practise', 'Recall test', 'Questions you’ve met, the ones you’re likeliest to have forgotten first. Won’t change your review dates.', () => play(true)) : null,
+    voiceOfTheDay(),
     h('nav', { class: 'tiles', 'aria-label': 'More' },
       h('button', { class: 'tile', onclick: () => { S.press(); openLibrary(); } }, h('span', { html: ICON.library }), 'Library'),
       h('button', { class: 'tile', onclick: () => { S.press(); show('progress', progressScreen); } }, h('span', { html: ICON.progress }), 'Progress'),
       h('button', { class: 'tile', onclick: () => { S.press(); show('settings', settingsScreen); } }, h('span', { html: ICON.settings }), 'Settings')),
-    (State.data.settings.quiet || State.data.settings.sound || State.data.settings.readAloud === 'auto')
-      ? h('button', { class: 'disclose quietrow', type: 'button', 'aria-pressed': String(!!State.data.settings.quiet),
-        onclick: () => { const st = State.data.settings; st.quiet = !st.quiet; State.save(); applySettings(); show('home', homeScreen, { replace: true }); } },
-        State.data.settings.quiet ? 'In public: quiet. Tap to turn sound back on.' : 'I’m in public — go quiet')
-      : null,
+    // Browsing everything, at the foot, where browsing belongs.
+    !first ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Canada'), chapterRows(chapterStats(false, 'canada'))) : null,
+    !first && PACK.chapters.some((c) => c.group === 'world') ? h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Around the world'), chapterRows(chapterStats(false, 'world'))) : null,
+    threadsCard(),
     h('nav', { class: 'foot-links', 'aria-label': 'Browse and about' },
       PACK.voices?.length ? h('button', { class: 'disclose', type: 'button', onclick: () => show('voices', voicesScreen) }, 'All the voices') : null,
       h('button', { class: 'disclose', type: 'button', onclick: () => show('about', aboutScreen) }, 'About, sources and licences'),
@@ -516,12 +526,27 @@ function yearLabel(at) { return at < 0 ? `${-at} BCE` : String(at); }
 function contextLine(q) {
   const ch = PACK.chapters.find((c) => c.id === q.ch);
   if (!ch) return null;
+  // A thread runs across regions, so "Four regions" tells the player nothing.
+  // Where a question belongs to one of the thread's lanes, that lane is the
+  // answer to "whose history is this?" — "China and Asia · 1557".
+  const lane = q.lane && ch.lanes?.find((l) => l.id === q.lane)?.name;
+  const where = q.who || lane || ch.title;
   const when = q.at != null ? yearLabel(q.at) : ch.era;
-  // "Africa · Africa, ancient times…" reads badly: where the era already
-  // names the place, it stands on its own.
-  if (when && when.toLowerCase().startsWith(ch.title.toLowerCase())) return when;
-  return [ch.title, when].filter(Boolean).join(' · ');
+  // "Africa · Africa, ancient times…" reads badly. Where the era's first
+  // phrase is already in the place name, the era stands on its own.
+  const first = String(when || '').split(',')[0].trim().toLowerCase();
+  if (when && first && where.toLowerCase().includes(first)) return when;
+  return [where, when].filter(Boolean).join(' · ');
 }
+// A card of the app's own prose, with a button that reads the whole card.
+// Quiet mode and a device without voices both give back null from sayBtn, and
+// the card is then simply itself.
+function readable(label, section) {
+  const b = sayBtn(() => section.textContent.replace(/\s+/g, ' ').trim(), `Read ${label.toLowerCase()} aloud`);
+  if (b) section.prepend(h('div', { class: 'src-head' }, h('span', { class: 'spacer' }), b));
+  return section;
+}
+
 function questionHead(q, prompt = q.prompt) {
   const { setup, ask } = splitPrompt(prompt);
   const where = contextLine(q);
@@ -698,7 +723,9 @@ function revealCard(q, ok) {
     }
   };
   out.push(h('section', { class: 'card stack key-card' },
-    h('div', { class: 'q-head' }, h('blockquote', { class: 'quote' }, key.quote), sayBtn(key.quote, 'Read the key sentence aloud')),
+    (() => { const b = sayBtn(key.quote, 'Read the key sentence aloud');
+      return b ? h('div', { class: 'src-head' }, h('p', { class: 't-label' }, 'From the source'), h('span', { class: 'spacer' }), b) : null; })(),
+    h('blockquote', { class: 'quote' }, key.quote),
     h('p', { class: 'cite' }, `§${key.sec}`),
     toggle, more));
   out.push(bigPicture(q), meanwhile(q));
@@ -724,6 +751,9 @@ function paragraphWithPlayer(text, quotes) {
     passage);
 }
 
+// The last round-end, kept so that reading a passage from it and pressing
+// back brings it back rather than Home.
+let lastDone = null;
 function finish() {
   if (round.placement) return placementDone();
   round.finished = true;
@@ -743,10 +773,10 @@ function finish() {
   const heldBefore = round.heldBefore ?? null;
   const heldNow = IDS.filter((id) => isHolding(State.card(id))).length;
   if (finished.length && !(tally.n && tally.right === tally.n)) setTimeout(() => S.fanfare(), 400);
-  show('done', () => [
+  const doneView = () => [
     h('div', { class: 'topbar' }),
     h('h1', { class: 't-title', style: 'font-size:1.8rem' }, practice ? 'Recall test done' : 'Round done'),
-    h('section', { class: 'card stack' },
+    readable('This round', h('section', { class: 'card stack' },
       h('p', { class: 'answer' }, `${tally.right} of ${tally.n} right.`),
       practice && tally.n ? h('p', { class: 't-body' }, 'These were the questions you were likeliest to have forgotten.') : null,
       practice && round.early ? h('p', { class: 't-small' }, `${round.early} came back sooner than usual: you’ve been through everything you’ve met in the last few hours. Learn brings new questions.`) : null,
@@ -755,7 +785,7 @@ function finish() {
       !practice ? h('p', { class: 't-body' }, growthLine()) : null,
       turnedToday.length ? h('p', { class: 't-body' }, h('b', {}, `${turnedToday.length} turned around today`), ': missed the first time, right now.') : null,
       !practice && heldBefore != null && heldNow > heldBefore ? h('p', { class: 't-body' }, h('b', {}, `${heldNow - heldBefore} more holding`), ': right after a week or more away.') : null,
-      !due && next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null),
+      !due && next ? h('p', { class: 't-body' }, nextDueSentence(next)) : null)),
     ...finished.map((s) => {
       const q0 = s.ids.map((id) => Q.get(id)).find((q) => q.ev) || Q.get(s.ids[0]);
       const e = evOf(q0)[0];
@@ -780,9 +810,11 @@ function finish() {
         : scoped && (sDue || sFresh) ? h('button', { class: 'btn primary wide', onclick: () => play(false, scope) }, 'Another round from this chapter')
           : due || fresh ? h('button', { class: 'btn primary wide', onclick: () => play(false) }, 'Another round') : null,
       h('button', { class: `btn wide${practice || due || fresh ? '' : ' primary'}`, onclick: () => show('home', homeScreen, { replace: true }) }, 'Home')),
-  ], { replace: true });
+  ];
+  lastDone = doneView;
+  show('done', doneView, { replace: true });
 }
-route('done', homeScreen);
+route('done', () => (lastDone ? lastDone() : homeScreen()));
 
 // ── progress ────────────────────────────────────────────────────────────
 function dayLabel(key) {
@@ -817,12 +849,12 @@ function progressScreen() {
     .sort((a, b) => b[1].last - a[1].last).slice(0, 8).map(([id]) => Q.get(id));
   return [
     h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'Progress')),
-    h('section', { class: 'card stack' },
+    readable('What you can answer', h('section', { class: 'card stack' },
       h('p', { class: 't-label' }, 'What you can answer'),
       h('p', { class: 'answer num' }, `${State.canAnswer(IDS)}`, h('span', { class: 't-small' }, ` of ${total}`)),
       h('p', { class: 't-body' }, growthLine(false)),
       growthChart(),
-      h('p', { class: 'key-line t-small' }, h('i', { class: 'kc' }), 'can answer: right the last time it was asked', h('i', { class: 'kk' }), 'known: right after three weeks away')),
+      h('p', { class: 'key-line t-small' }, h('i', { class: 'kc' }), 'can answer: right the last time it was asked', h('i', { class: 'kk' }), 'known: right after three weeks away'))),
     State.data.placement ? (() => {
       const pl = State.data.placement;
       const nowCan = State.canAnswer(pl.ids);

@@ -34,6 +34,17 @@ for (const f of readdirSync(join(ROOT, 'corpus'))) {
   }
 }
 
+// Terms already asked, across every chapter: "caliph" appeared in both the
+// Africa and the Islamic world chapters, with the same prompt and the same
+// evidence. First chapter to reach it keeps it.
+const ASKED = new Set();
+// Every usable definition in the library, as the pool wrong options are drawn
+// from. Short enough to read on a phone, and not so short as to be a label.
+const DISTRACTORS = TERMS.filter((t) => {
+  const n = t.meaning.trim().split(/\s+/).length;
+  return n >= 3 && n <= 18 && t.term.length <= 40 && !t.meaning.toLowerCase().includes(t.term.toLowerCase());
+});
+
 const PACKS = [
   {
     id: 'canada', title: 'Canada', dir: 'content/canada',
@@ -89,7 +100,10 @@ for (const pack of PACKS) {
     const generated = glossaryQuestions(pack, chId, mod);
     for (const q of [...ordered, ...generated]) {
       if (q.gen) { questions.push(q); continue; }
-      const base = { id: `${pack.id}/${q.id}`, ch: chId, kind: q.kind, prompt: q.prompt, lens: q.lens || [], big: q.big, ...(q.depth ? { depth: q.depth } : {}), ...(q.at != null ? { at: q.at } : {}) };
+      const base = { id: `${pack.id}/${q.id}`, ch: chId, kind: q.kind, prompt: q.prompt, lens: q.lens || [], big: q.big, ...(q.depth ? { depth: q.depth } : {}), ...(q.at != null ? { at: q.at } : {}),
+        // Whose history the question asks about, where the chapter title is too
+        // broad: a thread lane ('China and Asia'), or a people named outright.
+        ...(q.lane ? { lane: q.lane } : {}), ...(q.who ? { who: q.who } : {}) };
       if (q.kind === 'order') {
         questions.push({ ...base, items: q.items.map((it) => ({ label: it.label, at: it.at, when: it.when || null, ev: evOut(it.ev) })) });
       } else {
@@ -107,7 +121,7 @@ for (const pack of PACKS) {
   // (1 commonly known, 2 school-level, 3 specialist), from the question audit.
   // The placement check samples across these levels.
   const LEVEL = new Map((await import(pathToFileURL(join(ROOT, 'audits', '2026-09-19-questions.mjs')).href)).default.map(([id, fam]) => [id, fam]));
-  for (const q of questions) q.level = LEVEL.get(q.id.split('/')[1]) ?? 2;
+  for (const q of questions) q.level = LEVEL.get(q.id.split('/')[1]) ?? q.level ?? 2;
   const placement = (await import(pathToFileURL(join(ROOT, pack.dir, 'placement.mjs')).href)).default.map((a) => `${pack.id}/${a}`);
   const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions, placement, voices: await loadVoices(pack) };
   writeFileSync(join(ROOT, 'app', 'data', pack.id + '.json'), JSON.stringify(out));
@@ -142,7 +156,7 @@ function inPrefix(sec, prefixes) { return prefixes.some((pr) => sec === pr || se
 function glossaryQuestions(pack, chId, mod) {
   const from = mod.GLOSSARY_FROM || [];
   if (!from.length) return [];
-  const seen = new Set();
+  const seen = ASKED;
   const pool = TERMS.filter((t) => inPrefix(t.sec, from)).filter((t) => {
     const k = t.term.toLowerCase();
     const n = words(t.meaning);
@@ -160,15 +174,34 @@ function glossaryQuestions(pack, chId, mod) {
     // place against places — so the answer can't be picked by topic alone
     // ("biome" beside "an Islamic title"); then closeness in length.
     const kind = kindOf(t.meaning);
-    const cands = pool.filter((o) => o !== t && Math.abs(words(o.meaning) - n) <= Math.max(3, Math.round(n * 0.4)))
+    // Drawn from every glossary in the library rather than this chapter's own
+    // answers. Drawing from the chapter made a closed loop: each definition
+    // came round as three other questions' wrong options, so a chapter of 20
+    // terms felt like the same four sentences over and over.
+    const cands = DISTRACTORS.filter((o) => o.term.toLowerCase() !== t.term.toLowerCase() && o.meaning !== t.meaning
+      && Math.abs(words(o.meaning) - n) <= Math.max(3, Math.round(n * 0.4)))
       .map((o) => ({ o, r: (kind && kindOf(o.meaning) === kind ? 0 : 6) + Math.abs(words(o.meaning) - n) + rnd() * 3 })).sort((a, b) => a.r - b.r).map((x) => x.o);
     const wrong = [];
     for (const o of cands) if (wrong.length < 3 && !wrong.some((w) => w.meaning === o.meaning)) wrong.push(o);
     if (wrong.length < 3) continue;
     if (n - Math.max(...wrong.map((w) => words(w.meaning))) >= 3) continue;
-    const big = (mod.BIG || []).find((b) => inPrefix(t.sec, b.src || [])) || mod.BIG?.[0];
+    // A term whose section belongs to none of the chapter's big questions is
+    // left out rather than filed under the first one. The app groups a round
+    // by big question, so a mis-filed term breaks the grouping and the
+    // "bigger picture" card tells the player something untrue.
+    const big = (mod.BIG || []).find((b) => inPrefix(t.sec, b.src || []));
+    if (!big) continue;
     const slug = t.term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    out.push({
+    // Half the questions run the other way — the meaning given, the word
+    // asked for. Same evidence, a different thing to do with it, and four
+    // short options instead of four long ones.
+    const reversed = rnd() < 0.5 && wrong.every((w) => w.term.length <= 28);
+    out.push(reversed ? {
+      id: `${pack.id}/${chId}/g-${slug}`, ch: chId, kind: 'choice', gen: 'glossary', lens: ['record'], big: big.id, depth: 'detail', level: 3,
+      prompt: `Which word means “${t.meaning.replace(/\.$/, '')}”?`,
+      answer: t.term, options: wrong.map((w) => w.term),
+      ev: [evOut({ p: t.id, q: t.meaning })],
+    } : {
       id: `${pack.id}/${chId}/g-${slug}`, ch: chId, kind: 'choice', gen: 'glossary', lens: ['record'], big: big.id, depth: 'detail', level: 3,
       prompt: `Which of these describes “${t.term}”?`,
       answer: cap(t.meaning), options: wrong.map((w) => cap(w.meaning)),
