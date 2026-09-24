@@ -24,6 +24,25 @@ let WHERE = null;           // para id → { book, chapter, section, para }
 let TERMS = null;           // lowercased term → [glossary rows]
 let TERM_RE = null;
 
+// Everything that needs the books goes through here. They are 7 MB and most
+// sittings never open them, so they are fetched on demand; while they are on
+// their way the screen says so rather than sitting blank.
+function whenLoaded(go) {
+  if (LIB) return go(false);
+  show('loading', () => [
+    h('div', { class: 'topbar' }, iconBtn('back', 'Back', back)),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-title' }, 'Fetching the books'),
+      h('p', { class: 't-body' }, 'Both volumes, in full. They’re downloaded once and then kept on this device.')),
+  ]);
+  loadLibrary().then(() => go(true), () => show('loading', () => [
+    h('div', { class: 'topbar' }, iconBtn('back', 'Back', back)),
+    h('section', { class: 'card stack' },
+      h('p', { class: 't-title' }, 'The books didn’t arrive'),
+      h('p', { class: 't-body' }, 'You need a connection the first time you open them. The questions work without them.')),
+  ]));
+}
+
 export async function loadLibrary() {
   if (LIB) return LIB;
   LIB = window.__PALIMPSEST_LIB?.canada || await (await fetch('data/canada-library.json')).json();
@@ -101,7 +120,9 @@ export function showTerm(key) {
 }
 
 // ── the reader ──────────────────────────────────────────────────────────
-export function openReader(sectionId, paraId = null, quotes = []) { show('reader', readerScreen, { arg: { sectionId, paraId, quotes } }); }
+export function openReader(sectionId, paraId = null, quotes = []) {
+  whenLoaded((replace) => show('reader', readerScreen, { arg: { sectionId, paraId, quotes }, replace }));
+}
 route('reader', readerScreen);
 
 function findSection(id) {
@@ -267,8 +288,12 @@ export function readingSheet(onChange) {
 // ── the library screens ─────────────────────────────────────────────────
 route('library', libraryScreen);
 route('entry', entryScreen);
-export function openLibrary(tab = 'peoples') { show('library', libraryScreen, { arg: { tab } }); }
-export function openEntry(id) { show('entry', entryScreen, { arg: { id } }); }
+export function openLibrary(tab = 'peoples') {
+  whenLoaded((replace) => show('library', libraryScreen, { arg: { tab }, replace }));
+}
+export function openEntry(id) {
+  whenLoaded((replace) => show('entry', entryScreen, { arg: { id }, replace }));
+}
 
 function libraryScreen({ tab = 'peoples' } = {}) {
   const tabs = [['peoples', 'Peoples & periods'], ['glossary', 'Glossary'], ['read', 'Read the books'], ['search', 'Search']];

@@ -100,6 +100,10 @@ export function show(name, render, { replace = false, arg = null } = {}) {
   try { replace || !history.state ? history.replaceState(state, '') : history.pushState(state, ''); } catch { /* sandboxed */ }
   paint();
 }
+// Redraw the screen as it stands — used when something the current screen
+// wanted (the books) has finished arriving.
+export function repaint() { if (current) paint(); }
+export const currentName = () => current?.name || null;
 function paint() {
   const kids = current.render(current.arg);
   $app.replaceChildren(...[].concat(kids).filter(Boolean));

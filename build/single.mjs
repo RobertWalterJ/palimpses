@@ -32,7 +32,11 @@ let fonts = readFileSync(join(APP, 'fonts', 'fonts.css'), 'utf8')
 const css = readFileSync(join(APP, 'styles.css'), 'utf8');
 const safe = (s) => s.replace(/<\/script/gi, '<\\/script');
 const data = safe(readFileSync(join(APP, 'data', 'canada.json'), 'utf8'));
-const lib = safe(readFileSync(join(APP, 'data', 'canada-library.json'), 'utf8'));
+// The books are NOT inlined: they are written beside the page as
+// data/canada-library.json and fetched on demand (library.js). Inlining them
+// made every first visit a 3 MB download for a quiz that fits in a tenth of
+// that.
+const libFile = readFileSync(join(APP, 'data', 'canada-library.json'));
 
 // Function replacers throughout: a replacement STRING treats `$&`, `$'` and
 // `` $` `` specially, and minified code or the books' text can contain them.
@@ -53,8 +57,9 @@ const html = readFileSync(join(APP, 'index.html'), 'utf8')
   .replace('<link rel="stylesheet" href="fonts/fonts.css">', () => `<style>${fonts}</style>`)
   .replace('<link rel="stylesheet" href="styles.css">', () => `<style>${css}</style>`)
   .replace('<script type="module" src="js/app.js"></script>', () =>
-    `<script>window.__PALIMPSEST_BUILD=${BUILD};window.__PALIMPSEST_DATA={canada:${data}};window.__PALIMPSEST_LIB={canada:${lib}};</script>\n<script>${safe(js)}</script>`);
+    `<script>window.__PALIMPSEST_BUILD=${BUILD};window.__PALIMPSEST_DATA={canada:${data}};</script>\n<script>${safe(js)}</script>`);
 
-mkdirSync(join(ROOT, 'dist'), { recursive: true });
+mkdirSync(join(ROOT, 'dist', 'data'), { recursive: true });
 writeFileSync(join(ROOT, 'dist', 'palimpsest.html'), html);
-console.log(`wrote dist/palimpsest.html — ${(html.length / 1024).toFixed(0)} KB`);
+writeFileSync(join(ROOT, 'dist', 'data', 'canada-library.json'), libFile);
+console.log(`wrote dist/palimpsest.html — ${(html.length / 1024).toFixed(0)} KB, with dist/data/canada-library.json — ${(libFile.length / 1024 / 1024).toFixed(1)} MB beside it`);

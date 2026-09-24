@@ -16,7 +16,7 @@ import { State, Round, cardState, isHolding, nextDueSentence, shuffle, now, DAY,
 import { initSpeech, unlock, say, setRate, onSpeaking } from './speech.js';
 import { Reader, sentences } from './reader.js';
 import * as S from './sound.js';
-import { h, esc, ICON, iconBtn, sayBtn, sheet, closeSheet, show, back, route, setLeaveGuard, applyReading, READ_DEFAULTS, setQuiet, isQuiet } from './ui.js';
+import { h, esc, ICON, iconBtn, sayBtn, sheet, closeSheet, show, back, route, setLeaveGuard, applyReading, READ_DEFAULTS, setQuiet, isQuiet, repaint, currentName } from './ui.js';
 import { loadLibrary, openLibrary, openReader, openEntry, readingSheet, sectionOf } from './library.js';
 
 let PACK = null;
@@ -44,9 +44,11 @@ async function boot() {
   PACK = window.__PALIMPSEST_DATA?.canada || await (await fetch('data/canada.json')).json();
   for (const q of PACK.questions) Q.set(q.id, q);
   IDS = PACK.questions.map((q) => q.id);
-  await loadLibrary();
   State.snapshot(IDS);
   show('home', homeScreen, { replace: true });
+  // The books follow, in the background: the questions don't wait for 7 MB.
+  // Home shows a link into the passage behind today's voice once they land.
+  loadLibrary().then(() => { if (currentName() === 'home') repaint(); }, () => {});
 }
 
 function applySettings() {
@@ -971,6 +973,11 @@ const longDate = (iso) => iso ? new Date(iso + 'T12:00:00').toLocaleDateString('
 function versionText() { return `v${BUILD.v} · ${BUILD.commit}${BUILD.date ? ' · ' + longDate(BUILD.date) : ''}`; }
 const link = (href, text) => h('a', { href, target: '_blank', rel: 'noopener' }, text);
 const CC_BY = 'https://creativecommons.org/licenses/by/4.0/';
+const LICENCE_URL = {
+  'CC BY 4.0': CC_BY,
+  'CC BY-NC-SA 4.0': 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+  'CC BY-SA 4.0': 'https://creativecommons.org/licenses/by-sa/4.0/',
+};
 
 function aboutScreen() {
   // One entry per primary source behind the voices, from the pack itself.
@@ -994,12 +1001,12 @@ function aboutScreen() {
       h('p', { class: 't-body' }, 'Every question and every voice is checked word for word against the source it cites before the app can be built. If a quotation isn’t in the source, the build fails.')),
     h('section', { class: 'card stack' },
       h('p', { class: 't-label' }, 'Sources for the questions and library'),
-      h('p', { class: 't-body' }, 'John Douglas Belshaw, ', link('https://opentextbc.ca/preconfederation/', 'Canadian History: Pre-Confederation'),
-        ' (BCcampus, 2015) and ', link('https://opentextbc.ca/postconfederation/', 'Canadian History: Post-Confederation'),
-        ' (BCcampus, 2016), with sections by contributing historians credited where they appear. ', link(CC_BY, 'CC BY 4.0'), '.'),
-      h('p', { class: 't-body' }, 'Heiko Prümers, Carla Jaimes Betancourt, José Iriarte, Mark Robinson and Martin Schaich, ',
-        link('https://www.nature.com/articles/s41586-022-04780-4', 'Lidar reveals pre-Hispanic low-density urbanism in the Bolivian Amazon'),
-        ', Nature 606 (2022). ', link(CC_BY, 'CC BY 4.0'), '.'),
+      // Built from the books the questions actually cite, so this list cannot
+      // drift out of date with the pack: crediting them is a condition of
+      // their licences, not a courtesy.
+      ...(PACK.sources || []).map((b) => h('p', { class: 't-body' },
+        b.author + ', ', link(b.web, b.title), ` (${b.publisher}, ${b.year}). `,
+        b.licence === 'Public domain' ? 'Public domain.' : link(LICENCE_URL[b.licence] || CC_BY, b.licence))),
       h('p', { class: 't-small' }, 'Adapted: footnotes and citation markers moved or removed; figures, image credits and reading lists left out; text split into sentences for reading aloud. Texts as retrieved 18 September 2026.')),
     voiceBooks.length ? h('section', { class: 'card stack' },
       h('p', { class: 't-label' }, 'Sources for the voices'),

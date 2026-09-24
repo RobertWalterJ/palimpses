@@ -15,9 +15,36 @@ eCampusOntario Open Library repository (handles 123456789/235 and /234).
 Text only: the books' figures carry their own, varied licences (some
 NoDerivatives) and are not used.
 
+**OpenStax, *World History*, volumes 1 and 2 (Rice University, 2023).**
+Licensed CC BY-NC-SA 4.0. <https://openstax.org/details/books/world-history-volume-1>.
+Retrieved 2026-09-19 as CNXML from <https://github.com/openstax/osbooks-world-history>.
+
+**OpenStax, *Introduction to Anthropology* (Hasty, Lewis and Snipes; Rice
+University, 2022).** Licensed CC BY-NC-SA 4.0, stated in the collection XML
+itself. Retrieved 2026-09-23 as CNXML from
+<https://github.com/openstax/osbooks-introduction-anthropology>. Chapter 7,
+economic anthropology, is the source for the "Exchange and obligation" chapter —
+the claim about barter, gift and debt that this app's brief rests on, asked here
+in a textbook's words rather than asserted in ours.
+
+**Heinrich Prümers et al., "Lidar reveals pre-Hispanic low-density urbanism in
+the Bolivian Amazon", *Nature* 606 (2022).** CC BY 4.0, retrieved as JATS XML
+from Europe PMC.
+
+### Public domain
+
+*The History of Mary Prince* (1831) · Anders Ljungstedt, *An Historical Sketch
+of the Portuguese Settlements in China* (1836) · *Haytian Papers*, edited by
+Prince Saunders (W. Reed, London, 1816), the state papers of Haiti in English,
+retrieved 2026-09-23 from the Internet Archive (`haytianpaperscol00henr`).
+
+## Considered and rejected
+
+Sources whose licences do not permit this use, and the reasoning, are recorded
+in `audits/2026-09-23-source-hunt.md`. NoDerivatives is the usual blocker.
+
 ## Planned
 
-OpenStax *World History* vols 1–2 and *Introduction to Anthropology* — CC BY-NC-SA 4.0.
 OpenLearn (The Open University) — CC BY-NC-SA 4.0.
 SlaveVoyages — CC BY-NC.
 

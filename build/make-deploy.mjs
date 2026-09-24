@@ -41,6 +41,9 @@ writeFileSync(join(OUT, 'index.html'), html);
 writeFileSync(join(OUT, 'sw.js'), readFileSync(join(ROOT, 'app', 'sw.js'), 'utf8').replace("'palimpsest-v1-dev'", JSON.stringify('palimpsest-v1-' + build)));
 cpSync(join(ROOT, 'app', 'manifest.webmanifest'), join(OUT, 'manifest.webmanifest'));
 for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png']) cpSync(join(ROOT, 'app', 'icons', f), join(OUT, 'icons', f));
+// The books, fetched on demand from beside the page.
+mkdirSync(join(OUT, 'data'), { recursive: true });
+cpSync(join(ROOT, 'dist', 'data', 'canada-library.json'), join(OUT, 'data', 'canada-library.json'));
 writeFileSync(join(OUT, '.nojekyll'), '');
 
 // Everything the worker precaches must exist.

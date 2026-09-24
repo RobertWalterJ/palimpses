@@ -7,7 +7,7 @@
 // The whole app is one HTML file. Network first, so a new deploy arrives on
 // the next open with signal; the cached copy is the offline fallback.
 
-const VERSION = "palimpsest-v1-1e5302e-202609232216";   // stamped per deploy by make-deploy.mjs
+const VERSION = "palimpsest-v1-f0203ed-202609240152";   // stamped per deploy by make-deploy.mjs
 const PREFIX = 'palimpsest-';
 const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 

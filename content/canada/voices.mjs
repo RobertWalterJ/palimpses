@@ -100,6 +100,22 @@ export default [
     q: 'I have been a slave myself--I know what slaves feel--I can tell by myself what other slaves feel, and by what they have told me.',
   },
   {
+    // Haiti speaking for itself, in English, while other states refused to
+    // recognise it: a general of the revolution telling the French commander
+    // what proof he requires before he will submit.
+    id: 'christophe-proof', p: 'haytian1816-p76',
+    who: 'Henry Christophe, general of the Haitian revolution and later king, to General Leclerc', when: '1802',
+    recorded: 'Printed in the state papers Prince Saunders gathered for an English readership, London, 1816',
+    // The OCR reads this line's opening "I" as "T"; the quote starts after it.
+    q: 'a proof which must convince me of the intention to procure the liberty and equality of the population of this colony',
+  },
+  {
+    id: 'hayti-dating', p: 'haytian1816-p281',
+    who: 'The state of Hayti, dating its own decrees', when: '1810',
+    recorded: 'From the royal proclamations Prince Saunders published in London in 1816',
+    q: 'Done at our Palace of Cape Henry, the 8th October 1810, in the seventh year of the independence of Hayti.',
+  },
+  {
     id: 'las-casas', p: 'pre-1.2-p11',
     who: 'Bartolomé de las Casas, Spanish priest in the Caribbean', when: '1500s',
     recorded: 'Quoted in Belshaw',

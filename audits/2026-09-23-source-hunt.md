@@ -80,6 +80,17 @@ readability, and scholarly quality. "NC" flags a NonCommercial licence — fine
 here, since this project's own content is already CC BY-NC-SA 4.0 and the app is
 never sold, but it permanently forecloses ever selling it.
 
+Thirty-one candidates are listed in three tables below, grouped by region because
+they were verified in three parallel passes. **If you only do six things**, in
+this order: the Pressbooks XHTML export trick (method section — it closes
+PLAN.md item 7 for free); **candidate 1**, the Voices of formerly Enslaved
+Corpus; **candidate 7**, OpenStax *Introduction to Anthropology* (closes PLAN.md
+item 8); **candidate 15**, *Histories of Indigenous Peoples and Canada* (closes
+much of PLAN.md item 5); **candidate 24**, Ringmar's non-European history of
+international relations; and **candidate 2**, the *Haytian Papers*, which is the
+cheapest possible way to give the app a Haitian Revolution it currently has
+nothing on.
+
 | # | Source | Publisher / author | Licence | Format | Fetchable | Priority |
 |---|---|---|---|---|---|---|
 | 1 | Voices of formerly Enslaved Corpus (pilot v0.1) | Elmerot, Olsson & Rönnbäck, Univ. of Gothenburg / Språkbanken Text, 2026 | **CC BY-SA 4.0** (underlying texts public domain) | XML, 10.3M tokens, 405k sentences | yes (GitLab tarball) | 1 |
@@ -113,6 +124,23 @@ Verified in a parallel pass; the two strongest licence claims in each group
 | 21 | *Historia* (Historical Association of South Africa) | UP Journals, on SciELO South Africa, current | **CC BY 4.0** | full-text HTML | yes | 3 |
 | 22 | *Knowing Home: Braiding Indigenous Science with Western Science*, Books 1–2 | Gloria Snively & **Wanosts'a7 Lorna Williams** (Lil'wat), eds.; Univ. of Victoria / BCcampus, 2016 & 2018 | **CC BY-NC-SA 4.0** (NC) | Pressbooks HTML, 15+ chapters | yes | 3 |
 | 23 | *Studia Historiae Ecclesiasticae* | Church History Society of Southern Africa / UNISA Press, on SciELO ZA | **CC BY-SA 4.0** | full-text HTML | yes | 3 |
+
+### China and East Asia, South Asia and the Indian Ocean, the Islamic world
+
+Also verified in a parallel pass; candidates 24 and 30 were re-fetched and
+confirmed independently, and the licence claim for candidate 31 was corrected in
+the process (see its entry).
+
+| # | Source | Publisher / author | Licence | Format | Fetchable | Priority |
+|---|---|---|---|---|---|---|
+| 24 | *History of International Relations: A Non-European Perspective* | Erik Ringmar, Open Book Publishers, 2019 | **CC BY 4.0** | XHTML, ch1–ch8 | yes | 2 |
+| 25 | Europe PMC CC BY subset of *Medical History* and *Social History of Medicine* | Cambridge University Press | **CC BY 4.0** per article | JATS XML | yes | 2 |
+| 26 | Public-domain scholarly translations: Faxian tr. **James Legge** (1886) #2124; Legge's *Chinese Classics* #3100, #3330, #4094; *Travels of Marco Polo* (Yule–Cordier 1903) #10636, #12410; Nicholson, *A Literary History of the Arabs* (1907) #37985 | Project Gutenberg | **Public domain** | plain text + HTML | yes | 2 |
+| 27 | *Tellings and Texts: Music, Literature and Performance in North India* | Francesca Orsini & Katherine Butler Schofield, eds., OBP, 2015 | **CC BY 4.0** | XHTML | yes | 2 |
+| 28 | *The Official Indonesian Qurʾān Translation* | Fadhli Lukman, OBP, 2022 (The Global Qurʾān) | **CC BY 4.0** | XHTML, ch1–ch8 | yes | 2 |
+| 29 | *A Short History of Transport in Japan from Ancient Times to the Present* | John Andrew Black, OBP, 2022 | **CC BY-NC 4.0** (NC) | XHTML, ch1–ch9 | yes | 2 |
+| 30 | *Fluid Matter(s): Flow and Transformation in the History of the Body* | Natalie Köhle & Shigehisa Kuriyama, eds., ANU Press, 2020 | **CC BY-NC-ND 4.0** — ND, see caveat | HTML chapters (Shorthand wrapper) | yes | low |
+| 31 | Michigan Asian Studies Open Access collection (Center for Chinese Studies) | University of Michigan Press / LRCCS, on Fulcrum | **CC BY-NC-ND 4.0** per title — ND, see caveat; a few are CC BY-NC and some have no CC licence at all | EPUB (XHTML inside) | yes | low |
 
 ---
 
@@ -209,10 +237,16 @@ as well as British Caribbean. It is the source that lets the Caribbean pack be
 built from scholarship rather than only from nineteenth-century primary texts.
 
 **How to fetch it.** Article full-text HTML at
-`https://brill.com/view/journals/nwig/<vol>/<issue>/article-p<page>_<n>.xml` —
-tested `…/nwig/100/1-2/article-p153_18.xml` (HTTP 200, 292 KB, 14 body paragraphs
-over 250 characters, prose present in `<p>` tags). Requires a browser
-User-Agent. Discover articles and confirm each one's licence first via
+`https://brill.com/view/journals/nwig/<vol>/<issue>/article-p<page>_<n>.xml`, and
+for ahead-of-print
+`…/nwig/aop/article-10.1163-22134360-bja<nnnnn>/article-10.1163-22134360-bja<nnnnn>.xml`.
+Tested twice: a review at `…/nwig/100/1-2/article-p153_18.xml` (HTTP 200, 292 KB,
+14 body paragraphs) and a **research article** at `…/aop/…bja10044…` (HTTP 200,
+973 KB, **325 prose paragraphs**, `creativecommons.org/licenses/by/4.0` present in
+the page) — on cultural factors behind the National United Freedom Fighters'
+guerrilla war in Trinidad and Tobago, 1972–75, after the 1970 Black Power Revolt.
+Full prose, in `<p>` tags, with a browser User-Agent. Discover articles and
+confirm each one's licence first via
 `https://api.crossref.org/journals/2213-4360/works`.
 
 ### 7. OpenStax *Introduction to Anthropology* — the Graeber thread, ready to build
@@ -426,6 +460,78 @@ method section), which returns each book in the Belshaw export format.
 `/wp-json/pressbooks/v2/toc` and `/wp-json/pressbooks/v2/chapters?per_page=100`.
 Guessed chapter slugs 404 on every one of these sites.
 
+### 24. Ringmar, *History of International Relations: A Non-European Perspective*
+
+Erik Ringmar, Open Book Publishers, Cambridge, 2019. **CC BY 4.0** — verified on
+the book's own copyright page,
+`https://books.openbookpublishers.com/10.11647/obp.0074/copyright.xhtml`: "This
+work is licensed under a Creative Commons Attribution 4.0 International license
+(CC BY 4.0). This license allows you to share, copy, distribute and transmit the
+work; to adapt the work and to make commercial use of the work…". Eight chapters
+at `…/obp.0074/ch<n>.xhtml`, ch1–ch8 HTTP 200, ch9 404. Chapter 5 tested
+independently: 110 KB, 42 prose paragraphs, opening "In the thirteenth and
+fourteenth centuries, the Mongols created the largest contiguous empire the world
+has ever known."
+
+**What it teaches.** Chapter 2 China and East Asia, 3 India and Indianization,
+4 The Muslim Caliphates, 5 The Mongol Khanates — a whole history built on the
+premise that Europe is not the centre, which is exactly this app's stated premise
+("each pack starts from its own people, on their own terms"). Where OpenStax
+World History compresses tribute systems, Indianization and the caliphates into
+survey paragraphs, Ringmar gives chapter-length analytical prose, plus boxed
+vignettes that make good verbatim stems. Best licence, best fit, cheapest
+ingest of anything in priority 2 — and it is a book the app could build a whole
+pack on rather than mine for a few questions.
+
+### 25. *Medical History* and *Social History of Medicine* via Europe PMC
+
+Two Cambridge University Press journals with a large CC BY subset, reachable
+through the pipeline the app already has. Licence is machine-readable inside the
+JATS itself — the `<license>` element of, e.g.,
+`https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13311344/fullTextXML`
+carries `creativecommons.org/licenses/by/4.0/` — and Europe PMC exposes it as a
+search facet, so a candidate list can be built with
+`…/search?query=JOURNAL:"Medical History" AND LICENSE:"cc by"&format=json&resultType=core`
+and each full text pulled at `…/rest/<PMCID>/fullTextXML`. 324 CC BY articles
+across the two journals; 188 open-access hits in *Medical History* for India and
+China alone.
+
+**What it teaches.** Peer-reviewed, footnoted scholarship on colonial South Asia
+and East Asian medicine — titles seen in testing include "Nursing the colonised:
+the politics of representation of the Western nurse in plague-stricken Bombay",
+"'The Gendered Terrain of Disaster?' India and the Plague, c. 1896–1918", and
+"The mental hygiene movement: the birth of global mental health in India".
+Unlike a textbook it keeps growing, and it reaches a granularity no survey can.
+Combined with the Cambridge `core-reader` route (candidate 8) and Crossref
+licence filtering, this makes current scholarship a renewable source for the app
+rather than a one-off ingest.
+
+### 26. Public-domain scholarly translations for Asia and the Islamic world
+
+All plain text through the existing `PLAIN` pipeline, translator and date checked
+so the *translation* is out of copyright, not merely the original:
+
+- **Faxian**, *A Record of Buddhistic Kingdoms*, tr. **James Legge** (Clarendon Press, 1886) — Gutenberg **#2124** (316 KB). Legge died 1897, so public domain everywhere. A fifth-century Chinese monk's eyewitness account of Buddhist India and the sea route home — the Indian Ocean world described by someone crossing it.
+- **Legge**, *The Chinese Classics* — **#3100** (350 KB), **#3330** (Analects), **#4094**.
+- ***The Travels of Marco Polo***, Yule–Cordier edition, 1903 — **#10636**, **#12410** (2.3 MB). Heavily annotated, on Yuan China.
+- **Reynold A. Nicholson**, *A Literary History of the Arabs* (1907) — **#37985** (1.2 MB). Nicholson died 1945, so public domain in life+70 jurisdictions since 2016 and in the US as a pre-1929 work.
+
+Note: `gutendex.com` is effectively unusable (301 without `-L`, then 40-second
+timeouts) — query `gutenberg.org/ebooks/search/?query=…` directly and fetch from
+`https://www.gutenberg.org/cache/epub/<id>/pg<id>.txt`.
+
+### 27, 28, 29. Three more Open Book Publishers titles
+
+- **Francesca Orsini and Katherine Butler Schofield, eds., *Tellings and Texts: Music, Literature and Performance in North India*** (OBP, 2015) — **CC BY 4.0**, `…/obp.0062/copyright.xhtml`. Mughal and post-Mughal courtly music, Hindi/Urdu/Persian literary performance, Sufi and bhakti oral traditions, patronage and manuscript transmission, with Muzaffar Alam on the languages of political Islam in India. The texture — who performed what, for whom, in which language, under which patron — that no survey carries.
+- **Fadhli Lukman, *The Official Indonesian Qurʾān Translation*** (OBP, 2022, The Global Qurʾān series) — **CC BY 4.0**, `…/obp.0289/copyright.xhtml`, ch1–ch8. How a nation-state commissions, revises and polices a Qurʾān translation, in the largest Muslim-majority country. Modern Islamic intellectual history as state formation.
+- **John Andrew Black, *A Short History of Transport in Japan from Ancient Times to the Present*** (OBP, 2022) — **CC BY-NC 4.0** (NC), `…/obp.0281/copyright.xhtml`, ch1–ch9. Tokugawa road networks through Meiji railways.
+
+**Standing caveat on OBP: probe `ch1.xhtml` before committing to a title.**
+XHTML availability varies per book. *A Handbook and Reader of Ottoman Arabic*
+(obp.0208, 2021) has **no XHTML at all** — every `ch<n>.xhtml` 404s and OBP serves
+it only as per-chapter PDFs. And file naming is not uniform even where XHTML
+exists: obp.0033 uses names like `19_Works.html`. Always read `/toc.xhtml` first.
+
 ---
 
 ## Fetching: what blocks scripts, and what does not
@@ -434,7 +540,9 @@ Tested today with `curl` and a browser User-Agent.
 
 | Host | Result | Note |
 |---|---|---|
-| `opentextbc.ca` | **200** | Works. Contradicts PLAN.md item 7 — retry the 2nd-edition swap. |
+| `opentextbc.ca` | **200** | Works, contradicting PLAN.md item 7 — but rate-limits to a Cloudflare 429 on a repeat within the minute. One fetch per book, then cache. |
+| any Pressbooks host `/open/download?type=xhtml` | 200 | Whole book, one file, Belshaw export markup. |
+| any Pressbooks host `/wp-json/pressbooks/v2/toc` | 200 | Fallback when the export 500s. |
 | `brill.com` | 200 | Needs browser UA. Full article prose present. |
 | `docsouth.unc.edu` | 200 | Including the 49 MB bulk zip. Site frozen 30 Mar 2026. |
 | `books.openbookpublishers.com` | 200 | XHTML chapters. |
@@ -464,6 +572,12 @@ Tested today with `curl` and a browser User-Agent.
 | `www.scielo.org.za` | 200 | Article PIDs enumerable from issue TOCs. |
 | `unesdoc.unesco.org` PDFs | **Cloudflare challenge** | Record pages are a JS SPA; `.pdf.multi` returns a 1.9 KB challenge shell. |
 | `journals.codesria.org` | **redirects to login** | |
+| `press-files.anu.edu.au` | 200 | Full HTML chapters, no PDF needed. |
+| `www.fulcrum.org` | 200 | EPUB downloads work; monograph pages are a JS shell. Faceted-search URLs with stacked `f[…]` params 403 — keep query strings simple. |
+| `books.openedition.org` | **Anubis proof-of-work** | Loses the Presses de l'Ifpo / CEDEJ / IFEA Middle East corpus. |
+| `www.mdpi.com` | **403** | |
+| `uclpress.scienceopen.com` | **403** | `www.uclpress.co.uk` and `discovery.ucl.ac.uk` return 200; a different UCL Press route may exist, untested. |
+| `gutendex.com` | 301, then 40 s timeouts | Unusable. Query gutenberg.org directly. |
 
 ---
 
@@ -471,7 +585,9 @@ Tested today with `curl` and a browser User-Agent.
 
 **Rejected on licence (the usual reason).**
 
-- **ANU Press** — everything from January 2018 is **CC BY-NC-ND 4.0**, and the terms page states plainly that you "may not alter, transform or build upon this work" (`https://press.anu.edu.au/faqs/conditions-use`). Titles before 2018 are all rights reserved. ND is the one CC term that genuinely threatens the app's model: whether lifting a paragraph into a question counts as an excerpt (permitted) or an adaptation (not) is unsettled, and Creative Commons' own FAQ answer on excerpting ND works turns on the facts rather than giving a clean yes. Given a large supply of BY and BY-NC-SA material, ND is not worth the exposure. **This rules out most of ANU Press, most Liverpool University Press open-access titles, and a large share of OAPEN.**
+- **ANU Press** — everything from January 2018 is **CC BY-NC-ND 4.0**, and the terms page states plainly that you "may not alter, transform or build upon this work" (`https://press.anu.edu.au/faqs/conditions-use`). Titles **before 2018 are all rights reserved**, and ANU says to check each title's own copyright page rather than assume — so e.g. *Business and the Risk of Crime in China* (2011) is unusable. ND is the one CC term that genuinely threatens the app's model: whether lifting a paragraph into a question counts as an excerpt (permitted) or an adaptation (not) is unsettled, and Creative Commons' own FAQ answer on excerpting ND works turns on the facts rather than giving a clean yes. Given a large supply of BY and BY-NC-SA material, ND is not worth the exposure. **This rules out most of ANU Press, most Liverpool University Press open-access titles, most of the Michigan Asian Studies collection, and a large share of OAPEN.** Two ND titles are listed anyway as candidates 30 and 31, because their content is otherwise unmatched — treat them as a second tier requiring strict no-alteration handling, or leave them out.
+  - *Fluid Matter(s): Flow and Transformation in the History of the Body* (Köhle & Kuriyama, eds., ANU Press, 2020) — **CC BY-NC-ND 4.0**, stated inside the book at `https://press-files.anu.edu.au/downloads/press/n7034/html/01-acknowledgements/index.html`. Full HTML chapters at `https://press-files.anu.edu.au/downloads/press/n7034/html/<NN-slug>/index.html` (tested `/05-bloodletting-in-mongolia/`, HTTP 200, 378 KB), slugs scraped from `00-title/index.html`. Rendered with the Shorthand platform, so the prose sits inside a heavy CSS/JS wrapper — needs a real HTML parser, not a regex. Comparative history of bodily fluids across Chinese, Japanese, Mongolian, Tibetan and Indic medicine: a conceptual world no survey enters.
+  - **Michigan Asian Studies Open Access collection** (University of Michigan Press / Lieberthal-Rogel Center for Chinese Studies, on Fulcrum, digitised under NEH Humanities Open Book) — **CC BY-NC-ND 4.0** per title. **Correcting one detail:** the licence is *not* readable on the monograph web page, which is an 18 KB JavaScript shell containing no Creative Commons link at all. It is readable inside the EPUB, which is the authoritative place to check: for Dunstan's *Conflicting Counsels to Confuse the Age*, `OEBPS/html/02_Copyright.xhtml` states "The text of this book is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License: https://creativecommons.org/licenses/by-nc-nd/4.0/", and the `.opf` metadata repeats it. **So: download the EPUB and read its copyright page — do not trust the listing page, and do not assume, since a minority of titles are CC BY-NC and some carry no CC licence at all.** Fetch: monograph page → EPUB at `https://www.fulcrum.org/downloads/<noid>` (tested `dv13zw21m`, HTTP 200, 2,764,563 bytes, `application/epub+zip`, 300 entries). Content is real sinology — *Conflicting Counsels* and Chien's *Salt and State: An Annotated Translation of the Songshi Salt Monopoly Treatise* are **annotated translations of Chinese state documents**, which is precisely the raw material a verbatim-quote app wants, and a salt monopoly treatise is about as close to the Graeber vein as a Song source gets.
 - **Liverpool University Press** Haiti titles — *The Unfinished Revolution* (Karen Salt) and *Haiti for the Haitians* are genuinely open access and exactly on topic, but LUP's stated recommendation for its open-access books is **CC BY-NC-ND**, and the LUP site returns 403 to scripts so per-title confirmation was not possible. ND plus unconfirmed plus blocked: rejected, reluctantly.
 - **OAPEN / DOAB books generally** — *Awakening the Ashes* (Marlene L. Daut, UNC Press, 2023, an intellectual history of the Haitian Revolution and the single most desirable title found), *The Glasgow Sugar Aristocracy* (Stephen Mullen, University of London Press, 2022), *The Last Turtlemen of the Caribbean* (Sharika D. Crawford, UNC Press, 2020), *Slavery and the Dutch State* (Leiden UP, 2025), *Teaching Slavery* (UCL Press, 2023). All rejected for the same compound reason: **OAPEN's metadata records no licence at all** for these items (the full metadata dump for *Awakening the Ashes* has `dc.title`, `publisher.name`, `dc.date.issued` and no rights field), DOAB records only the useless string "open access", and the file that would settle it sits behind Anubis proof-of-work. If any one of these is wanted badly enough, the route is to obtain the EPUB by hand (*Awakening the Ashes* has `9781469674759.epub`, *Turtlemen* has `9781469660233.epub`) and read the copyright page — but that is a manual step, not a pipeline, and the answer may still be ND.
 
@@ -487,6 +603,9 @@ Tested today with `curl` and a browser User-Agent.
 - **Cliodynamics**, "Resetting History's Dial? A Critique of David Graeber and David Wengrow, *The Dawn of Everything*" (2022, DOI `10.21237/c7clio0057266`) — **CC BY 4.0** per Crossref, and thematically ideal: it would let the app teach the Graeber argument *and* the argument about the argument, the way it already handles the Macau 1557/1577 disagreement. But it is hosted on eScholarship, which returns **202 with an empty body** to scripts. Parked until a fetch route is found.
 - **De Gruyter Brill open-access books** (*Slavery and the Dutch State*, *Cultural Heritage and Slavery*) — per-chapter HTML exists at `degruyterbrill.com/document/doi/<DOI>/html`, which would be ideal, but the host returns 202 with an empty body.
 - **JSTOR Open Access books** and **MIT Press Direct to Open** — both block scripted fetching outright (3 KB stub and 403 respectively), so neither licence nor content could be verified.
+- **OpenEdition Books** (`books.openedition.org`) — Anubis proof-of-work on every URL, including paths that do not exist. This is a real loss: it takes with it the Presses de l'Ifpo, CEDEJ and IFEA corpus, which is the largest open-access body of scholarship on the Middle East.
+- **MDPI *Religions*** — `www.mdpi.com` returns 403, ruling it out as an Islamic-studies feed despite CC BY licensing.
+- **OBP *A Handbook and Reader of Ottoman Arabic*** (obp.0208, Wagner ed., 2021) — dropped on format, not licence: no XHTML at all, only per-chapter PDFs.
 
 **Rejected on rights being unstated.**
 

@@ -190,31 +190,48 @@ for (const src of ARTICLES) {
 // questions for students, not history, and are left out — but still counted,
 // so paragraph ids never shift under questions that already cite them.
 const OPENSTAX = [
-  { id: 'wh1', vol: 'volume-1', title: 'World History, Volume 1: to 1500' },
-  { id: 'wh2', vol: 'volume-2', title: 'World History, Volume 2: from 1400' },
+  { id: 'wh1', dir: 'wh1', title: 'World History, Volume 1: to 1500',
+    author: 'Ann Kordas, Ryan J. Lynch, Brooke Nelson, Julie Tatlock et al.', year: 2023,
+    web: 'https://openstax.org/books/world-history-volume-1/pages/', got: 'https://github.com/openstax/osbooks-world-history' },
+  { id: 'wh2', dir: 'wh2', title: 'World History, Volume 2: from 1400',
+    author: 'Ann Kordas, Ryan J. Lynch, Brooke Nelson, Julie Tatlock et al.', year: 2023,
+    web: 'https://openstax.org/books/world-history-volume-2/pages/', got: 'https://github.com/openstax/osbooks-world-history' },
+  // Economic and political anthropology: barter, money, debt and the state —
+  // the claim the app's own brief rests on, from a textbook rather than from
+  // memory. Same CNXML layout, so the loop below needed nothing new.
+  { id: 'anth', dir: 'anth', title: 'Introduction to Anthropology',
+    author: 'Jennifer Hasty, David G. Lewis, Marjorie M. Snipes', year: 2022,
+    web: 'https://openstax.org/books/introduction-anthropology/pages/', got: 'https://github.com/openstax/osbooks-introduction-anthropology' },
 ];
 for (const book of OPENSTAX) {
   const src = {
-    id: book.id, title: book.title, author: 'Ann Kordas, Ryan J. Lynch, Brooke Nelson, Julie Tatlock et al.',
-    publisher: 'OpenStax', year: 2023, licence: 'CC BY-NC-SA 4.0',
-    web: `https://openstax.org/books/world-history-${book.vol}/pages/`,
-    got: 'https://github.com/openstax/osbooks-world-history',
+    id: book.id, title: book.title, author: book.author,
+    publisher: 'OpenStax', year: book.year, licence: 'CC BY-NC-SA 4.0',
+    web: book.web, got: book.got,
   };
-  const DIR = join(ROOT, 'sources', 'openstax-' + book.id);
+  const DIR = join(ROOT, 'sources', 'openstax-' + book.dir);
   const col = cheerio.load(readFileSync(join(DIR, 'collection.xml'), 'utf8'), { xmlMode: true });
   const slugify = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   // Namespaced tags ("col:subcollection") trip CSS selectors, so walk by name.
-  const kids = (el, name) => col(el).children().toArray().filter((c) => c.tagName === name);
-  const top = col.root().children().toArray().find((c) => c.tagName === 'col:collection');
-  const units = kids(kids(top, 'col:content')[0], 'col:subcollection');
-  const chapterEls = units.flatMap((u) => kids(kids(u, 'col:content')[0], 'col:subcollection'));
+  // The two World History volumes write the col: prefix and group chapters
+  // inside units; Introduction to Anthropology writes the same elements
+  // unprefixed and has no units at all. Accept both.
+  const kids = (el, name) => col(el).children().toArray().filter((c) => c.tagName === name || c.tagName === 'col:' + name);
+  const top = col.root().children().toArray().find((c) => c.tagName === 'col:collection' || c.tagName === 'collection');
+  const groups = kids(kids(top, 'content')[0], 'subcollection');
+  // A group holding further subcollections is a unit of chapters; a group
+  // holding modules is a chapter itself.
+  const chapterEls = groups.flatMap((g) => {
+    const inner = kids(kids(g, 'content')[0], 'subcollection');
+    return inner.length ? inner : [g];
+  });
   const chapters = [];
   let chN = 0;
   chapterEls.forEach((chEl) => {
     const chTitle = clean(col(kids(chEl, 'md:title')[0]).text());
     chN++;
     const chapter = { n: chN, title: chTitle, sections: [] };
-    kids(kids(chEl, 'col:content')[0], 'col:module').forEach((modEl, i) => {
+    kids(kids(chEl, 'content')[0], 'module').forEach((modEl, i) => {
       const m = col(modEl).attr('document');
       const $ = cheerio.load(readFileSync(join(DIR, 'modules', m + '.cnxml'), 'utf8'), { xmlMode: true });
       const title = clean($('document > title').first().text());
@@ -262,6 +279,16 @@ const PLAIN = [
     title: 'The History of Mary Prince, a West Indian Slave. Related by Herself', author: 'Mary Prince (taken down from her own words; ed. Thomas Pringle)',
     publisher: 'F. Westley and A. H. Davis, London', year: 1831, licence: 'Public domain',
     web: 'https://www.gutenberg.org/ebooks/17851',
+  },
+  {
+    // Haiti's own state papers in English, gathered by a Black American
+    // educator acting for the Haitian government while other states refused
+    // to recognise it. The app had the Haitian Revolution only at second hand.
+    id: 'haytian1816', file: 'sources/voices/haytianpapers1816.txt',
+    title: 'Haytian Papers: A Collection of the Very Interesting Proclamations and Other Official Documents of the Kingdom of Hayti',
+    author: 'Edited by Prince Saunders, agent for the Haytian government',
+    publisher: 'W. Reed, London', year: 1816, licence: 'Public domain',
+    web: 'https://archive.org/details/haytianpaperscol00henr',
   },
   {
     id: 'ljungstedt1836', file: 'sources/voices/ljungstedt-b.txt',

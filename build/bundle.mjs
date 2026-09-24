@@ -16,6 +16,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 execFileSync(process.execPath, [join(ROOT, 'build', 'verify.mjs')], { stdio: 'inherit' });
 
 const PARA = new Map();
+// book id → its source record, for citing and for the About screen.
+const BOOK = new Map();
 const CHAPTER_OF = new Map();
 // Every glossary definition in the corpus ("term: meaning", under Key Terms),
 // with its section — the material for generated glossary questions.
@@ -23,6 +25,7 @@ const TERMS = [];
 for (const f of readdirSync(join(ROOT, 'corpus'))) {
   const book = JSON.parse(readFileSync(join(ROOT, 'corpus', f), 'utf8'));
   const cite = `${book.source.author}, ${book.source.title} (${book.source.publisher}, ${book.source.year}), ${book.source.licence}`;
+  BOOK.set(book.source.id, book.source);
   for (const c of book.chapters) for (const s of c.sections) for (const p of s.paras) {
     // A section with its own author is credited to them, within the book.
     PARA.set(p.id, { text: p.text, sec: `${s.num} ${s.title}`, url: s.url, cite: s.author ? `${s.author}, in ${cite}` : cite });
@@ -67,6 +70,7 @@ const CHAPTER_TITLE = {
   'w04-south-asia': 'South Asia and the Indian Ocean',
   'w05-islamic-world': 'The Islamic world',
   'w06-europe': 'Europe',
+  'w07-exchange': 'Exchange and obligation',
 };
 
 const evOut = (e) => {
@@ -123,7 +127,17 @@ for (const pack of PACKS) {
   const LEVEL = new Map((await import(pathToFileURL(join(ROOT, 'audits', '2026-09-19-questions.mjs')).href)).default.map(([id, fam]) => [id, fam]));
   for (const q of questions) q.level = LEVEL.get(q.id.split('/')[1]) ?? q.level ?? 2;
   const placement = (await import(pathToFileURL(join(ROOT, pack.dir, 'placement.mjs')).href)).default.map((a) => `${pack.id}/${a}`);
-  const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions, placement, voices: await loadVoices(pack) };
+  // Every book the questions draw on, with its licence — carried in the pack
+  // itself so About can never drift out of date with what is actually cited.
+  // (A hand-written list had gone three versions without crediting OpenStax,
+  // which its licence requires.)
+  const bookOf = (pid) => [...BOOK.keys()].find((id) => pid.startsWith(id + '-'));
+  const cited = new Set(questions.flatMap((q) => (q.ev || q.items?.flatMap((i) => i.ev) || []).map((e) => bookOf(e.p))).filter(Boolean));
+  const sources = [...cited].map((id) => {
+    const b = BOOK.get(id);
+    return { id, title: b.title, author: b.author, publisher: b.publisher, year: b.year, licence: b.licence, web: b.web };
+  }).sort((x, y) => x.year - y.year);
+  const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions, placement, sources, voices: await loadVoices(pack) };
   writeFileSync(join(ROOT, 'app', 'data', pack.id + '.json'), JSON.stringify(out));
   console.log(`wrote app/data/${pack.id}.json — ${questions.length} questions in ${chapters.length} chapter(s), ${questions.filter((q) => q.gen).length} of them generated from glossaries`);
   writeLibrary(pack, entries);
@@ -245,7 +259,7 @@ function writeLibrary(pack, entries) {
   const glossary = [];
   // Ljungstedt's OCR is left out of the reader (a single quotation is used,
   // shown in full on its question); the others are readable in full.
-  for (const f of ['pre.json', 'post.json', 'prumers2022.json', 'wh1.json', 'wh2.json', 'prince1831.json']) {
+  for (const f of ['pre.json', 'post.json', 'prumers2022.json', 'wh1.json', 'wh2.json', 'anth.json', 'prince1831.json', 'haytian1816.json']) {
     const book = JSON.parse(readFileSync(join(ROOT, 'corpus', f), 'utf8'));
     const src = book.source;
     books.push({
