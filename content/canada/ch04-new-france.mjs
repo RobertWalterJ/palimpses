@@ -30,6 +30,47 @@ export const BIG = [
 ];
 
 export default [
+  // ── added 24 Sept 2026: the colony's women, and the treaty that shaped it.
+  {
+    id: 'filles-du-roi', kind: 'choice', big: 'furs', at: 1663, lens: ['record', 'economy'],
+    prompt: 'Between 1663 and 1673 the French Crown paid to send roughly 800 women, most of them young, across the Atlantic to Canada. What were they sent to do?',
+    answer: 'Marry, and settle the colony',
+    options: ['Work the seigneuries as labourers', 'Staff the convents', 'Trade with the nations'],
+    must: ['The plan was to marry them off to the men of the regiment and anyone else who might thereby be encouraged to settle down'],
+    ev: [{ p: 'pre-4.6-p3', q: 'Roughly 800 women (most of them young) were sent out from France at the Crown’s expense between 1663 and 1673. The plan was to marry them off to the men of the regiment and anyone else who might thereby be encouraged to settle down, raise a farm and a family, and become a permanent part of Canadien life.' }],
+  },
+  {
+    id: 'colony-families', kind: 'choice', big: 'furs', lens: ['record'],
+    prompt: 'Women in eighteenth-century Canada married younger than women in New England or France, and remarried quickly when widowed. What was the effect by mid-century?',
+    answer: 'Families of six to eight children',
+    options: ['A falling population', 'Families smaller than France’s', 'No measurable change'],
+    must: ['by the middle of the 18th century, completed family size averaged between six and eight children'],
+    ev: [{ p: 'pre-4.6-p14', q: 'The effects were remarkable: by the middle of the 18th century, completed family size averaged between six and eight children, despite high infant mortality rates.' }],
+  },
+  {
+    id: 'utrecht', kind: 'choice', big: 'alliance', at: 1713, lens: ['record'],
+    prompt: 'The Treaty of Utrecht ended the war in North America in 1713. What did France hand to Britain?',
+    answer: 'Hudson Bay, Newfoundland and Acadia',
+    options: ['Canada and Louisiana', 'The Great Lakes forts', 'Nothing on this continent'],
+    must: ['Hudson Bay, Newfoundland, and Acadia were all handed over to the British'],
+    ev: [{ p: 'pre-4.6-p13', q: 'Hudson Bay, Newfoundland, and Acadia were all handed over to the British.' }],
+  },
+  {
+    id: 'utrecht-effect', kind: 'choice', big: 'alliance', at: 1713, lens: ['against-progress'],
+    prompt: 'Losing Hudson Bay, Newfoundland and Acadia might have argued for a smaller, more compact New France. What did it actually spur?',
+    answer: 'New expansion inland',
+    options: ['A compact colony at last', 'Withdrawal to Quebec', 'Peace with the Haudenosaunee'],
+    must: ['It had the ironic effect of intensifying expansionist tendencies in Canada'],
+    ev: [{ p: 'pre-4.6-p13', q: 'It had the ironic effect of intensifying expansionist tendencies in Canada.' }],
+  },
+  {
+    id: 'grand-banks-first', kind: 'choice', big: 'first-visits', lens: ['economy', 'against-progress'],
+    prompt: 'Before France decided to colonize the St. Lawrence, its boats were already crossing the Atlantic every year. What for?',
+    answer: 'The Grand Banks fishery',
+    options: ['Timber for the navy', 'Whales off Greenland', 'Gold in the interior'],
+    must: ['French fishing boats were still making the voyage to the Grand Banks fisheries, and they continued to encounter Aboriginal people who wished to trade'],
+    ev: [{ p: 'pre-3.6-p14', q: 'In the interim, French fishing boats were still making the voyage to the Grand Banks fisheries, and they continued to encounter Aboriginal people who wished to trade.' }],
+  },
   // ── the bigger picture (from the author's Key Points) ──────────────────
   {
     id: 'europe-enriched', kind: 'choice', big: 'first-visits', lens: ['economy'],

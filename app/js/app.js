@@ -926,6 +926,15 @@ function progressScreen() {
           h('div', {}, h('b', { class: 'num' }, `${nowCan}/${pl.ids.length}`), h('span', { class: 't-small' }, 'now'))),
         h('p', { class: 't-body' }, `The same eight questions, easy to hard. You started as “${pl.level}”.`));
     })() : null,
+    // Anyone who was already playing when the check arrived could never take
+    // it: it was offered on a first visit and nowhere else. It sets the pace
+    // and gives a mark to measure against, so it belongs here too.
+    !State.data.placement && PACK.placement?.length ? h('section', { class: 'card stack' },
+      h('p', { class: 't-label' }, 'Where do you start?'),
+      h('p', { class: 't-body' }, 'Eight questions, easy to hard. They set how fast new questions arrive, and give you a mark to measure the rest against.'),
+      PACK.placement.some((id) => !State.card(id))
+        ? h('button', { class: 'btn primary wide', onclick: () => startPlacement() }, 'Take the check')
+        : h('p', { class: 't-small' }, 'You have already met all eight of these questions, so the check would tell you nothing new.')) : null,
     (() => {
       const t = turnedAround();
       return h('section', { class: 'card stack' },

@@ -12,5 +12,8 @@ export default [
   // round 3 — surprises inside the familiar
   'giant-beaver', 'cartier-abduction', 'tenochtitlan', 'no-atlantic-roots', 'pigs',
   // round 4
-  'french-seventy', 'most-pivotal', 'wampum-record', 'cahokia-woodhenge',
+  'french-seventy', 'most-pivotal', 'wampum-record', 'cahokia-woodhenge', 'turtle-island',
+  // round 5 — the school-history anchors the 19 Sept audit found missing:
+  // Columbus, Cabot, the Grand Banks fishery, Turtle Island, Utrecht.
+  'columbus-indies', 'cabot-1497', 'grand-banks-first', 'utrecht', 'origin-stories-enough',
 ];

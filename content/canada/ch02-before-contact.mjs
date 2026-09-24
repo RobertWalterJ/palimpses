@@ -166,6 +166,32 @@ export default [
     must: ['white chert', 'currency'],
     ev: [{ p: 'pre-2.3-p24', q: 'They engaged in long-distance trade, using as currency white chert, a rock quarried from northern Labrador to Maine.' }],
   },
+  // ── anchors added 24 Sept 2026: the question audit found five pieces of
+  // school history the app assumed and never asked.
+  {
+    id: 'turtle-island', kind: 'choice', big: 'origins', lens: ['own-terms', 'record'],
+    prompt: 'Origin stories across the hemisphere say the land was made for the people, and the people made to inhabit it. What do those traditions say about how long people have been here?',
+    answer: 'Since time immemorial',
+    options: ['Since the last ice age', 'Since about 1000 CE', 'They do not say'],
+    must: ['Aboriginal peoples’ traditions point to occupation of “Turtle Island” since time immemorial'],
+    ev: [{ p: 'pre-2.3-p34', q: 'Aboriginal peoples’ traditions point to occupation of “Turtle Island” since time immemorial.' }],
+  },
+  {
+    id: 'origin-stories-enough', kind: 'choice', big: 'origins', lens: ['contested', 'record'],
+    prompt: 'Archaeology argues about Beringia and coastal routes. How do the peoples whose origins are being argued over treat their own origin stories?',
+    answer: 'As sufficient to their needs as history',
+    options: ['As stories for children', 'As second to the science', 'As lost beyond recovery'],
+    must: ['these stories are invoked by Aboriginal peoples as sufficient to their needs as regards history'],
+    ev: [{ p: 'pre-2.3-p18', q: 'It is also the case that these stories are invoked by Aboriginal peoples as sufficient to their needs as regards history.' }],
+  },
+  {
+    id: 'cabot-1497', kind: 'choice', big: 'worlds', at: 1497, lens: ['against-progress'],
+    prompt: 'John Cabot and his crew may have briefly visited one small patch of the northern half of North America in 1497. What was that landscape at the time?',
+    answer: 'More populous than for centuries after',
+    options: ['Almost empty of people', 'Newly settled from the south', 'Mapped in detail in Europe'],
+    must: ['was a vastly more populous and rich human environment than would re-emerge here until the 19th century'],
+    ev: [{ p: 'pre-1.1-p4', q: 'The “Canada” of 1497 — one small patch of which may have been briefly visited by John Cabot and his crew — was a vastly more populous and rich human environment than would re-emerge here until the 19th century.' }],
+  },
   {
     id: 'three-sisters', kind: 'choice', big: 'worlds', depth: 'detail', lens: ['own-terms'],
     prompt: 'Why do the “three sisters” — corn, beans and squash — grow better together?',
