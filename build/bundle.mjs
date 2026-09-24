@@ -61,6 +61,7 @@ const PACKS = [
 const CHAPTER_TITLE = {
   'ch02-before-contact': 'Before contact',
   'ch05-contact': 'Contact, on the nations’ terms',
+  'ch06-north': 'The North, and the fur trade country',
   'ch04-new-france': 'New France, inside other worlds',
   'ch03-amazonia': 'Amazonia, a centre of its own',
   'th01-empire-trade': 'Trade, empire and abolition, 1488–1842',
@@ -284,27 +285,46 @@ function gapQuestions(pack, chapters, questions) {
     const words = [...pool];
     if (words.length < 8) continue;
     const rnd = seeded('gap' + ch.id);
+    // Sentences any question in this chapter already quotes, so a gap never
+    // lands on ground that is already asked about; and the answers used so
+    // far, so one chapter doesn't ask for "Casarabe" three times.
+    const taken = new Set(mine.flatMap((q) => q.ev.map((e) => e.quote.trim())));
+    const usedAnswers = new Set();
     let made = 0;
     for (const q of mine) {
       if (made >= 4) break;
       const e = q.ev[0];
-      const n = e.quote.split(/\s+/).length;
-      if (n < 8 || n > 34) continue;
-      const cands = properNouns(e.quote).filter((w) => !STOP.has(w)
-        && e.quote.split(w).length === 2                     // appears exactly once
-        && !e.quote.startsWith(w));                          // not the first word
+      // NOT the sentence its source question already quotes — that made two
+      // questions on one sentence, which is the repetition this app is trying
+      // to get rid of. A neighbouring sentence of the same paragraph is new
+      // material and is source text by construction.
+      const others = sentencesOf(e.para).filter((t) => !taken.has(t.trim())
+        && ![...taken].some((u) => u.includes(t) || t.includes(u)));
+      const sentence = others.find((t) => {
+        const n = t.split(/\s+/).length;
+        return n >= 8 && n <= 34 && properNouns(t).some((w) => !STOP.has(w) && !usedAnswers.has(w));
+      });
+      if (!sentence) continue;
+      const cands = properNouns(sentence).filter((w) => !STOP.has(w) && !usedAnswers.has(w)
+        && sentence.split(w).length === 2                    // appears exactly once
+        && !sentence.startsWith(w));                         // not the first word
       if (!cands.length) continue;
       const answer = cands[Math.floor(rnd() * cands.length)];
-      const wrong = words.filter((w) => w !== answer && !e.quote.includes(w)).sort(() => rnd() - 0.5).slice(0, 3);
+      taken.add(sentence.trim());
+      usedAnswers.add(answer);
+      // A wrong option must not be a version of the right one: "Casarabe" and
+      // "Casarabe-culture" are the same answer twice.
+      const wrong = words.filter((w) => w !== answer && !sentence.includes(w)
+        && !w.includes(answer) && !answer.includes(w)).sort(() => rnd() - 0.5).slice(0, 3);
       if (wrong.length < 3) continue;
-      // The prompt must not hand the answer back in the question around it.
-      const gapped = e.quote.replace(w_re(answer), '_____');
+      if (!e.para.includes(sentence)) throw new Error(`gap ${q.id}: sentence not in its paragraph`);
+      const gapped = sentence.replace(w_re(answer), '_____');
       out.push({
         id: `${pack.id}/${ch.id}/gap-${q.id.split('/').pop()}`, ch: ch.id, kind: 'choice', gen: 'gap',
         lens: ['record'], big: q.big, level: 3,
         prompt: `“${gapped}” Which word belongs in the gap?`,
         answer, options: wrong,
-        ev: [e],
+        ev: [{ ...e, quote: sentence }],
       });
       made++;
     }
@@ -314,6 +334,17 @@ function gapQuestions(pack, chapters, questions) {
 // The word to blank out, matched whole. A function declaration, not a const:
 // the chapter loop above runs before any const further down is initialised —
 // this is the third time that has caught us in this file.
+// A paragraph's sentences. Abbreviations ("St. Lawrence", "c. 1450") are the
+// reason this is not a plain split on full stops: a sentence ends at a stop
+// followed by a space and a capital, and not after a one- or two-letter word.
+function sentencesOf(text) {
+  return String(text || '')
+    .split(/(?<![A-Z][a-z]?)(?<!\b[A-Z])\.\s+(?=[“"A-Z])/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .map((t) => (/[.?!”"]$/.test(t) ? t : t + '.'));
+}
+
 // Capitalised words that are really names, not words a sentence happened to
 // start with. "Boys" and "Consequently" opened sentences; "Tenochtitlan" and
 // "Canada" did not. The word must follow a lowercase letter, a comma or a
@@ -342,8 +373,12 @@ function glossaryQuestions(pack, chId, mod) {
     seen.add(k);
     return true;
   });
+  // A term already answered by a written question in this chapter is not
+  // asked again as a definition: "generalized reciprocity" was both.
+  const answered = new Set((mod.default || []).map((q) => String(q.answer || '').toLowerCase()));
   const out = [];
   for (const t of pool) {
+    if (answered.has(t.term.toLowerCase())) continue;
     const rnd = seeded(chId + t.term);
     const n = words(t.meaning);
     // Wrong options of the same KIND come first — a title against titles, a

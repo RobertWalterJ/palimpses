@@ -44,6 +44,11 @@ const files = [];
 const fails = [];
 let n = 0, entries = 0, voices = 0;
 const lensCount = {};
+// Question ids are global, not per chapter: the app keys a player's progress
+// by `canada/<id>`, so the same id in two files is one card for two questions
+// and the round asks it twice. (It happened: "facon-du-pays" was written a
+// second time in the North chapter, 24 September.)
+const idOwner = new Map();
 for (const file of files) {
   const qs = (await import(pathToFileURL(file).href)).default;
   const where = relative(ROOT, file);
@@ -148,6 +153,8 @@ for (const file of files) {
     if (q.depth && q.depth !== 'detail') fails.push(where + ' · ' + q.id + ': depth must be detail or absent');
     const bad = (m) => fails.push(`${where} · ${q.id}: ${m}`);
     if (ids.has(q.id)) bad('duplicate id');
+    if (idOwner.has(q.id) && idOwner.get(q.id) !== where) bad(`id already used in ${idOwner.get(q.id)} — ids are global`);
+    idOwner.set(q.id, where);
     ids.add(q.id);
     for (const l of q.lens || []) lensCount[l] = (lensCount[l] || 0) + 1;
 
