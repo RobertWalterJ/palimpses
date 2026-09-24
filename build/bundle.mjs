@@ -137,7 +137,43 @@ for (const pack of PACKS) {
     const b = BOOK.get(id);
     return { id, title: b.title, author: b.author, publisher: b.publisher, year: b.year, licence: b.licence, web: b.web };
   }).sort((x, y) => x.year - y.year);
-  const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions, placement, sources, voices: await loadVoices(pack) };
+  const voices = await loadVoices(pack);
+  // "Who said this?" — the app is named for its voices and had never asked
+  // about one. Only the voices whose words sit in the corpus can be asked
+  // (the rest are read from their own scans), but every speaker can be a
+  // wrong option.
+  questions.push(...whoSaidQuestions(pack, voices, chapters));
+  // "Oldest first" across regions, from the threads' own dated events. Three
+  // at a time, never all from one region, so the answer is a sense of when
+  // things happened beside each other rather than within one story.
+  questions.push(...orderQuestions(pack, chapters));
+  questions.push(...gapQuestions(pack, chapters, questions));
+  // New questions are introduced in this order, so anything appended to the
+  // end is never reached. The shapes that are not four-option choices —
+  // ordering, and "who said this?" — are spread evenly through it instead, so
+  // a round has a fair chance of holding one.
+  const shapedAll = questions.filter((q) => q.kind === 'order' || q.gen === 'voice' || q.gen === 'gap');
+  // Round-robin by type, or the player meets eight ordering questions, then
+  // four "who said this", then the gaps — the point is that no two days in a
+  // row set the same task.
+  const byType = new Map();
+  for (const q of shapedAll) { const t = q.gen || q.kind; byType.set(t, [...(byType.get(t) || []), q]); }
+  const shaped = [];
+  for (let i = 0; shaped.length < shapedAll.length; i++) for (const list of byType.values()) if (list[i]) shaped.push(list[i]);
+  if (shaped.length) {
+    const inShaped = new Set(shaped);
+    const rest = questions.filter((q) => !inShaped.has(q));
+    const every = Math.max(4, Math.floor(rest.length / (shaped.length + 1)));
+    const mixed = [];
+    let next = 0;
+    rest.forEach((q, i) => {
+      mixed.push(q);
+      if (i > 6 && (i - 6) % every === 0 && next < shaped.length) mixed.push(shaped[next++]);
+    });
+    questions.length = 0;
+    questions.push(...mixed, ...shaped.slice(next));
+  }
+  const out = { id: pack.id, title: pack.title, blurb: pack.blurb, chapters, questions, placement, sources, voices };
   writeFileSync(join(ROOT, 'app', 'data', pack.id + '.json'), JSON.stringify(out));
   console.log(`wrote app/data/${pack.id}.json — ${questions.length} questions in ${chapters.length} chapter(s), ${questions.filter((q) => q.gen).length} of them generated from glossaries`);
   writeLibrary(pack, entries);
@@ -167,6 +203,132 @@ function kindOf(meaning) {
   return KINDS.find(([, re]) => re.test(head))?.[0] || null;
 }
 function inPrefix(sec, prefixes) { return prefixes.some((pr) => sec === pr || sec.startsWith(pr + '.')); }
+// One question per voice whose words are in the corpus: the quote, and four
+// speakers to choose between. The quote is already checked verbatim by
+// verify.mjs, so nothing new can slip in here.
+function whoSaidQuestions(pack, voices, chapters) {
+  const speakers = [...new Set(voices.map((v) => v.short).filter(Boolean))];
+  const out = [];
+  for (const v of voices) {
+    if (!v.ask || !v.p || !v.short) continue;
+    if (!chapters.some((c) => c.id === v.ask.ch && c.big?.some((b) => b.id === v.ask.big))) throw new Error(`voice ${v.id}: no big question ${v.ask.ch}/${v.ask.big}`);
+    const rnd = seeded('who' + v.id);
+    const wrong = speakers.filter((n) => n !== v.short).sort(() => rnd() - 0.5).slice(0, 3);
+    if (wrong.length < 3) continue;
+    // A quote long enough to fill a phone screen is cut at a sentence end.
+    const quote = v.quote.length > 180 ? v.quote.slice(0, v.quote.lastIndexOf(' ', 170)) + '…' : v.quote;
+    // Not if the quote names the speaker: "…the independence of Hayti" beside
+    // "The state of Hayti" answers itself.
+    const said = quote.toLowerCase();
+    if (v.short.toLowerCase().split(/[^a-zà-ÿ]+/).some((w) => w.length > 4 && said.includes(w))) continue;
+    out.push({
+      id: `${pack.id}/${v.ask.ch}/who-${v.id}`, ch: v.ask.ch, kind: 'choice', gen: 'voice', lens: ['record'],
+      big: v.ask.big, level: 2,
+      prompt: `“${quote}” Who said this?`,
+      answer: v.short, options: wrong,
+      ev: [{ p: v.p, quote: v.quote, sec: v.sec, url: v.url, cite: v.cite }],
+    });
+  }
+  return out;
+}
+
+// Ordering questions built from a thread's timeline: every event is already
+// quoted and checked, so these cost nothing but combinations. One per trio,
+// capped, and never two questions on the same three events.
+function orderQuestions(pack, chapters) {
+  const out = [];
+  for (const ch of chapters.filter((c) => c.thread && c.timeline?.length > 5)) {
+    const rnd = seeded('order' + ch.id);
+    const byLane = new Map();
+    for (const e of ch.timeline) byLane.set(e.lane, [...(byLane.get(e.lane) || []), e]);
+    const lanes = [...byLane.keys()];
+    const seen = new Set();
+    for (let tries = 0; tries < 400 && out.length < 12; tries++) {
+      // Three lanes, one event each: the point is the comparison across them.
+      const pick = [...lanes].sort(() => rnd() - 0.5).slice(0, 3);
+      if (pick.length < 3) break;
+      const items = pick.map((l) => { const es = byLane.get(l); return es[Math.floor(rnd() * es.length)]; });
+      const years = items.map((e) => e.at);
+      if (new Set(years).size !== 3) continue;
+      // Far enough apart to be a question about history rather than a coin toss.
+      if (Math.min(...years.map((y, i) => Math.min(...years.filter((_, j) => j !== i).map((z) => Math.abs(y - z))))) < 15) continue;
+      const key = items.map((e) => e.at).sort().join('-');
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({
+        id: `${pack.id}/${ch.id}/order-gen-${key}`, ch: ch.id, kind: 'order', gen: 'timeline', lens: ['record'],
+        big: ch.big[0].id, level: 2, prompt: 'Oldest first.',
+        items: items.map((e) => ({ label: e.label, at: e.at, when: String(e.at), ev: e.ev[0] || e.ev })),
+      });
+    }
+  }
+  return out;
+}
+
+// "Which word belongs in the gap?" — a sentence the player has already been
+// shown as evidence, with one name, place or number taken out. The wrong
+// options are names and numbers from the same chapter, so the question is
+// recall of the passage rather than a guess at register. Only proper nouns and
+// numbers are ever blanked: a common noun would leave a gap several words
+// could honestly fill.
+function gapQuestions(pack, chapters, questions) {
+  const STOP = new Set(['The', 'This', 'That', 'These', 'Those', 'There', 'Their', 'They', 'When', 'While', 'Where', 'What', 'Which', 'After', 'Before', 'Some', 'Many', 'Most', 'Both', 'Each', 'Every', 'Under', 'During', 'Between', 'Although', 'Because', 'However', 'Instead', 'Within', 'Without', 'Among', 'Since', 'Until', 'Nevertheless', 'Despite', 'Indigenous', 'European', 'Europeans']);
+  const out = [];
+  for (const ch of chapters) {
+    const mine = questions.filter((q) => q.ch === ch.id && !q.gen && q.ev?.length);
+    if (mine.length < 6) continue;
+    // Every candidate word in the chapter, so the wrong options come from the
+    // same world as the right one.
+    const pool = new Set();
+    for (const q of mine) for (const e of q.ev) for (const w of properNouns(e.quote)) if (!STOP.has(w)) pool.add(w);
+    const words = [...pool];
+    if (words.length < 8) continue;
+    const rnd = seeded('gap' + ch.id);
+    let made = 0;
+    for (const q of mine) {
+      if (made >= 4) break;
+      const e = q.ev[0];
+      const n = e.quote.split(/\s+/).length;
+      if (n < 8 || n > 34) continue;
+      const cands = properNouns(e.quote).filter((w) => !STOP.has(w)
+        && e.quote.split(w).length === 2                     // appears exactly once
+        && !e.quote.startsWith(w));                          // not the first word
+      if (!cands.length) continue;
+      const answer = cands[Math.floor(rnd() * cands.length)];
+      const wrong = words.filter((w) => w !== answer && !e.quote.includes(w)).sort(() => rnd() - 0.5).slice(0, 3);
+      if (wrong.length < 3) continue;
+      // The prompt must not hand the answer back in the question around it.
+      const gapped = e.quote.replace(w_re(answer), '_____');
+      out.push({
+        id: `${pack.id}/${ch.id}/gap-${q.id.split('/').pop()}`, ch: ch.id, kind: 'choice', gen: 'gap',
+        lens: ['record'], big: q.big, level: 3,
+        prompt: `“${gapped}” Which word belongs in the gap?`,
+        answer, options: wrong,
+        ev: [e],
+      });
+      made++;
+    }
+  }
+  return out;
+}
+// The word to blank out, matched whole. A function declaration, not a const:
+// the chapter loop above runs before any const further down is initialised —
+// this is the third time that has caught us in this file.
+// Capitalised words that are really names, not words a sentence happened to
+// start with. "Boys" and "Consequently" opened sentences; "Tenochtitlan" and
+// "Canada" did not. The word must follow a lowercase letter, a comma or a
+// semicolon, which is what mid-sentence looks like.
+function properNouns(text) {
+  return [...text.matchAll(/[a-zà-ÿ,;]\s+([A-Z][a-zà-ÿ’'-]{3,})\b/g)]
+    .map((m) => m[1])
+    .filter((w) => !/ly$|ing$/.test(w));
+}
+
+function w_re(w) {
+  const escaped = w.replace(/[.*+?^${}()|[\]\\]/g, (c) => '\\' + c);
+  return new RegExp(String.raw`\b` + escaped + String.raw`\b`);
+}
+
 function glossaryQuestions(pack, chId, mod) {
   const from = mod.GLOSSARY_FROM || [];
   if (!from.length) return [];
@@ -242,7 +404,7 @@ async function loadVoices(pack) {
   let mod;
   try { mod = await import(pathToFileURL(f).href); } catch { return []; }
   return mod.default.map((v) => {
-    const base = { id: v.id, quote: v.q, who: v.who, when: v.when, recorded: v.recorded, note: v.note || null };
+    const base = { id: v.id, quote: v.q, who: v.who, when: v.when, recorded: v.recorded, note: v.note || null, short: v.short || null, ask: v.ask || null };
     if (v.p) { const p = PARA.get(v.p); return { ...base, p: v.p, sec: p.sec, url: p.url, cite: p.cite }; }
     const s = mod.VOICE_SOURCES[v.src];
     return { ...base, url: s.url, cite: `${s.author}, ${s.title} (${s.publisher}, ${s.year}), ${s.licence}` };

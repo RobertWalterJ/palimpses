@@ -246,25 +246,83 @@ function hero() {
   // Fourteen thousand years on a linear line would crowd everything after
   // 1 CE into the last tenth, so the scale is compressed (log of years
   // before 1500) and the caption says so.
-  const x = (y) => 100 - 100 * Math.log(1 + (1500 - y) / 100) / Math.log(1 + 13500 / 100);
-  const centres = [
-    { name: 'Maritime Archaic', when: 'c. 7000 BCE', at: -7000, go: () => openEntry('maritime-archaic') },
-    { name: 'Keatley Creek', when: 'c. 2800 BCE', at: -2800, go: () => { const w = sectionOf('pre-2.4-p8'); if (w) openReader(w.section.id, 'pre-2.4-p8'); } },
-    { name: 'Cahokia', when: 'c. 600 CE', at: 600, go: () => openEntry('mississippian') },
-    { name: 'Haudenosaunee League', when: 'c. 1450', at: 1450, go: () => openEntry('haudenosaunee') },
-  ];
+  const centres = timelinePoints();
+  // Fourteen thousand years on a straight line would crowd everything after
+  // 1 CE into the last tenth, so the scale is the log of years before the
+  // latest point, and the caption says so. The ends come from the strip's own
+  // points, so a player who has reached 1842 gets a line that runs to 1842.
+  const newest = Math.max(1500, ...centres.map((c) => c.at));
+  const oldest = Math.min(-13500, ...centres.map((c) => c.at));
+  const x = (y) => 100 - 100 * Math.log(1 + (newest - y) / 100) / Math.log(1 + (newest - oldest) / 100);
   const last = centres.length - 1;
   const strip = h('div', { class: 'strip' },
     h('div', { class: 'rail' },
       centres.map((c) => h('button', { class: 'dot', style: `left:${x(c.at)}%;cursor:pointer;padding:0`, 'aria-label': `${c.name}, ${c.when} — open`, title: c.name, onclick: c.go }))),
     h('div', { class: 'labels', 'aria-hidden': 'true' },
       ...centres.map((c, i) => h('span', { class: [i === last ? 'r' : i === 0 ? 'l' : '', i % 2 ? 'lo' : ''].join(' ').trim(), style: `left:${i === last ? 100 : x(c.at)}%` }, c.name, h('small', {}, c.when)))),
-    h('p', { class: 'caption' }, 'From the first people here, 14,000 years ago, to the League. Older years are squeezed to fit.'));
+    h('p', { class: 'caption' }, centres.some((c) => c.mine)
+      ? `Years you have met, from ${centres[0].when} to ${centres[last].when}. Older years are squeezed to fit.`
+      : 'From the first people here, 14,000 years ago, to the League. Older years are squeezed to fit.'));
   return h('header', { class: 'hero' }, under,
     h('h1', { class: 'wordmark' }, 'Palim', h('span', {}, 'psest')),
     h('p', { class: 'tagline' }, 'History has many voices.'),
     strip);
 }
+
+// The points on the hero's line. Until you have met a few dated questions
+// these are the pack's founding centres; after that they are your own — the
+// earliest year you have met, the latest, and two spread between. A thread's
+// timeline supplies the better label where it has one ("Macau assigned to the
+// Portuguese" rather than "China and Asia").
+const BASE_CENTRES = [
+  { name: 'Maritime Archaic', when: 'c. 7000 BCE', at: -7000, go: () => openEntry('maritime-archaic') },
+  { name: 'Keatley Creek', when: 'c. 2800 BCE', at: -2800, go: () => { const w = sectionOf('pre-2.4-p8'); if (w) openReader(w.section.id, 'pre-2.4-p8'); } },
+  { name: 'Cahokia', when: 'c. 600 CE', at: 600, go: () => openEntry('mississippian') },
+  { name: 'Haudenosaunee League', when: 'c. 1450', at: 1450, go: () => openEntry('haudenosaunee') },
+];
+function timelinePoints() {
+  const rich = new Map();
+  for (const c of PACK.chapters) for (const e of c.timeline || []) if (!rich.has(e.at)) rich.set(e.at, e);
+  const byYear = new Map();
+  for (const q of PACK.questions) {
+    if (q.at == null || !State.card(q.id)) continue;
+    if (byYear.has(q.at)) continue;
+    const e = rich.get(q.at);
+    const ch = PACK.chapters.find((c) => c.id === q.ch);
+    const lane = q.lane && ch?.lanes?.find((l) => l.id === q.lane)?.name;
+    const name = short(e ? e.label : (lane || ch?.title || ''), 30);
+    const p = e ? e.ev.p : q.ev?.[0]?.p;
+    if (!name) continue;
+    byYear.set(q.at, { name, when: yearLabel(q.at), at: q.at, mine: true,
+      go: () => { const w = p && sectionOf(p); if (w) openReader(w.section.id, p); } });
+  }
+  const mine = [...byYear.values()].sort((a, b) => a.at - b.at);
+  if (mine.length < 4) return BASE_CENTRES;
+  const first = mine[0], newest = mine[mine.length - 1];
+  // Positions, not years: the scale squeezes old centuries, so 1800 and 1842
+  // sit almost on top of each other and their labels collide. Points are kept
+  // only if they are far enough apart ON THE LINE, and the two ends always are.
+  const hi = Math.max(1500, newest.at), lo = Math.min(-13500, first.at);
+  const xOf = (y) => 100 - 100 * Math.log(1 + (hi - y) / 100) / Math.log(1 + (hi - lo) / 100);
+  const spaced = [];
+  for (const p of mine) {
+    if (!spaced.length || xOf(p.at) - xOf(spaced[spaced.length - 1].at) >= 22) spaced.push(p);
+    else if (p === newest && spaced.length > 1) { spaced[spaced.length - 1] = p; }
+  }
+  if (spaced.length < 3) return BASE_CENTRES;
+  // Four at most, evenly through what is left, and never the same name twice.
+  const out = [spaced[0]];
+  for (const i of [1, 2]) {
+    const want = spaced[Math.round((i * (spaced.length - 1)) / 3)];
+    const alt = spaced.find((p) => !out.includes(p) && p !== spaced[spaced.length - 1] && !out.some((o) => o.name === p.name));
+    const p = out.includes(want) || out.some((o) => o.name === want.name) ? alt : want;
+    if (p) out.push(p);
+  }
+  out.push(spaced[spaced.length - 1]);
+  return [...new Set(out)].sort((a, b) => a.at - b.at);
+}
+
+const short = (s, n) => (s.length <= n ? s : s.slice(0, s.lastIndexOf(' ', n) > 0 ? s.lastIndexOf(' ', n) : n) + '…');
 
 // ── voices ──────────────────────────────────────────────────────────────
 // One a day on Home; all of them, named, on their own screen at the foot of

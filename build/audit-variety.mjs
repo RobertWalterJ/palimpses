@@ -76,6 +76,7 @@ const totals = { asked: 0, gen: 0, choice: 0, repeatBig: 0 };
 for (const d of days) {
   const kinds = d.asked.map(({ id }) => Q.get(id).kind);
   const gen = d.asked.filter(({ id }) => Q.get(id).gen).length;
+  const shapes = new Set(d.asked.map(({ id }) => Q.get(id).gen || Q.get(id).kind));
   const choice = kinds.filter((k) => k === 'choice').length;
   const bigs = new Set(d.asked.map(({ id }) => groupOf(id)));
   const chapters = new Set(d.asked.map(({ id }) => Q.get(id).ch));
@@ -84,8 +85,19 @@ for (const d of days) {
   console.log(`${String(d.day).padStart(3)}  ${String(d.asked.length).padStart(6)}  ${String(d.asked.filter((x) => x.fresh).length).padStart(3)}  ${String(pct(choice, d.asked.length) + '%').padStart(7)}  ${String(pct(gen, d.asked.length) + '%').padStart(9)}  ${String(chapters.size).padStart(8)}  ${String(pct(repeats, d.asked.length) + '%').padStart(10)}`);
   prevBigs = bigs;
 }
-console.log(`\nover the fortnight: ${totals.asked} questions asked, ${pct(totals.choice, totals.asked)}% of them the same four-option shape, `
-  + `${pct(totals.gen, totals.asked)}% generated from glossaries, ${pct(totals.repeatBig, totals.asked)}% on a big question also asked the day before.`);
+// What the fortnight felt like, by the task the player was actually set: a
+// fill-the-gap and a four-option question are both `kind: 'choice'`, but they
+// are not the same thing to do.
+const SHAPE = { glossary: 'match a definition', gap: 'fill the gap', voice: 'who said this', timeline: 'oldest first' };
+const shapes = {};
+for (const d of days) for (const { id } of d.asked) {
+  const q = Q.get(id);
+  const s = SHAPE[q.gen] || (q.kind === 'order' ? 'oldest first' : 'four-option question');
+  shapes[s] = (shapes[s] || 0) + 1;
+}
+console.log(`\nover the fortnight: ${totals.asked} questions asked, ${pct(totals.repeatBig, totals.asked)}% on a big question also asked the day before.`);
+console.log('what you were asked to do: ' + Object.entries(shapes).sort((a, b) => b[1] - a[1])
+  .map(([k, v]) => `${k} ${pct(v, totals.asked)}%`).join(' · '));
 const kinds = {};
-for (const q of pack.questions) kinds[q.gen ? 'generated glossary' : q.kind] = (kinds[q.gen ? 'generated glossary' : q.kind] || 0) + 1;
+for (const q of pack.questions) kinds[q.gen ? 'generated ' + q.gen : q.kind] = (kinds[q.gen ? 'generated ' + q.gen : q.kind] || 0) + 1;
 console.log('the pack itself:', Object.entries(kinds).map(([k, v]) => `${k} ${v}`).join(' · '));
