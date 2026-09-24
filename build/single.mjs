@@ -37,6 +37,11 @@ const data = safe(readFileSync(join(APP, 'data', 'canada.json'), 'utf8'));
 // made every first visit a 3 MB download for a quiz that fits in a tenth of
 // that.
 const libFile = readFileSync(join(APP, 'data', 'canada-library.json'));
+// One exception: `INLINE_LIB=1 node build/single.mjs` puts the books back
+// inside the page and writes dist/palimpsest-inline.html. The Artifact is a
+// single file by nature; the web build, which is the one people are given,
+// stays light.
+const INLINE = process.env.INLINE_LIB === '1';
 
 // Function replacers throughout: a replacement STRING treats `$&`, `$'` and
 // `` $` `` specially, and minified code or the books' text can contain them.
@@ -57,9 +62,14 @@ const html = readFileSync(join(APP, 'index.html'), 'utf8')
   .replace('<link rel="stylesheet" href="fonts/fonts.css">', () => `<style>${fonts}</style>`)
   .replace('<link rel="stylesheet" href="styles.css">', () => `<style>${css}</style>`)
   .replace('<script type="module" src="js/app.js"></script>', () =>
-    `<script>window.__PALIMPSEST_BUILD=${BUILD};window.__PALIMPSEST_DATA={canada:${data}};</script>\n<script>${safe(js)}</script>`);
+    `<script>window.__PALIMPSEST_BUILD=${BUILD};window.__PALIMPSEST_DATA={canada:${data}};${INLINE ? `window.__PALIMPSEST_LIB={canada:${safe(libFile.toString('utf8'))}};` : ''}</script>\n<script>${safe(js)}</script>`);
 
 mkdirSync(join(ROOT, 'dist', 'data'), { recursive: true });
-writeFileSync(join(ROOT, 'dist', 'palimpsest.html'), html);
-writeFileSync(join(ROOT, 'dist', 'data', 'canada-library.json'), libFile);
-console.log(`wrote dist/palimpsest.html — ${(html.length / 1024).toFixed(0)} KB, with dist/data/canada-library.json — ${(libFile.length / 1024 / 1024).toFixed(1)} MB beside it`);
+if (INLINE) {
+  writeFileSync(join(ROOT, 'dist', 'palimpsest-inline.html'), html);
+  console.log(`wrote dist/palimpsest-inline.html — ${(html.length / 1024 / 1024).toFixed(1)} MB, books and all`);
+} else {
+  writeFileSync(join(ROOT, 'dist', 'palimpsest.html'), html);
+  writeFileSync(join(ROOT, 'dist', 'data', 'canada-library.json'), libFile);
+  console.log(`wrote dist/palimpsest.html — ${(html.length / 1024).toFixed(0)} KB, with dist/data/canada-library.json — ${(libFile.length / 1024 / 1024).toFixed(1)} MB beside it`);
+}
