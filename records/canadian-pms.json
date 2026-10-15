@@ -1,0 +1,219 @@
+{
+ "id": "canadian-pms",
+ "title": "Prime Ministers of Canada",
+ "lane": "canada",
+ "asks": "Who was prime minister of Canada",
+ "verb": "become prime minister",
+ "past": "became prime minister",
+ "kind": "reigns",
+ "source": "Wikidata",
+ "licence": "CC0 1.0",
+ "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+ "url": "https://query.wikidata.org/",
+ "retrieved": "2026-10-15",
+ "query": "#! title: Prime Ministers of Canada\r\n#! lane: canada\r\n#! asks: Who was prime minister of Canada\r\n#! verb: become prime minister\r\n#! past: became prime minister\r\n#! kind: reigns\r\n#! source: Wikidata\r\n#! licence: CC0 1.0\r\n#! url: https://query.wikidata.org/\r\n\r\n# One row per TERM, not per person: Macdonald, Mackenzie King and others held\r\n# the office more than once, and the gaps are the point of the question.\r\n\r\nSELECT ?item ?name ?from ?to WHERE {\r\n  ?item p:P39 ?st .\r\n  ?st ps:P39 wd:Q839078 ;\r\n      pq:P580 ?from .\r\n  OPTIONAL { ?st pq:P582 ?to }\r\n  FILTER NOT EXISTS { ?st wikibase:rank wikibase:DeprecatedRank }\r\n  ?item rdfs:label ?name . FILTER(LANG(?name) = \"en\")\r\n}\r\nORDER BY ?from",
+ "rows": [
+  {
+   "url": "http://www.wikidata.org/entity/Q128702",
+   "id": "Q128702",
+   "from": 1867,
+   "name": "John A. Macdonald",
+   "to": 1873
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128708",
+   "id": "Q128708",
+   "from": 1873,
+   "name": "Alexander Mackenzie",
+   "to": 1878
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128702",
+   "id": "Q128702",
+   "from": 1878,
+   "name": "John A. Macdonald",
+   "to": 1891
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128696",
+   "id": "Q128696",
+   "from": 1891,
+   "name": "John Abbott",
+   "to": 1892
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128686",
+   "id": "Q128686",
+   "from": 1892,
+   "name": "John Sparrow David Thompson",
+   "to": 1894
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128677",
+   "id": "Q128677",
+   "from": 1894,
+   "name": "Mackenzie Bowell",
+   "to": 1896
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128672",
+   "id": "Q128672",
+   "from": 1896,
+   "name": "Charles Tupper",
+   "to": 1896
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128664",
+   "id": "Q128664",
+   "from": 1896,
+   "name": "Wilfrid Laurier",
+   "to": 1911
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128655",
+   "id": "Q128655",
+   "from": 1911,
+   "name": "Robert Borden",
+   "to": 1920
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128645",
+   "id": "Q128645",
+   "from": 1920,
+   "name": "Arthur Meighen",
+   "to": 1921
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128633",
+   "id": "Q128633",
+   "from": 1921,
+   "name": "William Lyon Mackenzie King",
+   "to": 1926
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128645",
+   "id": "Q128645",
+   "from": 1926,
+   "name": "Arthur Meighen",
+   "to": 1926
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128633",
+   "id": "Q128633",
+   "from": 1926,
+   "name": "William Lyon Mackenzie King",
+   "to": 1930
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128641",
+   "id": "Q128641",
+   "from": 1930,
+   "name": "Richard Bedford Bennett",
+   "to": 1935
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128633",
+   "id": "Q128633",
+   "from": 1935,
+   "name": "William Lyon Mackenzie King",
+   "to": 1948
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128626",
+   "id": "Q128626",
+   "from": 1948,
+   "name": "Louis St. Laurent",
+   "to": 1957
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128614",
+   "id": "Q128614",
+   "from": 1957,
+   "name": "John Diefenbaker",
+   "to": 1963
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128604",
+   "id": "Q128604",
+   "from": 1963,
+   "name": "Lester B. Pearson",
+   "to": 1968
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q8619",
+   "id": "Q8619",
+   "from": 1968,
+   "name": "Pierre Trudeau",
+   "to": 1979
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128574",
+   "id": "Q128574",
+   "from": 1979,
+   "name": "Joe Clark",
+   "to": 1980
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q8619",
+   "id": "Q8619",
+   "from": 1980,
+   "name": "Pierre Trudeau",
+   "to": 1984
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128568",
+   "id": "Q128568",
+   "from": 1984,
+   "name": "John Turner",
+   "to": 1984
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128563",
+   "id": "Q128563",
+   "from": 1984,
+   "name": "Brian Mulroney",
+   "to": 1993
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128553",
+   "id": "Q128553",
+   "from": 1993,
+   "name": "Kim Campbell",
+   "to": 1993
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128543",
+   "id": "Q128543",
+   "from": 1993,
+   "name": "Jean Chrétien",
+   "to": 2003
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128529",
+   "id": "Q128529",
+   "from": 2003,
+   "name": "Paul Martin",
+   "to": 2006
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q206",
+   "id": "Q206",
+   "from": 2006,
+   "name": "Stephen Harper",
+   "to": 2015
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q3099714",
+   "id": "Q3099714",
+   "from": 2015,
+   "name": "Justin Trudeau",
+   "to": 2025
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q192533",
+   "id": "Q192533",
+   "from": 2025,
+   "name": "Mark Carney"
+  }
+ ]
+}

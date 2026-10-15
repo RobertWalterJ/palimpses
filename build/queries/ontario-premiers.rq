@@ -1,0 +1,23 @@
+#! title: Premiers of Ontario
+#! lane: canada
+#! asks: Who was premier of Ontario
+#! verb: become premier
+#! past: became premier
+#! kind: reigns
+#! source: Wikidata
+#! licence: CC0 1.0
+#! url: https://query.wikidata.org/
+
+# Ontario only. Before 1867 the territory was Upper Canada and then Canada
+# West, which had no premier of its own — the Province of Canada was led by
+# joint premiers for both halves, so there is no list to put beside this one.
+
+SELECT ?item ?name ?from ?to WHERE {
+  ?item p:P39 ?st .
+  ?st ps:P39 wd:Q2560704 ;
+      pq:P580 ?from .
+  OPTIONAL { ?st pq:P582 ?to }
+  FILTER NOT EXISTS { ?st wikibase:rank wikibase:DeprecatedRank }
+  ?item rdfs:label ?name . FILTER(LANG(?name) = "en")
+}
+ORDER BY ?from

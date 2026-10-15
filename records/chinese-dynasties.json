@@ -1,0 +1,101 @@
+{
+ "id": "chinese-dynasties",
+ "title": "The Chinese dynasties",
+ "lane": "china",
+ "asks": "Which dynasty was ruling China",
+ "verb": "begin",
+ "past": "began",
+ "kind": "reigns",
+ "source": "Wikidata",
+ "licence": "CC0 1.0",
+ "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+ "url": "https://query.wikidata.org/",
+ "retrieved": "2026-10-15",
+ "query": "#! title: The Chinese dynasties\r\n#! lane: china\r\n#! asks: Which dynasty was ruling China\r\n#! verb: begin\r\n#! past: began\r\n#! kind: reigns\r\n#! source: Wikidata\r\n#! licence: CC0 1.0\r\n#! url: https://query.wikidata.org/\r\n\r\n# The twelve dynasties a reader means when they ask what order the Chinese\r\n# dynasties came in. The DATES are Wikidata's; the SELECTION is ours, and it\r\n# is listed here rather than hidden in code so it can be argued with.\r\n#\r\n# Why a hand-picked list and not a class query: asking for everything typed as\r\n# a \"Chinese dynasty\" returns 31 rows that leave out Qin, Sui, Yuan, Ming and\r\n# Qing — they are typed as \"historical Chinese state\" instead — while\r\n# including a dozen splinter dynasties of the Southern and Northern courts.\r\n# Neither set is the sequence anyone is trying to learn.\r\n#\r\n# What this list does not show: the long stretches when China was not one\r\n# state. Between the Han and the Sui, and again between the Tang and the Song,\r\n# several dynasties ruled at once. The gaps between these rows are those\r\n# centuries, and the app's questions say so rather than pretending to a clean\r\n# baton-pass.\r\n#\r\n# Dates before 1 CE arrive negative and are printed BCE. They are also the\r\n# place where Wikidata and the textbooks differ by a year or two (the Qin here\r\n# begin in 220 BCE; most books say 221), which is why nothing built from this\r\n# list asks for an exact year before 1000 CE — only for order.\r\n\r\nSELECT ?item ?name ?from ?to WHERE {\r\n  VALUES ?item {\r\n    wd:Q169705   # Xia\r\n    wd:Q128938   # Shang\r\n    wd:Q35216    # Zhou\r\n    wd:Q7183     # Qin\r\n    wd:Q7209     # Han\r\n    wd:Q7352     # Jin (266-420)\r\n    wd:Q7405     # Sui\r\n    wd:Q9683     # Tang\r\n    wd:Q7462     # Song\r\n    wd:Q7313     # Yuan\r\n    wd:Q9903     # Ming\r\n    wd:Q8733     # Qing\r\n  }\r\n  ?item wdt:P571 ?from .\r\n  OPTIONAL { ?item wdt:P576 ?to }\r\n  ?item rdfs:label ?name . FILTER(LANG(?name) = \"en\")\r\n}\r\nORDER BY ?from",
+ "rows": [
+  {
+   "url": "http://www.wikidata.org/entity/Q169705",
+   "id": "Q169705",
+   "from": -2204,
+   "name": "Xia dynasty",
+   "to": -1599
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q128938",
+   "id": "Q128938",
+   "from": -1599,
+   "name": "Shang dynasty",
+   "to": -1045
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q35216",
+   "id": "Q35216",
+   "from": -1045,
+   "name": "Zhou dynasty",
+   "to": -255
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q7183",
+   "id": "Q7183",
+   "from": -220,
+   "name": "Qin dynasty",
+   "to": -205
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q7209",
+   "id": "Q7209",
+   "from": -205,
+   "name": "Han dynasty",
+   "to": 220
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q7352",
+   "id": "Q7352",
+   "from": 266,
+   "name": "Jin dynasty",
+   "to": 420
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q7405",
+   "id": "Q7405",
+   "from": 581,
+   "name": "Sui dynasty",
+   "to": 618
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q9683",
+   "id": "Q9683",
+   "from": 618,
+   "name": "Tang dynasty",
+   "to": 907
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q7462",
+   "id": "Q7462",
+   "from": 960,
+   "name": "Song dynasty",
+   "to": 1279
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q7313",
+   "id": "Q7313",
+   "from": 1271,
+   "name": "Yuan dynasty",
+   "to": 1368
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q9903",
+   "id": "Q9903",
+   "from": 1368,
+   "name": "Ming dynasty",
+   "to": 1644
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q8733",
+   "id": "Q8733",
+   "from": 1636,
+   "name": "Qing dynasty",
+   "to": 1912
+  }
+ ]
+}

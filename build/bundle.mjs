@@ -11,6 +11,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { loadRecords, recordQuestions, recordTimeline } from './records.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 execFileSync(process.execPath, [join(ROOT, 'build', 'verify.mjs')], { stdio: 'inherit' });
@@ -65,6 +66,7 @@ const CHAPTER_TITLE = {
   'ch04-new-france': 'New France, inside other worlds',
   'ch03-amazonia': 'Amazonia, a centre of its own',
   'th01-empire-trade': 'Trade, empire and abolition, 1488–1842',
+  'th02-reigns': 'Reigns and dynasties, side by side',
   'w01-africa': 'Africa',
   'w02-atlantic': 'The Caribbean and the Atlantic',
   'w03-east-asia': 'China and East Asia',
@@ -78,6 +80,10 @@ const evOut = (e) => {
   const p = PARA.get(e.p);
   return { quote: e.q, p: e.p, para: p.text, sec: p.sec, url: p.url, cite: p.cite };
 };
+
+// The dated snapshots in records/, read once. Nothing is fetched here: see
+// build/fetch-records.mjs, which is run by hand and commits what it gets.
+const RECORDS = loadRecords(ROOT);
 
 mkdirSync(join(ROOT, 'app', 'data'), { recursive: true });
 for (const pack of PACKS) {
@@ -96,13 +102,28 @@ for (const pack of PACKS) {
       big: (mod.BIG || []).map((b) => ({ id: b.id, q: b.q, ev: b.ev.map(evOut) })),
       group: chId.startsWith('th') ? 'thread' : chId.startsWith('w') ? 'world' : 'canada',
       era: mod.ERA || null,
+      ...(mod.BLURB ? { blurb: mod.BLURB } : {}),
       // A thread (file name th…) crosses chapters and regions, with a timeline
       // in lanes; it is listed apart from the chapters.
-      ...(chId.startsWith('th') ? { thread: true, lanes: mod.LANES || [], timeline: (mod.TIMELINE || []).map((e) => ({ lane: e.lane, at: e.at, label: e.label, ev: evOut(e.ev) })).sort((a, b) => a.at - b.at) } : {}) });
+      ...(chId.startsWith('th') ? { thread: true, lanes: mod.LANES || [],
+        // A thread's timeline is either written by hand with quoted evidence,
+        // or built from the dated snapshots it names in FROM_RECORDS.
+        timeline: mod.FROM_RECORDS
+          ? recordTimeline(RECORDS.filter((r) => mod.FROM_RECORDS.includes(r.id)))
+          : (mod.TIMELINE || []).map((e) => ({ lane: e.lane, at: e.at, label: e.label, ev: evOut(e.ev) })).sort((a, b) => a.at - b.at) } : {}) });
     // Significant questions first, the details after: new questions are
     // introduced in this order, so a chapter opens on what matters most.
     const ordered = [...qs.filter((q) => q.depth !== 'detail'), ...qs.filter((q) => q.depth === 'detail')];
     const generated = glossaryQuestions(pack, chId, mod);
+    if (mod.FROM_RECORDS) {
+      const sets = RECORDS.filter((r) => mod.FROM_RECORDS.includes(r.id));
+      const missing = mod.FROM_RECORDS.filter((id) => !sets.some((s) => s.id === id));
+      if (missing.length) throw new Error(`${chId}: no snapshot in records/ for ${missing.join(', ')}`);
+      // Which big question a set belongs to: the Canadian offices to their
+      // own, everything else to the one about order.
+      const bigFor = (set) => (set.lane === 'canada' ? 'offices' : 'order');
+      generated.push(...recordQuestions(pack, chId, sets, bigFor));
+    }
     for (const q of [...ordered, ...generated]) {
       if (q.gen) { questions.push(q); continue; }
       const base = { id: `${pack.id}/${q.id}`, ch: chId, kind: q.kind, prompt: q.prompt, lens: q.lens || [], big: q.big, ...(q.depth ? { depth: q.depth } : {}), ...(q.at != null ? { at: q.at } : {}),
@@ -132,12 +153,23 @@ for (const pack of PACKS) {
   // itself so About can never drift out of date with what is actually cited.
   // (A hand-written list had gone three versions without crediting OpenStax,
   // which its licence requires.)
-  const bookOf = (pid) => [...BOOK.keys()].find((id) => pid.startsWith(id + '-'));
+  // Evidence that is a record has no paragraph id; the datasets are credited
+  // separately, below.
+  const bookOf = (pid) => (pid ? [...BOOK.keys()].find((id) => pid.startsWith(id + '-')) : null);
   const cited = new Set(questions.flatMap((q) => (q.ev || q.items?.flatMap((i) => i.ev) || []).map((e) => bookOf(e.p))).filter(Boolean));
   const sources = [...cited].map((id) => {
     const b = BOOK.get(id);
     return { id, title: b.title, author: b.author, publisher: b.publisher, year: b.year, licence: b.licence, web: b.web };
   }).sort((x, y) => x.year - y.year);
+  // The datasets behind the record questions, credited the same way. CC0 asks
+  // for nothing, but a player is owed the same answer to "says who?".
+  const usedSets = new Set(questions.flatMap((q) => (q.ev || []).filter((e) => e.record).map((e) => e.cite)));
+  for (const set of RECORDS) {
+    if (![...usedSets].some((c) => c.startsWith(set.source))) continue;
+    if (sources.some((x) => x.id === set.id)) continue;
+    sources.push({ id: set.id, title: set.title, author: set.source, publisher: set.source,
+      year: Number(set.retrieved.slice(0, 4)), licence: set.licence, web: set.url, dataset: true });
+  }
   const voices = await loadVoices(pack);
   // "Who said this?" — the app is named for its voices and had never asked
   // about one. Only the voices whose words sit in the corpus can be asked

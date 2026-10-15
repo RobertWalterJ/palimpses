@@ -1,0 +1,51 @@
+#! title: The Chinese dynasties
+#! lane: china
+#! asks: Which dynasty was ruling China
+#! verb: begin
+#! past: began
+#! kind: reigns
+#! source: Wikidata
+#! licence: CC0 1.0
+#! url: https://query.wikidata.org/
+
+# The twelve dynasties a reader means when they ask what order the Chinese
+# dynasties came in. The DATES are Wikidata's; the SELECTION is ours, and it
+# is listed here rather than hidden in code so it can be argued with.
+#
+# Why a hand-picked list and not a class query: asking for everything typed as
+# a "Chinese dynasty" returns 31 rows that leave out Qin, Sui, Yuan, Ming and
+# Qing — they are typed as "historical Chinese state" instead — while
+# including a dozen splinter dynasties of the Southern and Northern courts.
+# Neither set is the sequence anyone is trying to learn.
+#
+# What this list does not show: the long stretches when China was not one
+# state. Between the Han and the Sui, and again between the Tang and the Song,
+# several dynasties ruled at once. The gaps between these rows are those
+# centuries, and the app's questions say so rather than pretending to a clean
+# baton-pass.
+#
+# Dates before 1 CE arrive negative and are printed BCE. They are also the
+# place where Wikidata and the textbooks differ by a year or two (the Qin here
+# begin in 220 BCE; most books say 221), which is why nothing built from this
+# list asks for an exact year before 1000 CE — only for order.
+
+SELECT ?item ?name ?from ?to WHERE {
+  VALUES ?item {
+    wd:Q169705   # Xia
+    wd:Q128938   # Shang
+    wd:Q35216    # Zhou
+    wd:Q7183     # Qin
+    wd:Q7209     # Han
+    wd:Q7352     # Jin (266-420)
+    wd:Q7405     # Sui
+    wd:Q9683     # Tang
+    wd:Q7462     # Song
+    wd:Q7313     # Yuan
+    wd:Q9903     # Ming
+    wd:Q8733     # Qing
+  }
+  ?item wdt:P571 ?from .
+  OPTIONAL { ?item wdt:P576 ?to }
+  ?item rdfs:label ?name . FILTER(LANG(?name) = "en")
+}
+ORDER BY ?from

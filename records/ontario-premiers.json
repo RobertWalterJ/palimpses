@@ -1,0 +1,198 @@
+{
+ "id": "ontario-premiers",
+ "title": "Premiers of Ontario",
+ "lane": "canada",
+ "asks": "Who was premier of Ontario",
+ "verb": "become premier",
+ "past": "became premier",
+ "kind": "reigns",
+ "source": "Wikidata",
+ "licence": "CC0 1.0",
+ "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+ "url": "https://query.wikidata.org/",
+ "retrieved": "2026-10-15",
+ "query": "#! title: Premiers of Ontario\r\n#! lane: canada\r\n#! asks: Who was premier of Ontario\r\n#! verb: become premier\r\n#! past: became premier\r\n#! kind: reigns\r\n#! source: Wikidata\r\n#! licence: CC0 1.0\r\n#! url: https://query.wikidata.org/\r\n\r\n# Ontario only. Before 1867 the territory was Upper Canada and then Canada\r\n# West, which had no premier of its own — the Province of Canada was led by\r\n# joint premiers for both halves, so there is no list to put beside this one.\r\n\r\nSELECT ?item ?name ?from ?to WHERE {\r\n  ?item p:P39 ?st .\r\n  ?st ps:P39 wd:Q2560704 ;\r\n      pq:P580 ?from .\r\n  OPTIONAL { ?st pq:P582 ?to }\r\n  FILTER NOT EXISTS { ?st wikibase:rank wikibase:DeprecatedRank }\r\n  ?item rdfs:label ?name . FILTER(LANG(?name) = \"en\")\r\n}\r\nORDER BY ?from",
+ "rows": [
+  {
+   "url": "http://www.wikidata.org/entity/Q938623",
+   "id": "Q938623",
+   "from": 1867,
+   "name": "John Sandfield Macdonald",
+   "to": 1871
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q333003",
+   "id": "Q333003",
+   "from": 1871,
+   "name": "Edward Blake",
+   "to": 1872
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q1387837",
+   "id": "Q1387837",
+   "from": 1872,
+   "name": "Oliver Mowat",
+   "to": 1896
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q439049",
+   "id": "Q439049",
+   "from": 1896,
+   "name": "Arthur Sturgis Hardy",
+   "to": 1899
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q553340",
+   "id": "Q553340",
+   "from": 1899,
+   "name": "George William Ross",
+   "to": 1905
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q3161488",
+   "id": "Q3161488",
+   "from": 1905,
+   "name": "James Whitney",
+   "to": 1914
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q387764",
+   "id": "Q387764",
+   "from": 1914,
+   "name": "William Howard Hearst",
+   "to": 1919
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q3056893",
+   "id": "Q3056893",
+   "from": 1919,
+   "name": "Ernest Charles Drury",
+   "to": 1923
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q3141552",
+   "id": "Q3141552",
+   "from": 1923,
+   "name": "Howard Ferguson",
+   "to": 1930
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q3101940",
+   "id": "Q3101940",
+   "from": 1930,
+   "name": "George Stewart Henry",
+   "to": 1934
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q3317082",
+   "id": "Q3317082",
+   "from": 1934,
+   "name": "Mitchell Hepburn",
+   "to": 1942
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q3110889",
+   "id": "Q3110889",
+   "from": 1942,
+   "name": "Gordon Daniel Conant",
+   "to": 1943
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q3127880",
+   "id": "Q3127880",
+   "from": 1943,
+   "name": "Harry Nixon",
+   "to": 1943
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q1234217",
+   "id": "Q1234217",
+   "from": 1943,
+   "name": "George A. Drew",
+   "to": 1948
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q462381",
+   "id": "Q462381",
+   "from": 1948,
+   "name": "Thomas Laird Kennedy",
+   "to": 1949
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q1820783",
+   "id": "Q1820783",
+   "from": 1949,
+   "name": "Leslie Frost",
+   "to": 1961
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q787456",
+   "id": "Q787456",
+   "from": 1961,
+   "name": "John Robarts",
+   "to": 1971
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q862052",
+   "id": "Q862052",
+   "from": 1971,
+   "name": "Bill Davis",
+   "to": 1985
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q463038",
+   "id": "Q463038",
+   "from": 1985,
+   "name": "Frank Miller",
+   "to": 1985
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q1176105",
+   "id": "Q1176105",
+   "from": 1985,
+   "name": "David Peterson",
+   "to": 1990
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q888208",
+   "id": "Q888208",
+   "from": 1990,
+   "name": "Bob Rae",
+   "to": 1995
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q598964",
+   "id": "Q598964",
+   "from": 1995,
+   "name": "Mike Harris",
+   "to": 2002
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q599306",
+   "id": "Q599306",
+   "from": 2002,
+   "name": "Ernie Eves",
+   "to": 2003
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q568204",
+   "id": "Q568204",
+   "from": 2003,
+   "name": "Dalton McGuinty",
+   "to": 2013
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q3786221",
+   "id": "Q3786221",
+   "from": 2013,
+   "name": "Kathleen Wynne",
+   "to": 2018
+  },
+  {
+   "url": "http://www.wikidata.org/entity/Q5300478",
+   "id": "Q5300478",
+   "from": 2018,
+   "name": "Doug Ford"
+  }
+ ]
+}

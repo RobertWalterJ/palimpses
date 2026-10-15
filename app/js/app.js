@@ -144,7 +144,7 @@ function threadScreen(id) {
   const draw = () => list.replaceChildren(...t.timeline.filter((e) => !only || e.lane === only).map((e) => {
     const w = sectionOf(e.ev.p);
     return h('li', { class: `lane-row lane-${e.lane}` },
-      h('b', { class: 'num yr' }, String(e.at)),
+      h('b', { class: 'num yr' }, yearLabel(e.at)),
       h('div', {}, h('span', { class: 'lane-tag' }, laneName.get(e.lane)), h('p', { class: 'lane-label' }, e.label),
         w ? h('button', { class: 'disclose', style: 'padding:2px 0;min-height:32px', onclick: () => openReader(w.section.id, e.ev.p, [e.ev.quote]) }, 'Where this comes from')
           : h('p', { class: 'cite' }, e.ev.cite)));
@@ -161,7 +161,7 @@ function threadScreen(id) {
     h('div', { class: 'topbar' }, iconBtn('back', 'Back', back), h('h1', { class: 't-title' }, 'Thread')),
     h('h2', { class: 'thread-title' }, t.title),
     readable('This thread', h('section', { class: 'card stack' },
-      h('p', { class: 't-body' }, 'The same years, seen from China, Europe, North America and the Caribbean. Every date is quoted from its source.'))),
+      h('p', { class: 't-body' }, t.blurb || 'The same years, seen from China, Europe, North America and the Caribbean. Every date is quoted from its source.'))),
     h('button', { class: 'btn primary wide', onclick: () => play(!(due || fresh), ids) }, due || fresh ? `Play this thread · ${fresh} new${due ? `, ${due} to revisit` : ''}` : 'Recall test on this thread'),
     h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'The big questions'), h('ul', { class: 'bigs' }, t.big.map((b) => h('li', {}, b.q)))),
     h('section', { class: 'card stack' }, h('p', { class: 't-label' }, 'Timeline'), chips, list),
@@ -697,9 +697,17 @@ function orderScreen(q) {
       h('p', { class: `verdict ${ok ? 'good' : 'bad'}`, tabindex: '-1' }, ok ? '✓ In order.' : '✗ Not quite. Oldest first:'),
       h('ol', { class: 'order-truth' }, truth.map((it) => h('li', {}, h('b', { class: 'num' }, it.when), ' ', it.label))),
       (() => {
-        const box = h('div', { class: 'stack', hidden: true }, ...truth.map((it) => h('div', { class: 'stack', style: 'gap:6px' },
-          h('div', { class: 'q-head' }, h('blockquote', { class: 'quote' }, it.ev.quote), sayBtn(`${it.when}. ${it.label}. ${it.ev.quote}`)),
-          citeLine(it.ev))));
+        const box = h('div', { class: 'stack', hidden: true }, ...truth.map((it) => (it.ev.record
+          // A date that comes from a record rather than a sentence shows the
+          // record: the reign, the span, and where it is from.
+          ? h('div', { class: 'stack', style: 'gap:6px' },
+            h('div', { class: 'record' },
+              h('p', { class: 'rec-title' }, it.ev.record.title),
+              h('dl', { class: 'rec-rows' }, it.ev.record.rows.flatMap(([k, v]) => [h('dt', {}, k), h('dd', { class: 'num' }, v)]))),
+            h('p', { class: 'cite' }, it.ev.cite))
+          : h('div', { class: 'stack', style: 'gap:6px' },
+            h('div', { class: 'q-head' }, h('blockquote', { class: 'quote' }, it.ev.quote), sayBtn(`${it.when}. ${it.label}. ${it.ev.quote}`)),
+            citeLine(it.ev)))));
         const t = h('button', { class: 'disclose', type: 'button', 'aria-expanded': 'false' }, 'Where each date comes from');
         t.onclick = () => { box.hidden = !box.hidden; t.setAttribute('aria-expanded', String(!box.hidden)); };
         return h('section', { class: 'card stack' }, t, box);
@@ -736,7 +744,8 @@ function bigPicture(q) {
   if (!b) return null;
   const ch = PACK.chapters.find((c) => c.id === q.ch);
   const n = ch.big.indexOf(b) + 1;
-  const seen = evOf(q).map((x) => x.quote);
+  // Evidence that is a record has no quote to compare against.
+  const seen = evOf(q).map((x) => x.quote).filter(Boolean);
   const fresh = b.ev.filter((x) => !seen.some((y) => y.includes(x.quote) || x.quote.includes(y)));
   const e = (fresh[0] || b.ev[0]);
   const w = sectionOf(e.p);
@@ -761,10 +770,27 @@ function lensChips(q) {
 // from, and one line naming the big question. Everything else — the other
 // quotes, the whole paragraph read aloud, the full credit, the threads — is
 // one tap away under "More from the source". Target: under 60 words.
+// A card for evidence that is a record rather than a sentence: a reign, a
+// dynasty's span, the date a colony became a country. Nobody wrote these as
+// prose, so the app shows the record itself — its fields, where it comes from
+// and under what licence — instead of pretending a quotation exists.
+function recordCard(q) {
+  const recs = q.ev.filter((e) => e.record);
+  const first = recs[0];
+  return h('section', { class: 'card stack key-card' },
+    h('p', { class: 't-label' }, recs.length > 1 ? 'From the record' : 'From the record'),
+    ...recs.map((e) => h('div', { class: 'record' },
+      h('p', { class: 'rec-title' }, e.record.title),
+      h('dl', { class: 'rec-rows' }, e.record.rows.flatMap(([k, v]) => [h('dt', {}, k), h('dd', { class: 'num' }, v)])))),
+    h('p', { class: 'cite' }, first.cite,
+      first.url ? [' · ', h('a', { href: first.url, target: '_blank', rel: 'noopener' }, 'the record')] : null));
+}
+
 function revealCard(q, ok) {
   const out = [h('p', { class: `verdict ${ok ? 'good' : 'bad'}`, tabindex: '-1' }, ok ? '✓ Right.' : '✗ Not quite.')];
   if (!ok) out.push(h('div', { class: 'q-head' }, h('p', { class: 'answer' }, q.answer), sayBtn(q.answer, 'Read the right answer aloud')));
   const key = q.ev[0];
+  if (key.record) return [...out, recordCard(q), bigPicture(q), meanwhile(q)].filter(Boolean);
   const more = h('div', { class: 'stack', hidden: true });
   const toggle = h('button', { class: 'disclose', type: 'button', 'aria-expanded': 'false' }, 'More from the source');
   toggle.onclick = () => {

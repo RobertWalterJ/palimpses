@@ -1,0 +1,496 @@
+{
+ "id": "english-monarchs",
+ "title": "Monarchs of England, Great Britain and the United Kingdom",
+ "lane": "england",
+ "asks": "Who was on the throne in England",
+ "verb": "came to the throne",
+ "past": "came to the throne",
+ "kind": "reigns",
+ "source": "Wikidata",
+ "licence": "CC0 1.0",
+ "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+ "url": "https://query.wikidata.org/",
+ "retrieved": "2026-10-15",
+ "query": "#! title: Monarchs of England, Great Britain and the United Kingdom\r\n#! lane: england\r\n#! asks: Who was on the throne in England\r\n#! verb: came to the throne\r\n#! past: came to the throne\r\n#! kind: reigns\r\n#! source: Wikidata\r\n#! licence: CC0 1.0\r\n#! url: https://query.wikidata.org/\r\n\r\n# Every reign held as \"Monarch of England\" (to 1707), \"Monarch of Great\r\n# Britain\" (1707-1800) or \"Monarch of the United Kingdom\" (1801-), with the\r\n# start and end of that reign from the qualifiers on the position itself —\r\n# not the person's birth and death.\r\n#\r\n# One row per reign, not per person: a monarch who held two of these titles\r\n# (George III held the second and the third) appears once per title, which is\r\n# the honest shape — the kingdoms were different states.\r\n\r\nSELECT ?item ?name ?from ?to ?title WHERE {\r\n  VALUES ?pos { wd:Q18810062 wd:Q110324075 wd:Q9134365 }\r\n  ?item p:P39 ?st .\r\n  ?st ps:P39 ?pos ;\r\n      pq:P580 ?from .\r\n  OPTIONAL { ?st pq:P582 ?to }\r\n  # Leave out statements the community has marked as deprecated (disputed or\r\n  # superseded values): they are in the data on purpose, flagged as unsound.\r\n  FILTER NOT EXISTS { ?st wikibase:rank wikibase:DeprecatedRank }\r\n  ?item rdfs:label ?name . FILTER(LANG(?name) = \"en\")\r\n  ?pos rdfs:label ?title . FILTER(LANG(?title) = \"en\")\r\n}\r\nORDER BY ?from",
+ "rows": [
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q83476",
+   "id": "Q83476",
+   "from": 871,
+   "name": "Alfred the Great",
+   "to": 899
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q187114",
+   "id": "Q187114",
+   "from": 899,
+   "name": "Edward the Elder",
+   "to": 924
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q170017",
+   "id": "Q170017",
+   "from": 927,
+   "name": "Æthelstan",
+   "to": 939
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q190166",
+   "id": "Q190166",
+   "from": 939,
+   "name": "Edmund I",
+   "to": 946
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q191767",
+   "id": "Q191767",
+   "from": 946,
+   "name": "Edred of England",
+   "to": 955
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q191203",
+   "id": "Q191203",
+   "from": 955,
+   "name": "Eadwig",
+   "to": 959
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q192925",
+   "id": "Q192925",
+   "from": 959,
+   "name": "Edgar of England",
+   "to": 975
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q192920",
+   "id": "Q192920",
+   "from": 975,
+   "name": "Edward the Martyr",
+   "to": 978
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q183499",
+   "id": "Q183499",
+   "from": 978,
+   "name": "Æthelred the Unready",
+   "to": 1013
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q181896",
+   "id": "Q181896",
+   "from": 1013,
+   "name": "Sweyn I of Denmark",
+   "to": 1014
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q183499",
+   "id": "Q183499",
+   "from": 1014,
+   "name": "Æthelred the Unready",
+   "to": 1016
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q134128",
+   "id": "Q134128",
+   "from": 1016,
+   "name": "Cnut the Great",
+   "to": 1035
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q188684",
+   "id": "Q188684",
+   "from": 1016,
+   "name": "Edmund II of England",
+   "to": 1016
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q188627",
+   "id": "Q188627",
+   "from": 1037,
+   "name": "Harold Harefoot",
+   "to": 1040
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q190091",
+   "id": "Q190091",
+   "from": 1040,
+   "name": "Harthacanute",
+   "to": 1042
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q130005",
+   "id": "Q130005",
+   "from": 1042,
+   "name": "Edward the Confessor",
+   "to": 1066
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q159597",
+   "id": "Q159597",
+   "from": 1066,
+   "name": "Harold Godwinson",
+   "to": 1066
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q37594",
+   "id": "Q37594",
+   "from": 1066,
+   "name": "William the Conqueror",
+   "to": 1087
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q102005",
+   "id": "Q102005",
+   "from": 1087,
+   "name": "William II of England",
+   "to": 1100
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q101384",
+   "id": "Q101384",
+   "from": 1100,
+   "name": "Henry I of England",
+   "to": 1135
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q60849",
+   "id": "Q60849",
+   "from": 1135,
+   "name": "Stephen, King of England",
+   "to": 1141
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q60849",
+   "id": "Q60849",
+   "from": 1141,
+   "name": "Stephen, King of England",
+   "to": 1154
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q102140",
+   "id": "Q102140",
+   "from": 1154,
+   "name": "Henry II of England",
+   "to": 1189
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q42305",
+   "id": "Q42305",
+   "from": 1189,
+   "name": "Richard I of England",
+   "to": 1199
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q129308",
+   "id": "Q129308",
+   "from": 1199,
+   "name": "John, King of England",
+   "to": 1216
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q160311",
+   "id": "Q160311",
+   "from": 1216,
+   "name": "Henry III of England",
+   "to": 1272
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q57798",
+   "id": "Q57798",
+   "from": 1272,
+   "name": "Edward I of England",
+   "to": 1307
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q5236",
+   "id": "Q5236",
+   "from": 1307,
+   "name": "Edward II of England",
+   "to": 1327
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q129247",
+   "id": "Q129247",
+   "from": 1327,
+   "name": "Edward III of England",
+   "to": 1377
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q81000",
+   "id": "Q81000",
+   "from": 1377,
+   "name": "Richard II of England",
+   "to": 1399
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q161866",
+   "id": "Q161866",
+   "from": 1399,
+   "name": "Henry IV of England",
+   "to": 1413
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q131581",
+   "id": "Q131581",
+   "from": 1413,
+   "name": "Henry V of England",
+   "to": 1422
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q160337",
+   "id": "Q160337",
+   "from": 1422,
+   "name": "Henry VI of England",
+   "to": 1461
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q160341",
+   "id": "Q160341",
+   "from": 1461,
+   "name": "Edward IV of England",
+   "to": 1470
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q160337",
+   "id": "Q160337",
+   "from": 1470,
+   "name": "Henry VI of England",
+   "to": 1471
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q160341",
+   "id": "Q160341",
+   "from": 1471,
+   "name": "Edward IV of England",
+   "to": 1483
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q170470",
+   "id": "Q170470",
+   "from": 1483,
+   "name": "Edward V of England",
+   "to": 1483
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q133028",
+   "id": "Q133028",
+   "from": 1483,
+   "name": "Richard III of England",
+   "to": 1485
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q675493",
+   "id": "Q675493",
+   "from": 1485,
+   "name": "Henry VII of England",
+   "to": 1509
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q38370",
+   "id": "Q38370",
+   "from": 1509,
+   "name": "Henry VIII of England",
+   "to": 1547
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q83229",
+   "id": "Q83229",
+   "from": 1547,
+   "name": "Edward VI of England",
+   "to": 1553
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q162356",
+   "id": "Q162356",
+   "from": 1553,
+   "name": "Lady Jane Grey",
+   "to": 1553
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q82674",
+   "id": "Q82674",
+   "from": 1553,
+   "name": "Mary I",
+   "to": 1558
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q7207",
+   "id": "Q7207",
+   "from": 1558,
+   "name": "Elizabeth I of England",
+   "to": 1603
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q79972",
+   "id": "Q79972",
+   "from": 1603,
+   "name": "James VI and I",
+   "to": 1625
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q81506",
+   "id": "Q81506",
+   "from": 1625,
+   "name": "Charles I of England",
+   "to": 1649
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q122553",
+   "id": "Q122553",
+   "from": 1660,
+   "name": "Charles II of England",
+   "to": 1685
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q126188",
+   "id": "Q126188",
+   "from": 1685,
+   "name": "James II of England",
+   "to": 1688
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q130812",
+   "id": "Q130812",
+   "from": 1689,
+   "name": "Mary II of England",
+   "to": 1694
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q129987",
+   "id": "Q129987",
+   "from": 1694,
+   "name": "William III of England",
+   "to": 1702
+  },
+  {
+   "title": "Monarch of England",
+   "url": "http://www.wikidata.org/entity/Q119702",
+   "id": "Q119702",
+   "from": 1702,
+   "name": "Anne of Great Britain",
+   "to": 1707
+  },
+  {
+   "title": "Monarch of Great Britain",
+   "url": "http://www.wikidata.org/entity/Q119702",
+   "id": "Q119702",
+   "from": 1707,
+   "name": "Anne of Great Britain",
+   "to": 1714
+  },
+  {
+   "title": "Monarch of Great Britain",
+   "url": "http://www.wikidata.org/entity/Q130805",
+   "id": "Q130805",
+   "from": 1714,
+   "name": "George I of Great Britain",
+   "to": 1727
+  },
+  {
+   "title": "Monarch of Great Britain",
+   "url": "http://www.wikidata.org/entity/Q131981",
+   "id": "Q131981",
+   "from": 1727,
+   "name": "George II of Great Britain",
+   "to": 1760
+  },
+  {
+   "title": "Monarch of Great Britain",
+   "url": "http://www.wikidata.org/entity/Q127318",
+   "id": "Q127318",
+   "from": 1760,
+   "name": "George III of Great Britain",
+   "to": 1801
+  },
+  {
+   "title": "Monarch of the United Kingdom",
+   "url": "http://www.wikidata.org/entity/Q269412",
+   "id": "Q269412",
+   "from": 1927,
+   "name": "George V",
+   "to": 1936
+  },
+  {
+   "title": "Monarch of the United Kingdom",
+   "url": "http://www.wikidata.org/entity/Q590227",
+   "id": "Q590227",
+   "from": 1936,
+   "name": "Edward VIII",
+   "to": 1936
+  },
+  {
+   "title": "Monarch of the United Kingdom",
+   "url": "http://www.wikidata.org/entity/Q280856",
+   "id": "Q280856",
+   "from": 1936,
+   "name": "George VI",
+   "to": 1952
+  },
+  {
+   "title": "Monarch of the United Kingdom",
+   "url": "http://www.wikidata.org/entity/Q9682",
+   "id": "Q9682",
+   "from": 1952,
+   "name": "Elizabeth II",
+   "to": 2022
+  },
+  {
+   "title": "Monarch of the United Kingdom",
+   "url": "http://www.wikidata.org/entity/Q43274",
+   "id": "Q43274",
+   "from": 2022,
+   "name": "Charles III"
+  }
+ ]
+}

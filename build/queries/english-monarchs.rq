@@ -1,0 +1,32 @@
+#! title: Monarchs of England, Great Britain and the United Kingdom
+#! lane: england
+#! asks: Who was on the throne in England
+#! verb: came to the throne
+#! past: came to the throne
+#! kind: reigns
+#! source: Wikidata
+#! licence: CC0 1.0
+#! url: https://query.wikidata.org/
+
+# Every reign held as "Monarch of England" (to 1707), "Monarch of Great
+# Britain" (1707-1800) or "Monarch of the United Kingdom" (1801-), with the
+# start and end of that reign from the qualifiers on the position itself —
+# not the person's birth and death.
+#
+# One row per reign, not per person: a monarch who held two of these titles
+# (George III held the second and the third) appears once per title, which is
+# the honest shape — the kingdoms were different states.
+
+SELECT ?item ?name ?from ?to ?title WHERE {
+  VALUES ?pos { wd:Q18810062 wd:Q110324075 wd:Q9134365 }
+  ?item p:P39 ?st .
+  ?st ps:P39 ?pos ;
+      pq:P580 ?from .
+  OPTIONAL { ?st pq:P582 ?to }
+  # Leave out statements the community has marked as deprecated (disputed or
+  # superseded values): they are in the data on purpose, flagged as unsound.
+  FILTER NOT EXISTS { ?st wikibase:rank wikibase:DeprecatedRank }
+  ?item rdfs:label ?name . FILTER(LANG(?name) = "en")
+  ?pos rdfs:label ?title . FILTER(LANG(?title) = "en")
+}
+ORDER BY ?from
