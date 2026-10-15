@@ -74,6 +74,7 @@ const CHAPTER_TITLE = {
   'w05-islamic-world': 'The Islamic world',
   'w06-europe': 'Europe',
   'w07-exchange': 'Exchange and obligation',
+  'w08-caribbean': 'The Caribbean, in its own voices',
 };
 
 const evOut = (e) => {
@@ -488,7 +489,7 @@ function writeLibrary(pack, entries) {
   const glossary = [];
   // Ljungstedt's OCR is left out of the reader (a single quotation is used,
   // shown in full on its question); the others are readable in full.
-  for (const f of ['pre.json', 'post.json', 'prumers2022.json', 'wh1.json', 'wh2.json', 'anth.json', 'prince1831.json', 'haytian1816.json']) {
+  for (const f of ['pre.json', 'post.json', 'prumers2022.json', 'wh1.json', 'wh2.json', 'anth.json', 'prince1831.json', 'warner1831.json', 'seacole1857.json', 'haytian1816.json']) {
     const book = JSON.parse(readFileSync(join(ROOT, 'corpus', f), 'utf8'));
     const src = book.source;
     books.push({

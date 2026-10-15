@@ -281,6 +281,25 @@ const PLAIN = [
     web: 'https://www.gutenberg.org/ebooks/17851',
   },
   {
+    // St Vincent, in the same year and through the same amanuensis as Mary
+    // Prince: Susanna Strickland took down both. Warner came to England and
+    // died in prison there, held as a runaway.
+    id: 'warner1831', file: 'sources/voices/warner1831.txt',
+    title: 'Negro Slavery Described by a Negro: Being the Narrative of Ashton Warner, a Native of St Vincent',
+    author: 'Ashton Warner, taken down by Susanna Strickland',
+    publisher: 'Samuel Maunder, London', year: 1831, licence: 'Public domain',
+    web: 'https://archive.org/details/884d7348-2d60-4deb-9cc7-4923381a0ded',
+  },
+  {
+    // A Jamaican woman who paid her own way to the Crimean war after the War
+    // Office turned her down, and wrote her own book about it.
+    id: 'seacole1857', file: 'sources/voices/seacole1857.txt', encoding: 'latin1',
+    title: 'Wonderful Adventures of Mrs. Seacole in Many Lands',
+    author: 'Mary Seacole',
+    publisher: 'James Blackwood, London', year: 1857, licence: 'Public domain',
+    web: 'https://www.gutenberg.org/ebooks/23031',
+  },
+  {
     // Haiti's own state papers in English, gathered by a Black American
     // educator acting for the Haitian government while other states refused
     // to recognise it. The app had the Haitian Revolution only at second hand.
@@ -305,7 +324,10 @@ for (const src of PLAIN) {
     // A word split at a line end ("stran-" / "gers"), sometimes with a stray
     // space after the hyphen. Only a lowercase letter on both sides, so a
     // real dash between words ("Work--work--work") is left alone.
-    .map((p) => clean(p.replace(/([a-z])- *\n\s*([a-z])/g, '$1$2').replace(/\n/g, ' ')))
+    // Some scans print the line-end hyphen as "¬" ("ex¬ ecutor", "War¬ ner"):
+    // the same join, one character different. The negation sign never appears
+    // in these books as itself.
+    .map((p) => clean(p.replace(/([a-z])- *\n\s*([a-z])/g, '$1$2').replace(/([A-Za-z])¬ *\n?\s*([a-z])/g, '$1$2').replace(/\n/g, ' ')))
     .filter((t) => t.length >= 60)
     .map((text, i) => ({ id: `${src.id}-p${i + 1}`, under: null, key: false, text }));
   const section = { id: `${src.id}-1`, num: '1', title: src.title, url: src.web, paras };
